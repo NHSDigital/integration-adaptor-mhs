@@ -1,12 +1,10 @@
-from distutils.core import setup
-
-import setuptools
+from setuptools import setup, find_packages
 
 setup(
     name='integration-adaptors-common',
     version='',
-    packages=setuptools.find_packages(),
-    url='git@github.com:nhsconnect/integration-adaptor-common.git',
+    packages=find_packages(),
+    url='https://github.com/nhsconnect/integration-adaptor-common',
     license='',
     author='NIA Development Team',
     author_email='',
