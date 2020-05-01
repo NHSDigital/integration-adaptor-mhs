@@ -6,7 +6,7 @@ This package contains common utilities used by the various projects that make up
 To use this package as part of your project, ensure you have `pipenv` installed and on your path, then from your
 project's directory run:
 ```
-pipenv install git+ssh://git@github.com/nhsconnect/integration-adaptor-common.git#egg=integration-adaptors-common
+pipenv install git+ssh://git@github.com/nhsconnect/integration-adaptor-common.git@0.0.1#egg=integration-adaptors-common
 ```
 
 ### Run Tests
