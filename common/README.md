@@ -2,6 +2,9 @@
 
 This package contains common utilities used by the various projects that make up the NHS integration adaptors.
 
+## CI Status
+![](https://github.com/nhsconnect/integration-adaptor-common/workflows/Python%20package/badge.svg)
+
 ## Installation
 To use this package as part of your project, ensure you have `pipenv` installed and on your path, then from your
 project's directory run:
