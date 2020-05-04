@@ -28,3 +28,15 @@ Ensure sonar-scanner is on your path, and configured for the sonarqube host with
 `sonar-scanner` will use `sonar-project.properties` to submit source to sonarqube for analysis.
  (See: [SonarQube](https://gpitbjss.atlassian.net/wiki/x/XQFfXQ))\
 NOTE: Coverage will not show in the analysis unless you have already generated the xml report (as per above.)
+
+## Intellij Version Control for external package
+
+Edit files: Open IntelliJ → selected repo → Pipenv → external libraries → integration-adaptor-common → Select file you want to edit → pop-up window select (I want to edit all files in this directory)
+
+Create directory: cd to root of desired directory, `mkdir directory_name`
+
+Create File: cd to root of desired directory, `touch file_name`
+
+Add files: cd into directory of file created, git add (file-name)
+ 
+Push changes: Location of virtualenv → src → integration-adaptor-common → git status → git diff → git commit → git push HEAD
