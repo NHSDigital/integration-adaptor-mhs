@@ -11,6 +11,7 @@ project's directory run:
 ```
 pipenv install git+ssh://git@github.com/nhsconnect/integration-adaptor-common.git@0.0.1#egg=integration-adaptors-common
 ```
+This must be ssh and not https in order to be able to push your branches changes when this is an external repository. 
 
 ### Run Tests
 From the integration-adaptor-common folder
@@ -32,7 +33,11 @@ Ensure sonar-scanner is on your path, and configured for the sonarqube host with
  (See: [SonarQube](https://gpitbjss.atlassian.net/wiki/x/XQFfXQ))\
 NOTE: Coverage will not show in the analysis unless you have already generated the xml report (as per above.)
 
-## Intellij Version Control for external package
+## Working with both packages in Intellij
+
+It is possible to edit the external package when using it in another repository, like nhais or mhs, in the same IntelliJ window as the opened project. There is no need to keep two windows open.
+
+To do this you must ensure ssh was used to install this repository as an external package in your current repository to be able to push changes. 
 
 Edit files: Open IntelliJ → selected repo → Pipenv → external libraries → integration-adaptor-common → Select file you want to edit → pop-up window select (I want to edit all files in this directory)
 
