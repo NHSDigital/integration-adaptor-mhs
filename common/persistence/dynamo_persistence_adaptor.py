@@ -1,50 +1,18 @@
 """Module containing functionality for a DynamoDB implementation of a persistence adaptor."""
 import contextlib
-import json
 
 import aioboto3
 from boto3.dynamodb.conditions import Attr
 
 import utilities.integration_adaptors_logger as log
-from exceptions import MaxRetriesExceeded
-from retry.retriable_action import RetriableAction
 from persistence import persistence_adaptor
+from persistence.persistence_adaptor import retriable, RecordCreationError, RecordUpdateError, RecordRetrievalError, \
+    RecordDeletionError, validate_data_has_no_primary_key_field
 from utilities import config
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
-
-class RecordCreationError(RuntimeError):
-    """Error occurred when creating record."""
-    pass
-
-
-class RecordDeletionError(RuntimeError):
-    """Error occurred when deleting record."""
-    pass
-
-
-class RecordRetrievalError(RuntimeError):
-    """Error occurred when retrieving record."""
-    pass
-
-
-class RecordUpdateError(RuntimeError):
-    """Error occurred when updating record."""
-    pass
-
-
-def retriable(func):
-    async def inner(*args, **kwargs):
-        self = args[0]
-        if hasattr(self, 'max_retries') and hasattr(self, 'retry_delay'):
-            result = await RetriableAction(func, self.max_retries, self.retry_delay).execute(*args, **kwargs)
-            if not result.is_successful:
-                raise MaxRetriesExceeded from result.exception
-            return result.result
-        else:
-            raise RuntimeError("Retriable must be set on method which object has 'max_retries: int' and 'retry_delay: float' attributes")
-    return inner
+_KEY = "key"
 
 
 class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
@@ -60,31 +28,34 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
           * retry_delay: The delay between retries
         :param table_name: Table name to be used in this adaptor.
         """
+        self.table_name = table_name
         self.retry_delay = retry_delay
         self.max_retries = max_retries
-        self.table_name = table_name
 
-    async def add(self, data):
+        self.endpoint_url = config.get_config('DB_ENDPOINT_URL', None)
+        self.region_name = config.get_config('CLOUD_REGION', 'eu-west-2')
+
+    @validate_data_has_no_primary_key_field(primary_key=_KEY)
+    @retriable
+    async def add(self, key, data):
         """Add an item to a specified table, using a provided key.
 
+        :param key: The key under which to store the data in persistence.
         :param data: The item to store in persistence.
         """
 
-        if 'key' not in data:
-            raise ValueError("Added data should have 'key' as one of it's items")
-
-        logger.info('Adding data for {key} in table {table}', fparams={'key': data['key'], 'table': self.table_name})
+        logger.info('Adding data for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
 
         try:
-            async with aioboto3.resource('dynamodb', region_name='eu-west-2',
-                                         endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None)) as dynamo_resource:
-                table = await dynamo_resource.Table(self.table_name)
+            async with self.__get_dynamo_resource() as dynamo:
+                table = await dynamo.Table(self.table_name)
                 await table.put_item(
-                    Item=data,
-                    ConditionExpression=Attr('key').not_exists())
+                    Item=self.add_primary_key_field(_KEY, key, data),
+                    ConditionExpression=Attr(_KEY).not_exists())
         except Exception as e:
             raise RecordCreationError from e
 
+    @validate_data_has_no_primary_key_field(primary_key=_KEY)
     @retriable
     async def update(self, key: str, data: dict):
         """Updates an item in a specified table, using a provided key.
@@ -93,20 +64,21 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         :param data: The item to update in persistence.
         :return: The previous version of the item which has been replaced. (None if no previous item)
         """
+
         logger.info('Updating data for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
 
         attribute_updates = dict([(k, {"Value": v}) for k, v in data.items()])
 
         try:
-            async with self.__get_dynamo_table() as table:
+            async with self.__get_dynamo_resource() as dynamo:
+                table = await dynamo.Table(self.table_name)
                 response = await table.update_item(
-                    Key={'key': key},
+                    Key={_KEY: key},
                     AttributeUpdates=attribute_updates,
                     ReturnValues="ALL_NEW")
 
-            return response.get('Attributes', {})
+            return self.remove_primary_key_field(_KEY, response.get('Attributes', {}))
         except Exception as e:
-            logger.exception('Error getting record')
             raise RecordUpdateError from e
 
     @retriable
@@ -119,19 +91,17 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Getting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            async with aioboto3.resource('dynamodb', region_name='eu-west-2',
-                                         endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None)) as dynamo_resource:
-                table = await dynamo_resource.Table(self.table_name)
-                logger.info('Establishing connection to {table_name}', fparams={'table_name': self.table_name})
+            async with self.__get_dynamo_resource() as dynamo:
+                table = await dynamo.Table(self.table_name)
                 response = await table.get_item(
-                    Key={'key': key},
+                    Key={_KEY: key},
                     ConsistentRead=strongly_consistent_read)
 
             if 'Item' not in response:
                 logger.info('No item found for record: {key} in table {table}', fparams={'key': key, 'table': self.table_name})
                 return None
             attributes = response.get('Item', {})
-            return attributes
+            return self.remove_primary_key_field(_KEY, attributes)
         except Exception as e:
             raise RecordRetrievalError from e
 
@@ -144,18 +114,28 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Deleting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            async with aioboto3.resource('dynamodb', region_name='eu-west-2',
-                                         endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None)) as dynamo_resource:
-                table = await dynamo_resource.Table(self.table_name)
-                logger.info('Establishing connection to {table_name}', fparams={'table_name': self.table_name})
+            async with self.__get_dynamo_resource() as dynamo:
+                table = await dynamo.Table(self.table_name)
                 response = await table.delete_item(
-                    Key={'key': key},
+                    Key={_KEY: key},
                     ReturnValues='ALL_OLD'
                 )
             if 'Attributes' not in response:
                 logger.info('No values found for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
                 return None
             attributes = response.get('Attributes', {})
-            return attributes
+            return self.remove_primary_key_field(_KEY, attributes)
         except Exception as e:
             raise RecordDeletionError from e
+
+    @contextlib.asynccontextmanager
+    async def __get_dynamo_resource(self):
+        """
+        Creates a connection to the table referenced by this instance.
+        :return: The table to be used by this instance.
+        """
+        async with aioboto3.resource('dynamodb',
+                                     region_name=self.region_name,
+                                     endpoint_url=self.endpoint_url) as dynamo_resource:
+            logger.info('Establishing connection to DynamoDB')
+            yield dynamo_resource
