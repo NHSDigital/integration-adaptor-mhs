@@ -12,7 +12,7 @@ requests = "~=2.23"
 integration-adaptors-common = {editable = true,path = "./../../common"}
 ldap3 = "~=2.7"
 tornado = "~=6.0"
-aioboto3 = "~=6.4"
+aioboto3 = "~=8.0"
 defusedxml = "~=0.6"
 dpath = "~=2.0"
 pymongo = "~=3.9"
