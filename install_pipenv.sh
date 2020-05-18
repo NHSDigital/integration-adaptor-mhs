@@ -2,7 +2,7 @@ projects=("$@")
 
 if [ -z "$projects" ]
 then
-    projects=( "common" "mhs/common" "mhs/outbound" "mhs/inbound" "mhs/spineroutelookup" "integration-tests/integration_tests" "SCR" "SCRWebService" )
+    projects=( "mhs/common" "mhs/outbound" "mhs/inbound" "mhs/spineroutelookup" "integration-tests/integration_tests" "examples/SCR" "examples/SCRWebService )
 fi
 
 for i in "${projects[@]}"
