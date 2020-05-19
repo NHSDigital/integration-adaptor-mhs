@@ -1,5 +1,6 @@
 #common
 MHS_LOG_FORMAT: "%(asctime)sZ | %(levelname)s | %(message)s | %(name)s | %(interaction_id)s | %(message_id)s | %(correlation_id)s | %(inbound_message_id)s"
+MHS_INBOUND_USE_SSL: "False"
 #fake spine route lookup
 SPINE_ROUTE_LOOKUP_PORT: '8090'
 #fake spine
@@ -235,7 +236,7 @@ INBOUND_CA_STORE: |
 
 #Common env variables for inbound
 MHS_INBOUND_HEALTHCHECK_SERVER_PORT: "8082"
-MHS_LOG_LEVEL: NOTSET
+MHS_LOG_LEVEL: INFO
 MHS_INBOUND_QUEUE_BROKERS: amqp://localhost:5672
 MHS_INBOUND_QUEUE_NAME: inbound
 MHS_STATE_TABLE_NAME: mhs_state

@@ -39,7 +39,7 @@ def build_ssl_context(local_certs_file: str, ca_certs_file: str, key_file: str, 
     ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     ssl_ctx.load_cert_chain(local_certs_file, key_file)
     # The docs suggest we have to specify both that we must verify the client cert and the locations
-    ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+    ssl_ctx.verify_mode = ssl.CERT_OPTIONAL
     ssl_ctx.load_verify_locations(ca_certs_file)
 
     return ssl_ctx
@@ -138,7 +138,6 @@ def main():
 
     interactions_config_file = pathlib.Path(definitions.ROOT_DIR) / 'data' / "interactions" / "interactions.json"
     config_manager = configuration_manager.ConfigurationManager(str(interactions_config_file))
-
     start_inbound_server(certificates.local_cert_path, certificates.ca_certs_path, certificates.private_key_path,
                          party_key, workflows, work_description_store, config_manager)
 

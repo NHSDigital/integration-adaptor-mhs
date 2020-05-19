@@ -2,6 +2,8 @@
 
 from typing import Dict, Optional
 
+from pympler import muppy, summary
+
 import mhs_common.messages.common_ack_envelope as common_ack_envelope
 import mhs_common.messages.ebxml_ack_envelope as ebxml_ack_envelope
 import mhs_common.messages.ebxml_envelope as ebxml_envelope
@@ -48,6 +50,9 @@ class InboundHandler(base_handler.BaseHandler):
     @time_request
     async def post(self):
         logger.info('Inbound POST received: {request}', fparams={'request': self.request})
+        all_objects = muppy.get_objects()
+        sum1 = summary.summarize(all_objects)
+        summary.print_(sum1)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
         request_message = self._extract_incoming_ebxml_request_message()
@@ -130,10 +135,16 @@ class InboundHandler(base_handler.BaseHandler):
     def _send_ack(self, parsed_message: ebxml_envelope.EbxmlEnvelope):
         logger.info('Building and sending acknowledgement')
         self._send_ebxml_message(parsed_message, is_positive_ack=True, additional_context={})
+        all_objects = muppy.get_objects()
+        sum1 = summary.summarize(all_objects)
+        summary.print_(sum1)
 
     def _send_nack(self, request_message: ebxml_envelope.EbxmlEnvelope, nack_context):
         logger.info('Building and sending negative acknowledgement')
         self._send_ebxml_message(request_message, is_positive_ack=False, additional_context=nack_context)
+        all_objects = muppy.get_objects()
+        sum1 = summary.summarize(all_objects)
+        summary.print_(sum1)
 
     def _send_ebxml_message(self, parsed_message, is_positive_ack, additional_context):
         message_details = parsed_message.message_dictionary
