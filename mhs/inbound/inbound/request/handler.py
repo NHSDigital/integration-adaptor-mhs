@@ -62,11 +62,9 @@ class InboundHandler(base_handler.BaseHandler):
             self._return_message_to_message_initiator(request_message)
             return
 
-        ebxml = request_message.message_dictionary[ebxml_request_envelope.EBXML]
-        payload = request_message.message_dictionary[ebxml_request_envelope.MESSAGE]
-        attachments = request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS]
-
-        message_data = MessageData(ebxml, payload, attachments)
+        message_data = MessageData(request_message.message_dictionary[ebxml_request_envelope.EBXML],
+                                   request_message.message_dictionary[ebxml_request_envelope.MESSAGE],
+                                   request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS])
 
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
