@@ -11,14 +11,6 @@ pipeline {
     }
 
     stages {
-        stage('Build & test common') {
-            steps {
-                dir('common') {
-                    buildModules('Installing common dependencies')
-                    executeUnitTestsWithCoverage()
-                }
-            }
-        }
         stage('Build & test MHS Common') {
             steps {
                 dir('mhs/common') {
