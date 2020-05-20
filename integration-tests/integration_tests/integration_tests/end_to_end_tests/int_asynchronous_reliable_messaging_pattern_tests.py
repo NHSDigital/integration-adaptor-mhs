@@ -49,9 +49,6 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
 
-        print('-------------------------- msg: ')
-        print(message)
-
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='REPC_IN150016UK05',
@@ -70,9 +67,6 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
     def test_should_record_asynchronous_reliable_message_status_as_successful(self):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
-
-        print('-------------------------- msg: ')
-        print(message)
 
         # Act
         MhsHttpRequestBuilder() \
@@ -97,10 +91,6 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
     def test_should_return_successful_response_and_record_spline_reply_in_resync_table_if_sync_async_requested(self):
         # Arrange
         messages = [build_message('REPC_IN150016UK05', '9446245796') for i in range(1)]
-
-        print('-------------------------- msgs: ')
-        print(messages[0].message_id)
-        print(messages[0].message)
 
         # Act
         responses = send_messages_concurrently(messages, interaction_id='REPC_IN150016UK05', sync_async=True)

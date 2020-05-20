@@ -42,9 +42,6 @@ class ForwardReliableMessagingPatternTests(TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
 
-        print('-------------------------- msg: ')
-        print(message)
-
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='COPC_IN000001UK01',
@@ -69,9 +66,6 @@ class ForwardReliableMessagingPatternTests(TestCase):
         # If failures are seen here, it is probably an issue with opentest SDS not being correctly configured for your
         # account
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
-
-        print('-------------------------- msg: ')
-        print(message)
 
         # Act
         MhsHttpRequestBuilder() \

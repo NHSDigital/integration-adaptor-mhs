@@ -34,9 +34,6 @@ class SynchronousMessagingPatternTests(TestCase):
         # Arrange
         message, message_id = build_message('QUPA_IN040000UK32', '9691813343')
 
-        print('-------------------------- msg: ')
-        print(message)
-
         # Act
         response = MhsHttpRequestBuilder() \
             .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, sync_async=False) \
@@ -53,9 +50,6 @@ class SynchronousMessagingPatternTests(TestCase):
     def test_should_record_synchronous_message_status_as_successful(self):
         # Arrange
         message, message_id = build_message('QUPA_IN040000UK32', '9691813343')
-
-        print('-------------------------- msg: ')
-        print(message)
 
         # Act
         MhsHttpRequestBuilder() \
