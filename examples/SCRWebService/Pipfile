@@ -8,12 +8,10 @@ coverage = "~=4.5"
 unittest-xml-reporting = "~=2.5"
 
 [packages]
+requests = "~=2.22"
 integration-adaptors-common = {editable = true,git = "https://git@github.com/nhsconnect/integration-adaptor-common.git",tag = '0.1.6'}
+scr = {editable = true,path = "./../SCR"}
 tornado = "~=6.0"
-defusedxml = "~=0.6"
-ldap3 = "~=2.7"
-mhs-common = {editable = true,path = "./../common"}
-redis = "~=3.3"
 
 [requires]
 python_version = "3.7"
@@ -24,4 +22,7 @@ unittests-cov = 'coverage run -m xmlrunner -o test-reports -v'
 coverage-report = 'coverage report'
 coverage-report-xml = 'coverage xml'
 coverage-report-html = 'coverage html'
-start = "python main.py"
+inttests = 'python -m xmlrunner discover -o test-reports -p "int_*" -v'
+scr-server = "python main.py"
+
+

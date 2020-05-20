@@ -7,11 +7,10 @@ verify_ssl = true
 
 [packages]
 integration-adaptors-common = {editable = true,git = "https://git@github.com/nhsconnect/integration-adaptor-common.git",tag = '0.1.6'}
-tornado = "*"
-pystache = "*"
+scr = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
 
 [scripts]
-start = "python main.py"
+unittests = "python -m unittest -v"
