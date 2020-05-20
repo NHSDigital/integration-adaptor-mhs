@@ -1,5 +1,6 @@
 """This module defines the inbound request handler component."""
-
+import asyncio
+from tornado import gen
 from typing import Dict, Optional
 
 from pympler import muppy, summary
@@ -14,7 +15,7 @@ import mhs_common.workflow as workflow
 import tornado.web
 
 from mhs_common.workflow.common import MessageData
-from utilities import mdc
+from utilities import mdc, message_utilities
 from mhs_common.configuration import configuration_manager
 from mhs_common.handler import base_handler
 from mhs_common.messages.envelope import CONVERSATION_ID, MESSAGE_ID, RECEIVED_MESSAGE_ID
@@ -27,6 +28,10 @@ from utilities.timing import time_request
 import logging
 
 logger = log.IntegrationAdaptorsLogger(__name__)
+
+from tornado import concurrent
+
+executor = concurrent.futures.ThreadPoolExecutor(8)
 
 
 class InboundHandler(base_handler.BaseHandler):
@@ -75,10 +80,12 @@ class InboundHandler(base_handler.BaseHandler):
 
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
-            self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
+            logger.info('xxxx')
+            await self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
+            logger.info('yyyy')
         else:
             logger.info(f'No RefToMessageId on inbound reply: handling as an unsolicited message')
-            self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
+            await self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
         self._send_ack(request_message)
         # IOLoop.current().run_in_executor(None, self.print_memory)
 
@@ -173,7 +180,7 @@ class InboundHandler(base_handler.BaseHandler):
         self.write(serialized_message)
 
     def _extract_correlation_id(self, message):
-        correlation_id = message.message_dictionary[CONVERSATION_ID]
+        correlation_id = message_utilities.get_uuid()
         mdc.correlation_id.set(correlation_id)
         logger.info('Set correlation id from inbound request.')
         return correlation_id

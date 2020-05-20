@@ -2,6 +2,7 @@
 import contextlib
 
 import aioboto3
+import boto3 as boto3
 from boto3.dynamodb.conditions import Attr
 
 import utilities.integration_adaptors_logger as log
@@ -83,8 +84,8 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         except Exception as e:
             raise RecordCreationError from e
 
-    @retriable
-    async def update(self, key: str, data: dict):
+
+    def update(self, key: str, data: dict):
         """Updates an item in a specified table, using a provided key.
 
         :param key: The key used to identify the item.
@@ -96,19 +97,21 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         attribute_updates = dict([(k, {"Value": v}) for k, v in data.items()])
 
         try:
-            async with self.__get_dynamo_table() as table:
-                response = await table.update_item(
-                    Key={'key': key},
-                    AttributeUpdates=attribute_updates,
-                    ReturnValues="ALL_NEW")
+            table = self.__get_dynamo_table()
+            logger.warning('got table')
+            response = table.update_item(
+                Key={'key': key},
+                AttributeUpdates=attribute_updates,
+                ReturnValues="ALL_NEW")
+            logger.warning('got response')
 
             return response.get('Attributes', {})
         except Exception as e:
             logger.exception('Error getting record')
             raise RecordUpdateError from e
 
-    @retriable
-    async def get(self, key: str, strongly_consistent_read: bool = False):
+
+    def get(self, key: str, strongly_consistent_read: bool = False):
         """
         Retrieves an item from a specified table with a given key.
         :param key: The key which identifies the item to get.
@@ -117,10 +120,12 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Getting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            async with self.__get_dynamo_table() as table:
-                response = await table.get_item(
-                    Key={'key': key},
-                    ConsistentRead=strongly_consistent_read)
+            table = self.__get_dynamo_table()
+            logger.warning('got table')
+            response = table.get_item(
+                Key={'key': key},
+                ConsistentRead=strongly_consistent_read)
+            logger.warning('got response')
 
             if 'Item' not in response:
                 logger.info('No item found for record: {key} in table {table}', fparams={'key': key, 'table': self.table_name})
@@ -152,13 +157,14 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         except Exception as e:
             raise RecordDeletionError from e
 
-    @contextlib.asynccontextmanager
-    async def __get_dynamo_table(self):
+
+    def __get_dynamo_table(self):
         """
         Creates a connection to the table referenced by this instance.
         :return: The table to be used by this instance.
         """
-        async with aioboto3.resource('dynamodb', region_name='eu-west-2',
-                                     endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None)) as dynamo_resource:
-            logger.info('Establishing connection to {table_name}', fparams={'table_name': self.table_name})
-            yield dynamo_resource.Table(self.table_name)
+
+        logger.warning('waiting')
+        dynamodb = boto3.resource('dynamodb', region_name='eu-west-2',
+                                  endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None))
+        return dynamodb.Table(self.table_name)

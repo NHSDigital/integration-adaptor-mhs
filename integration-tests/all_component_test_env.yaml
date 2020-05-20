@@ -1,5 +1,5 @@
 #common
-MHS_LOG_FORMAT: "%(asctime)sZ | %(levelname)s | %(message)s | %(name)s | %(interaction_id)s | %(message_id)s | %(correlation_id)s | %(inbound_message_id)s"
+MHS_LOG_FORMAT: "%(asctime)sZ | %(levelname)s | %(message)s | %(name)s | %(correlation_id)s"
 MHS_INBOUND_USE_SSL: "False"
 #fake spine route lookup
 SPINE_ROUTE_LOOKUP_PORT: '8090'
