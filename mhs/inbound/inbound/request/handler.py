@@ -3,6 +3,7 @@
 from typing import Dict, Optional
 
 from pympler import muppy, summary
+from tornado.ioloop import IOLoop
 
 import mhs_common.messages.common_ack_envelope as common_ack_envelope
 import mhs_common.messages.ebxml_ack_envelope as ebxml_ack_envelope
@@ -50,12 +51,13 @@ class InboundHandler(base_handler.BaseHandler):
     @time_request
     async def post(self):
         logger.info('Inbound POST received: {request}', fparams={'request': self.request})
-        all_objects = muppy.get_objects()
-        sum1 = summary.summarize(all_objects)
-        summary.print_(sum1)
+        # self.print_memory()
+
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
         request_message = self._extract_incoming_ebxml_request_message()
+
+        # request_message = await IOLoop.current().run_in_executor(None, self._extract_incoming_ebxml_request_message)
 
         message_id = self._extract_message_id(request_message)
         interaction_id = self._extract_interaction_id(request_message)
@@ -67,25 +69,30 @@ class InboundHandler(base_handler.BaseHandler):
             self._return_message_to_message_initiator(request_message)
             return
 
-        ebxml = request_message.message_dictionary[ebxml_request_envelope.EBXML]
-        payload = request_message.message_dictionary[ebxml_request_envelope.MESSAGE]
-        attachments = request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS]
-
-        message_data = MessageData(ebxml, payload, attachments)
+        message_data = MessageData(request_message.message_dictionary[ebxml_request_envelope.EBXML],
+                                   request_message.message_dictionary[ebxml_request_envelope.MESSAGE],
+                                   request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS])
 
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
-            await self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
+            self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
         else:
             logger.info(f'No RefToMessageId on inbound reply: handling as an unsolicited message')
-            await self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
+            self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
         self._send_ack(request_message)
+        # IOLoop.current().run_in_executor(None, self.print_memory)
+
+    def print_memory(self):
+        logger.info('Mem stats start')
+        all_objects = muppy.get_objects()
+        sum1 = summary.summarize(all_objects)
+        summary.print_(sum1, 8)
+        logger.info('Mem stats stop')
 
     async def _handle_referenced_reply_message(self, message_id: str, correlation_id: str, message_data: MessageData):
         work_description = await self._get_work_description_from_store(message_id)
         message_workflow = self.workflows[work_description.workflow]
         logger.info('Forwarding message {message_id} to {workflow}', fparams={'workflow': message_workflow, 'message_id': message_id})
-
         try:
             await message_workflow.handle_inbound_message(message_id, correlation_id, work_description, message_data)
         except Exception as e:
@@ -135,16 +142,10 @@ class InboundHandler(base_handler.BaseHandler):
     def _send_ack(self, parsed_message: ebxml_envelope.EbxmlEnvelope):
         logger.info('Building and sending acknowledgement')
         self._send_ebxml_message(parsed_message, is_positive_ack=True, additional_context={})
-        all_objects = muppy.get_objects()
-        sum1 = summary.summarize(all_objects)
-        summary.print_(sum1)
 
     def _send_nack(self, request_message: ebxml_envelope.EbxmlEnvelope, nack_context):
         logger.info('Building and sending negative acknowledgement')
         self._send_ebxml_message(request_message, is_positive_ack=False, additional_context=nack_context)
-        all_objects = muppy.get_objects()
-        sum1 = summary.summarize(all_objects)
-        summary.print_(sum1)
 
     def _send_ebxml_message(self, parsed_message, is_positive_ack, additional_context):
         message_details = parsed_message.message_dictionary

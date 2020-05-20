@@ -71,6 +71,8 @@ def start_inbound_server(local_certs_file: str, ca_certs_file: str, key_file: st
 
     inbound_server = tornado.httpserver.HTTPServer(inbound_application, ssl_options=ssl_ctx)
     inbound_server_port = int(config.get_config('INBOUND_SERVER_PORT', default='443'))
+    # inbound_server.bind(inbound_server_port)
+    # inbound_server.start(20)
     inbound_server.listen(inbound_server_port)
 
     healthcheck_application = tornado.web.Application([
@@ -124,7 +126,7 @@ def main():
                                                   local_cert=secrets.get_secret_config('CLIENT_CERT'),
                                                   ca_certs=secrets.get_secret_config('CA_CERTS'))
 
-    tornado.ioloop.IOLoop.current().spawn_callback(trace_leak, delay=300, top=10, trace=3)
+    # tornado.ioloop.IOLoop.current().spawn_callback(trace_leak, delay=300, top=10, trace=3)
 
     party_key = secrets.get_secret_config('PARTY_KEY')
 
