@@ -52,7 +52,7 @@ The National Adaptors Common Module provides classes which implement common requ
 
 The MHS Adaptor presents a simple HTTP synchronous interface which is used to make requests to Spine.
 
-Please refer to the [API Documentation](outbound/openapi-docs.html) for further details.
+Please refer to the [API Documentation](MHS-Outbound.yaml) for further details.
 
 Examples of how this API is called can be found in the [integration tests](../integration-tests/integration_tests) module
 
