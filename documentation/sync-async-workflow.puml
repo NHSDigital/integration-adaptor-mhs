@@ -1,6 +1,6 @@
 @startuml
 
-title Synchronous workflow
+title Sync-async workflow
 
 "GP System" -> Outbound: POST
 Outbound -> "State Db": OUTBOUND_MESSAGE_RECEIVED

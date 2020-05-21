@@ -152,3 +152,4 @@ export-env-vars-and-run-mhs-docker.sh
 /mhs/spineroutelookup/mock_ldap_data/*.json
 
 /release-scripts/export-env-vars.sh
+out/
