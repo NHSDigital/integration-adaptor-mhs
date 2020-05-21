@@ -37,17 +37,19 @@ class DbAdaptorsTests(unittest.TestCase):
 
     keys = []
 
-    def setUp(self) -> None:
-        self.clean_up()
+    @test_utilities.async_test
+    async def setUp(self) -> None:
+        await self.clean_up()
 
-    def tearDown(self) -> None:
-        self.clean_up()
+    @test_utilities.async_test
+    async def tearDown(self) -> None:
+        await self.clean_up()
 
-    def clean_up(self):
+    async def clean_up(self):
         for adaptor_type in PERSISTENCE_ADAPTOR_TYPES:
             for key in self.keys:
                 adaptor = self.get_adaptor(adaptor_type)
-                adaptor.delete(key)
+                await adaptor.delete(key)
         self.keys = []
 
     @test_utilities.async_test
