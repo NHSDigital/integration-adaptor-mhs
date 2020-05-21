@@ -35,6 +35,11 @@ def retriable(func):
     return inner
 
 
+class DuplicatePrimaryKeyError(RuntimeError):
+    """Error occurred when creating record with already existing same primary key."""
+    pass
+
+
 class RecordCreationError(RuntimeError):
     """Error occurred when creating record."""
     pass

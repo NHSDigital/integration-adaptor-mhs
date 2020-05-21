@@ -3,11 +3,12 @@ import threading
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
+from pymongo.errors import DuplicateKeyError
 
 import utilities.integration_adaptors_logger as log
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor import retriable, RecordCreationError, RecordUpdateError, RecordRetrievalError, \
-    RecordDeletionError, validate_data_has_no_primary_key_field
+    RecordDeletionError, validate_data_has_no_primary_key_field, DuplicatePrimaryKeyError
 from utilities import config
 
 logger = log.IntegrationAdaptorsLogger(__name__)
@@ -53,6 +54,8 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             result = await self.collection.insert_one(self.add_primary_key_field(_KEY, key, data))
             if not result.acknowledged:
                 raise RecordCreationError
+        except DuplicateKeyError as e:
+            raise DuplicatePrimaryKeyError from e
         except Exception as e:
             raise RecordCreationError from e
 

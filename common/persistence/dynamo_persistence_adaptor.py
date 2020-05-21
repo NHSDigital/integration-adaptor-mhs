@@ -3,11 +3,12 @@ import contextlib
 
 import aioboto3
 from boto3.dynamodb.conditions import Attr
+from botocore.exceptions import ClientError
 
 import utilities.integration_adaptors_logger as log
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor import retriable, RecordCreationError, RecordUpdateError, RecordRetrievalError, \
-    RecordDeletionError, validate_data_has_no_primary_key_field
+    RecordDeletionError, validate_data_has_no_primary_key_field, DuplicatePrimaryKeyError
 from utilities import config
 
 logger = log.IntegrationAdaptorsLogger(__name__)
@@ -52,6 +53,10 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
                 await table.put_item(
                     Item=self.add_primary_key_field(_KEY, key, data),
                     ConditionExpression=Attr(_KEY).not_exists())
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+                raise DuplicatePrimaryKeyError
+            raise
         except Exception as e:
             raise RecordCreationError from e
 
