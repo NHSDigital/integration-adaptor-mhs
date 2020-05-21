@@ -2,7 +2,8 @@ import unittest
 from unittest.mock import patch
 import uuid
 
-from persistence.persistence_adaptor import PersistenceAdaptor
+from exceptions import MaxRetriesExceeded
+from persistence.persistence_adaptor import PersistenceAdaptor, DuplicatePrimaryKeyError
 from persistence.persistence_adaptor_factory import get_persistence_adaptor, PERSISTENCE_ADAPTOR_TYPES
 from utilities import test_utilities
 
@@ -89,6 +90,25 @@ class DbAdaptorsTests(unittest.TestCase):
 
                 value = await adaptor.get(other_key)
                 self.assertIsNone(value)
+
+    @test_utilities.async_test
+    async def test_error_if_same_key_inserted_twice(self):
+        for adaptor_type in PERSISTENCE_ADAPTOR_TYPES:
+            with self.subTest(f"{adaptor_type}"):
+                adaptor = self.get_adaptor(adaptor_type)
+
+                key = str(uuid.uuid4()).upper()
+                self.keys += [key]
+
+                await adaptor.add(key, OTHER_DATA)
+
+                try:
+                    await adaptor.add(key, OTHER_DATA)
+                except MaxRetriesExceeded as e:
+                    cause = e.__cause__
+                    self.assertIsInstance(cause, DuplicatePrimaryKeyError)
+                else:
+                    self.fail(f"Expected '{type(DuplicatePrimaryKeyError)}' exception not raised")
 
     @test_utilities.async_test
     async def test_error_if_data_to_add_has_primary_key_in(self):
