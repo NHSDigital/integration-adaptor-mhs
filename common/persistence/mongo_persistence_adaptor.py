@@ -1,6 +1,4 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
-import threading
-
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError
@@ -20,8 +18,6 @@ _KEY = "_id"
 class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
     """Class responsible for persisting items into a MongoDB."""
 
-    client = None
-
     def __init__(self, table_name: str, max_retries: int, retry_delay: float):
         """
         Constructs a MongoDB version of a
@@ -36,7 +32,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.retry_delay = retry_delay
         self.max_retries = max_retries
 
-        client = MongoPersistenceAdaptor._initialize_mongo_client()
+        client = AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'))
         self.collection = client[_DB_NAME][table_name]
 
     @validate_data_has_no_primary_key_field(primary_key=_KEY)
@@ -107,10 +103,3 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             return self.remove_primary_key_field(_KEY, result)
         except Exception as e:
             raise RecordDeletionError from e
-
-    @staticmethod
-    def _initialize_mongo_client():
-        with threading.Lock():
-            if MongoPersistenceAdaptor.client is None:
-                MongoPersistenceAdaptor.client = AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'))
-        return MongoPersistenceAdaptor.client
