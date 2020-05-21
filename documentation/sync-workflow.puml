@@ -1,0 +1,14 @@
+@startuml
+
+"GP System" -> Outbound: POST
+Outbound -> "State Db": Save state request
+Outbound <-- "State Db": Response
+Outbound -> SDS: GET
+SDS -> "Spine Directory Service": GET
+SDS <-- "Spine Directory Service": Response
+Outbound <-- SDS: Response
+Outbound -> "Spine": POST
+Outbound <-- "Spine": Response
+"GP System" <-- Outbound: Response
+
+@enduml
