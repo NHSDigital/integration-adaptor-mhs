@@ -247,3 +247,15 @@ variable "mhs_forward_reliable_endpoint_url" {
   type = string
   description = "The URL to communicate with Spine for Forward Reliable messaging from the outbound service"
 }
+
+variable "lb_deregistration_delay" {
+  type = number
+  default = 40
+  description = "How long the LB should wait before removing deregistered members, AWS default is 300 seconds"
+}
+
+variable "healthcheck_threshold" {
+  type = number
+  default = 3
+  description = "Retries for confirming target status - healthy or unhealthy, AWS default is 3"
+}
