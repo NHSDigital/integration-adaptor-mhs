@@ -7,7 +7,7 @@ services:
     #   context: .
     #   dockerfile: ./dockers/mhs/inbound/Dockerfile
     environment:
-      - MHS_LOG_LEVEL=NOTSET
+      - MHS_LOG_LEVEL=INFO
       - MHS_SECRET_PARTY_KEY
       - MHS_SECRET_CLIENT_CERT
       - MHS_SECRET_CLIENT_KEY
@@ -30,7 +30,7 @@ services:
     #   context: .
     #   dockerfile: ./dockers/mhs/outbound/Dockerfile
     environment:
-      - MHS_LOG_LEVEL=NOTSET
+      - MHS_LOG_LEVEL=INFO
       - MHS_SECRET_PARTY_KEY
       - MHS_SECRET_CLIENT_CERT
       - MHS_SECRET_CLIENT_KEY
@@ -57,7 +57,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      - MHS_LOG_LEVEL=NOTSET
+      - MHS_LOG_LEVEL=INFO
       - MHS_SDS_URL=ldap://fakespine.vp-testing.nhsredteam.internal.nhs.uk
       - MHS_SDS_SEARCH_BASE=ou=services,o=nhs
       - MHS_DISABLE_SDS_TLS=True
@@ -95,4 +95,4 @@ services:
       - MHS_SECRET_PARTY_KEY=${MHS_SECRET_PARTY_KEY}
       - FAKE_SPINE_PORT=${FAKE_SPINE_PORT}
       - FAKE_SPINE_OUTBOUND_SSL_ENABLED=${FAKE_SPINE_OUTBOUND_SSL_ENABLED}
-      - MHS_LOG_LEVEL=DEBUG
+      - MHS_LOG_LEVEL=INFO
