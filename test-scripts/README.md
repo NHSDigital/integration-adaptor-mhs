@@ -18,7 +18,7 @@ $ git clone https://github.com/nhsconnect/integration-adaptor-mhs
 
 ## Find the test scripts folder
 ```bash
-$ cd integration-adaptor-mhs
+$ cd integration-adaptor-mhs/test-scripts
 ```
 
 ## Setup your OpenTest details
