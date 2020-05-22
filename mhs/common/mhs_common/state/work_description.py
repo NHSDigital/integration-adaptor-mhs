@@ -74,7 +74,7 @@ async def get_work_description_from_store(persistence_store: pa.PersistenceAdapt
         logger.error('Failed to get work description from store: key is None')
         raise ValueError('Expected non-null key')
 
-    json_store_data = persistence_store.get(key, strongly_consistent_read=True)
+    json_store_data = await persistence_store.get(key, strongly_consistent_read=True)
     if json_store_data is None:
         logger.info('Persistence store returned empty value for {key}', fparams={'key': key})
         return None
@@ -164,7 +164,7 @@ class WorkDescription(object):
         await self._set_status(OUTBOUND_STATUS, new_status)
 
     async def _set_status(self, field: str, new_status: MessageStatus):
-        store_data = self._persistence_store.update(self.key, {field: new_status})
+        store_data = await self._persistence_store.update(self.key, {field: new_status})
         self._from_store_data(store_data)
 
     def _from_store_data(self, store_data):

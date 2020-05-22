@@ -60,9 +60,9 @@ class InboundHandler(base_handler.BaseHandler):
 
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
-        request_message = self._extract_incoming_ebxml_request_message()
+        # request_message = self._extract_incoming_ebxml_request_message()
 
-        # request_message = await IOLoop.current().run_in_executor(None, self._extract_incoming_ebxml_request_message)
+        request_message = await IOLoop.current().run_in_executor(None, self._extract_incoming_ebxml_request_message)
 
         message_id = self._extract_message_id(request_message)
         interaction_id = self._extract_interaction_id(request_message)

@@ -4,6 +4,7 @@ import contextlib
 import aioboto3
 import boto3 as boto3
 from boto3.dynamodb.conditions import Attr
+from tornado.ioloop import IOLoop
 
 import utilities.integration_adaptors_logger as log
 from exceptions import MaxRetriesExceeded
@@ -85,7 +86,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             raise RecordCreationError from e
 
 
-    def update(self, key: str, data: dict):
+    async def update(self, key: str, data: dict):
         """Updates an item in a specified table, using a provided key.
 
         :param key: The key used to identify the item.
@@ -99,10 +100,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         try:
             table = self.__get_dynamo_table()
             logger.warning('got table')
-            response = table.update_item(
-                Key={'key': key},
-                AttributeUpdates=attribute_updates,
-                ReturnValues="ALL_NEW")
+            response = await IOLoop.current().run_in_executor(None, self.update_item, attribute_updates, key, table)
             logger.warning('got response')
 
             return response.get('Attributes', {})
@@ -110,8 +108,13 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             logger.exception('Error getting record')
             raise RecordUpdateError from e
 
+    def update_item(self, attribute_updates, key, table):
+        return table.update_item(
+            Key={'key': key},
+            AttributeUpdates=attribute_updates,
+            ReturnValues="ALL_NEW")
 
-    def get(self, key: str, strongly_consistent_read: bool = False):
+    async def get(self, key: str, strongly_consistent_read: bool = False):
         """
         Retrieves an item from a specified table with a given key.
         :param key: The key which identifies the item to get.
@@ -122,9 +125,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         try:
             table = self.__get_dynamo_table()
             logger.warning('got table')
-            response = table.get_item(
-                Key={'key': key},
-                ConsistentRead=strongly_consistent_read)
+            response = await IOLoop.current().run_in_executor(None, self.get_item, key, strongly_consistent_read, table)
             logger.warning('got response')
 
             if 'Item' not in response:
@@ -134,6 +135,11 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             return attributes
         except Exception as e:
             raise RecordRetrievalError from e
+
+    def get_item(self, key, strongly_consistent_read, table):
+        return table.get_item(
+            Key={'key': key},
+            ConsistentRead=strongly_consistent_read)
 
     @retriable
     async def delete(self, key):
