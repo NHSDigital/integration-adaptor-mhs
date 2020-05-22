@@ -21,7 +21,7 @@ def async_test(f):
     return wrapper
 
 
-def awaitable(result):
+def awaitable(result=None):
     """
     Create a :class:`asyncio.Future` that is completed and returns result.
     :param result: to return
