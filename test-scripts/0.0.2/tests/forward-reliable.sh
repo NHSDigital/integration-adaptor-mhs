@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ../../export-env-vars.sh
+
 set -ex
 
 UUID=`uuidgen`
