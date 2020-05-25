@@ -87,7 +87,7 @@ class SyncAsyncWorkflow(common_synchronous.CommonSynchronousWorkflow):
         logger.info('Entered sync-async inbound workflow')
 
         try:
-            await self.sync_async_store.add({"key": message_id, CORRELATION_ID: correlation_id, MESSAGE_DATA: message_data.payload})
+            self.sync_async_store.add({"key": message_id, CORRELATION_ID: correlation_id, MESSAGE_DATA: message_data.payload})
             logger.info('Placed message in sync-async store successfully')
             await wdo.set_inbound_status(wd.MessageStatus.INBOUND_SYNC_ASYNC_MESSAGE_STORED)
         except Exception as e:

@@ -1,14 +1,13 @@
 """Module containing functionality for a DynamoDB implementation of a persistence adaptor."""
 import contextlib
 
-import aioboto3
 import boto3 as boto3
 from boto3.dynamodb.conditions import Attr
 
 import utilities.integration_adaptors_logger as log
 from exceptions import MaxRetriesExceeded
-from retry.retriable_action import RetriableAction
 from persistence import persistence_adaptor
+from retry.retriable_action import RetriableAction
 from utilities import config
 
 logger = log.IntegrationAdaptorsLogger(__name__)
@@ -64,8 +63,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.max_retries = max_retries
         self.table_name = table_name
 
-    @retriable
-    async def add(self, data):
+    def add(self, data):
         """Add an item to a specified table, using a provided key.
 
         :param data: The item to store in persistence.
@@ -77,13 +75,12 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         logger.info('Adding data for {key} in table {table}', fparams={'key': data['key'], 'table': self.table_name})
 
         try:
-            async with self.__get_dynamo_table() as table:
-                await table.put_item(
+            with self.__get_dynamo_table() as table:
+                table.put_item(
                     Item=data,
                     ConditionExpression=Attr('key').not_exists())
         except Exception as e:
             raise RecordCreationError from e
-
 
     def update(self, key: str, data: dict):
         """Updates an item in a specified table, using a provided key.
@@ -97,19 +94,16 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         attribute_updates = dict([(k, {"Value": v}) for k, v in data.items()])
 
         try:
-            table = self.__get_dynamo_table()
-            logger.warning('got table')
-            response = table.update_item(
-                Key={'key': key},
-                AttributeUpdates=attribute_updates,
-                ReturnValues="ALL_NEW")
-            logger.warning('got response')
+            with self.__get_dynamo_table() as table:
+                response = table.update_item(
+                    Key={'key': key},
+                    AttributeUpdates=attribute_updates,
+                    ReturnValues="ALL_NEW")
 
-            return response.get('Attributes', {})
+                return response.get('Attributes', {})
         except Exception as e:
             logger.exception('Error getting record')
             raise RecordUpdateError from e
-
 
     def get(self, key: str, strongly_consistent_read: bool = False):
         """
@@ -120,23 +114,20 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Getting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            table = self.__get_dynamo_table()
-            logger.warning('got table')
-            response = table.get_item(
-                Key={'key': key},
-                ConsistentRead=strongly_consistent_read)
-            logger.warning('got response')
+            with self.__get_dynamo_table() as table:
+                response = table.get_item(
+                    Key={'key': key},
+                    ConsistentRead=strongly_consistent_read)
 
-            if 'Item' not in response:
-                logger.info('No item found for record: {key} in table {table}', fparams={'key': key, 'table': self.table_name})
-                return None
-            attributes = response.get('Item', {})
-            return attributes
+                if 'Item' not in response:
+                    logger.info('No item found for record: {key} in table {table}', fparams={'key': key, 'table': self.table_name})
+                    return None
+                attributes = response.get('Item', {})
+                return attributes
         except Exception as e:
             raise RecordRetrievalError from e
 
-    @retriable
-    async def delete(self, key):
+    def delete(self, key):
         """
         Removes an item from a table given it's key.
         :param key: The key of the item to delete.
@@ -144,8 +135,8 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Deleting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            async with self.__get_dynamo_table() as table:
-                response = await table.delete_item(
+            with self.__get_dynamo_table() as table:
+                response = table.delete_item(
                     Key={'key': key},
                     ReturnValues='ALL_OLD'
                 )
@@ -157,14 +148,11 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         except Exception as e:
             raise RecordDeletionError from e
 
-
+    @contextlib.contextmanager
     def __get_dynamo_table(self):
         """
         Creates a connection to the table referenced by this instance.
         :return: The table to be used by this instance.
         """
-
-        logger.warning('waiting')
-        dynamodb = boto3.resource('dynamodb', region_name='eu-west-2',
-                                  endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None))
-        return dynamodb.Table(self.table_name)
+        dynamodb = boto3.resource('dynamodb', region_name='eu-west-2', endpoint_url=config.get_config('DYNAMODB_ENDPOINT_URL', None))
+        yield dynamodb.Table(self.table_name)

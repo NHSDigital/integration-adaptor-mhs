@@ -9,7 +9,7 @@ class PersistenceAdaptor(abc.ABC):
     """An adaptor that provides a common interface to a specific item type in a database."""
 
     @abc.abstractmethod
-    async def add(self, data: dict) -> None:
+    def add(self, data: dict) -> None:
         """Add an item to a specified table, using 'key' from data.
 
         :param data: The item to store in persistence. Must have 'key'
@@ -18,11 +18,11 @@ class PersistenceAdaptor(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def update(self, key: str, data: dict):
+    def update(self, key: str, data: dict):
         pass
 
     @abc.abstractmethod
-    async def get(self, key: str) -> Optional[dict]:
+    def get(self, key: str) -> Optional[dict]:
         """
         Retrieves an item from a specified table with a given key.
         :param key: The key which identifies the item to get.
@@ -31,7 +31,7 @@ class PersistenceAdaptor(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def delete(self, key: str) -> Optional[dict]:
+    def delete(self, key: str) -> Optional[dict]:
         """
         Removes an item from a table given it's key.
         :param key: The key of the item to delete.

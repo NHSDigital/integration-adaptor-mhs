@@ -145,7 +145,7 @@ class WorkDescription(object):
         Attempts to publish the local state of the work description to the state store
         :return:
         """
-        await self._persistence_store.add(self._to_store_data())
+        self._persistence_store.add(self._to_store_data())
 
     async def set_inbound_status(self, new_status: MessageStatus):
         """

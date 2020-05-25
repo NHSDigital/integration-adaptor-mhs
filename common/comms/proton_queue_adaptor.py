@@ -4,6 +4,8 @@ import proton.handlers
 import proton.reactor
 from typing import Dict, Any, List
 
+from tornado.ioloop import IOLoop
+
 import comms.queue_adaptor
 import utilities.integration_adaptors_logger as log
 import utilities.message_utilities as message_utilities
@@ -92,7 +94,7 @@ class ProtonQueueAdaptor(comms.queue_adaptor.QueueAdaptor):
             try:
                 logger.info("Trying to send message to {url} {queue}", fparams={'url': url, 'queue': self.queue})
                 messaging_handler = ProtonMessagingHandler(url, self.queue, self.username, self.password, message)
-                proton.reactor.Container(messaging_handler).run()
+                await IOLoop.current().run_in_executor(None, proton.reactor.Container(messaging_handler).run)
             except EarlyDisconnectError as e:
                 logger.warning("Failed to send message to '%s", url)
                 exception = e

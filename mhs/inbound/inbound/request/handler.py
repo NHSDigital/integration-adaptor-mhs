@@ -1,6 +1,9 @@
 """This module defines the inbound request handler component."""
-
+import logging
 from typing import Dict, Optional
+
+import tornado.web
+from tornado.ioloop import IOLoop
 
 import mhs_common.messages.common_ack_envelope as common_ack_envelope
 import mhs_common.messages.ebxml_ack_envelope as ebxml_ack_envelope
@@ -8,20 +11,17 @@ import mhs_common.messages.ebxml_envelope as ebxml_envelope
 import mhs_common.messages.ebxml_nack_envelope as ebxml_nack_envelope
 import mhs_common.messages.ebxml_request_envelope as ebxml_request_envelope
 import mhs_common.workflow as workflow
-import tornado.web
-
-from mhs_common.workflow.common import MessageData
-from utilities import mdc
 from mhs_common.configuration import configuration_manager
 from mhs_common.handler import base_handler
-from mhs_common.messages.envelope import CONVERSATION_ID, MESSAGE_ID, RECEIVED_MESSAGE_ID
-from persistence import persistence_adaptor as pa
+from mhs_common.messages.envelope import MESSAGE_ID, RECEIVED_MESSAGE_ID
 from mhs_common.state import work_description as wd
-from persistence.persistence_adaptor import PersistenceAdaptor
 from mhs_common.workflow import asynchronous_forward_reliable as forward_reliable
+from mhs_common.workflow.common import MessageData
+from persistence import persistence_adaptor as pa
+from persistence.persistence_adaptor import PersistenceAdaptor
 from utilities import integration_adaptors_logger as log
+from utilities import mdc
 from utilities.timing import time_request
-import logging
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -48,9 +48,12 @@ class InboundHandler(base_handler.BaseHandler):
     @time_request
     async def post(self):
         logger.info('Inbound POST received: {request}', fparams={'request': self.request})
+
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
-        request_message = self._extract_incoming_ebxml_request_message()
+        # request_message = self._extract_incoming_ebxml_request_message()
+
+        request_message = await IOLoop.current().run_in_executor(None, self._extract_incoming_ebxml_request_message)
 
         message_id = self._extract_message_id(request_message)
         interaction_id = self._extract_interaction_id(request_message)
@@ -68,11 +71,13 @@ class InboundHandler(base_handler.BaseHandler):
 
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
+            logger.info('xxxx')
             await self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
+            logger.info('yyyy')
         else:
             logger.info(f'No RefToMessageId on inbound reply: handling as an unsolicited message')
             await self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
-        self._send_ack(request_message)
+        await IOLoop.current().run_in_executor(None, self._send_ack, request_message)
 
     async def _handle_referenced_reply_message(self, message_id: str, correlation_id: str, message_data: MessageData):
         work_description = await self._get_work_description_from_store(message_id)
@@ -159,7 +164,7 @@ class InboundHandler(base_handler.BaseHandler):
         self.write(serialized_message)
 
     def _extract_correlation_id(self, message):
-        correlation_id = message.message_dictionary[CONVERSATION_ID]
+        correlation_id = message.message_dictionary[ebxml_envelope.CONVERSATION_ID]
         mdc.correlation_id.set(correlation_id)
         logger.info('Set correlation id from inbound request.')
         return correlation_id
