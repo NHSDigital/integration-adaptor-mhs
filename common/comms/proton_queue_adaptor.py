@@ -259,5 +259,4 @@ class ProtonMessageReceiver(proton.handlers.MessagingHandler):
 
     def on_message(self, event):
         message = event.message
-        print(f'Received message is: {message.body}')
         self.callback(message)
