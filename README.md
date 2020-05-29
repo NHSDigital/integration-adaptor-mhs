@@ -21,15 +21,12 @@ This repository contains the following directories:
 - [documentation](documentation) - Documentation and assets for the integration adaptors as a whole.
 - [mhs](mhs) - A pre-assured implementation of a Message Handling Service (MHS), that encapsulates the details of Spine
 messaging and provides a simple interface to allow HL7 messages to be sent to the NHS spine MHS.
-- [nhais-adaptor](nhais-adaptor) - A proof-of-concept adaptor that hides the details of NHAIS' EDIFACT messaging format
-and provides a prototype FHIR interface for sending registration events taking place at the practice to NHAIS.
-- [OneOneOne](OneOneOne) - A proof-of-concept 111 receiver, also used to investigate use of the ITK testbench (the TKW).
 - [pipeline](pipeline) - Scripts and configuration files used to build container images for adaptors and deploy them to various
 environments. Intended for use as part of an automated build pipeline, or may be run seperately.
-- [SCR](SCR) - A package of assets that simplify the building of HL7 GP Summary Update request messages.
-- [SCRWebservice](SCRWebService) - An application that uses the SCR package to build GP summary upload HL7 messages,
+- [SCR](examples/SCR) - A package of assets that simplify the building of HL7 GP Summary Update request messages.
+- [SCRWebservice](examples/SCRWebService) - An application that uses the SCR package to build GP summary upload HL7 messages,
  forwards the message to the MHS, parses the success response and returns the parsed details to the supplier  
-- [supplier-example](supplier-example) - An example web application that uses the assets from the SCR package to
+- [supplier-example](examples/supplier-example) - An example web application that uses the assets from the SCR package to
 generate a GP Summary Update request and send it to an instance of the MHS reference implementation. Intended to show
 how the adaptors can be used together to simplify integration.
 

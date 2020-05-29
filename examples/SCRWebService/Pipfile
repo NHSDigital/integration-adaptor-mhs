@@ -1,0 +1,26 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+coverage = "~=4.5"
+unittest-xml-reporting = "~=2.5"
+
+[packages]
+requests = "~=2.22"
+integration-adaptors-common = {editable = true,git = "https://git@github.com/nhsconnect/integration-adaptor-common.git",tag = '0.1.7'}
+scr = {editable = true,path = "./../SCR"}
+tornado = "~=6.0"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+unittests = 'python -m xmlrunner -o test-reports -v'
+unittests-cov = 'coverage run -m xmlrunner -o test-reports -v'
+coverage-report = 'coverage report'
+coverage-report-xml = 'coverage xml'
+coverage-report-html = 'coverage html'
+inttests = 'python -m xmlrunner discover -o test-reports -p "int_*" -v'
+scr-server = "python main.py"

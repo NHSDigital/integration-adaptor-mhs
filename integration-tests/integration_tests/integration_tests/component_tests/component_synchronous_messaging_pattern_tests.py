@@ -4,10 +4,11 @@ Provides tests around the Synchronous workflow
 import unittest
 
 from integration_tests.assertors.json_error_response_assertor import JsonErrorResponseAssertor
-from integration_tests.dynamo.dynamo import MHS_STATE_TABLE_DYNAMO_WRAPPER, MHS_SYNC_ASYNC_TABLE_DYNAMO_WRAPPER
-from integration_tests.dynamo.dynamo_mhs_table import DynamoMhsTableStateAssertor
+from integration_tests.db.db_wrapper_factory import MHS_STATE_TABLE_WRAPPER, MHS_SYNC_ASYNC_TABLE_WRAPPER
+from integration_tests.db.mhs_table import MhsTableStateAssertor
 from integration_tests.helpers.build_message import build_message
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
+
 
 class SynchronousMessagingPatternTests(unittest.TestCase):
     """
@@ -19,8 +20,8 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
     """
 
     def setUp(self):
-        MHS_STATE_TABLE_DYNAMO_WRAPPER.clear_all_records_in_table()
-        MHS_SYNC_ASYNC_TABLE_DYNAMO_WRAPPER.clear_all_records_in_table()
+        MHS_STATE_TABLE_WRAPPER.clear_all_records_in_table()
+        MHS_SYNC_ASYNC_TABLE_WRAPPER.clear_all_records_in_table()
 
     def test_should_return_error_response_to_client_when_error_response_returned_from_spine(self):
         """
@@ -32,7 +33,7 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
 
         # Act
         response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, sync_async=False) \
+            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False) \
             .with_body(message) \
             .execute_post_expecting_error_response()
 
@@ -54,12 +55,12 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
 
         # Act
         MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, sync_async=False) \
+            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False) \
             .with_body(message) \
             .execute_post_expecting_error_response()
 
         # Assert
-        DynamoMhsTableStateAssertor(MHS_STATE_TABLE_DYNAMO_WRAPPER.get_all_records_in_table()) \
+        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
             .assert_single_item_exists_with_key(message_id) \
             .assert_item_contains_values(
             {
@@ -74,7 +75,7 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
 
         # Act
         response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, sync_async=False, from_asid=None) \
+            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False, from_asid=None) \
             .with_body(message) \
             .execute_post_expecting_bad_request_response()
 
@@ -87,12 +88,12 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
 
         # Act
         MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, sync_async=False, from_asid=None) \
+            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False, from_asid=None) \
             .with_body(message) \
             .execute_post_expecting_bad_request_response()
 
         # Assert
-        DynamoMhsTableStateAssertor(MHS_STATE_TABLE_DYNAMO_WRAPPER.get_all_records_in_table()) \
+        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
             .assert_single_item_exists_with_key(message_id) \
             .assert_item_contains_values({
             'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_RECEIVED',

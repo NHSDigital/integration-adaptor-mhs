@@ -11,14 +11,6 @@ pipeline {
     }
 
     stages {
-        stage('Build & test common') {
-            steps {
-                dir('common') {
-                    buildModules('Installing common dependencies')
-                    executeUnitTestsWithCoverage()
-                }
-            }
-        }
         stage('Build & test MHS Common') {
             steps {
                 dir('mhs/common') {
@@ -68,13 +60,6 @@ pipeline {
                             steps {
                                 dir('mhs/outbound') {
                                     executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
-                        stage('Check documentation') {
-                            steps {
-                                dir('mhs/outbound') {
-                                    sh label: 'Check API docs can be generated', script: 'pipenv run generate-openapi-docs > /dev/null'
                                 }
                             }
                         }
@@ -143,7 +128,7 @@ pipeline {
                                         --env "MHS_ADDRESS=http://outbound" \
                                         --env "AWS_ACCESS_KEY_ID=test" \
                                         --env "AWS_SECRET_ACCESS_KEY=test" \
-                                        --env "MHS_DYNAMODB_ENDPOINT_URL=http://dynamodb:8000" \
+                                        --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
                                         --env "FAKE_SPINE_ADDRESS=http://fakespine" \
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
@@ -303,13 +288,13 @@ pipeline {
                                             returnStdout: true,
                                             script: "terraform output route_lb_target_group_arn"
                                         ).trim()
-                                        env.MHS_DYNAMODB_TABLE_NAME = sh (
-                                            label: 'Obtaining the dynamodb table name used for the MHS state',
+                                        env.MHS_STATE_TABLE_NAME = sh (
+                                            label: 'Obtaining the table name used for the MHS state',
                                             returnStdout: true,
                                             script: "terraform output mhs_state_table_name"
                                         ).trim()
                                         env.MHS_SYNC_ASYNC_TABLE_NAME = sh (
-                                            label: 'Obtaining the dynamodb table name used for the MHS sync/async state',
+                                            label: 'Obtaining the table name used for the MHS sync/async state',
                                             returnStdout: true,
                                             script: "terraform output mhs_sync_async_table_name"
                                         ).trim()

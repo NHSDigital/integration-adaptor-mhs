@@ -31,10 +31,10 @@ The MHS adaptor is composed of three main services, coloured in orange,  which a
 
 These services have some dependencies, shown in blue, which are implemented through the adaptor pattern:
 - State database, which is used to handle internal MHS message state. 
-In this repository, DynamoDB is used as an implementation of the State database.
+In this repository, DynamoDB and MongoDB are used as an implementations of the State database.
 - Sync-Async Response Database, a special case of the state database where a synchronous facade is provided by the Outbound Service for interactions
 with Spine which actually involve asynchronous responses. This database is used to correlate request to Spine and responses from Spine in this scenario. 
-Again this is implemented here as a DynamoDB state adaptor.
+Again this is implemented here as a DynamoDB and MongoDB state adaptor.
 - Container orchestration. The container orchestration solution of your choice can be used. In this repository, Docker compose is used when running
 the adaptor locally, and ECS, Fargate and ECR are used by the AWS exemplar architecture.
 - Secret Store - Used to safely inject secrets such as passwords into running containers.
@@ -52,7 +52,7 @@ The National Adaptors Common Module provides classes which implement common requ
 
 The MHS Adaptor presents a simple HTTP synchronous interface which is used to make requests to Spine.
 
-Please refer to the [API Documentation](outbound/openapi-docs.html) for further details.
+Please refer to the [API Documentation](MHS-Outbound.yaml) for further details.
 
 Examples of how this API is called can be found in the [integration tests](../integration-tests/integration_tests) module
 
@@ -80,7 +80,7 @@ The Asynchronous Express Messaging Pattern is one of the Spine messaging pattern
 In this pattern, a request is made to Spine, but the response is not provided on the same connection. Instead, spine initiates a connection back to your 
 MHS with the response. I.e the response from Spine is delivered like a call back to your MHS. The MHS Adaptor has hidden all this asynchronous callback 
 detail behind a synchronous interface, so your HTTP client just sees a simple HTTP request/response. This is what the MHS Adaptor has termed the "Sync-Async wrapper". 
-When you set the `sync-async` message header to `true` you are requesting the MHS Adaptor to hide this asynchronous response from you, and deliver the response in the 
+When you set the `wait-for-response` message header to `true` you are requesting the MHS Adaptor to hide this asynchronous response from you, and deliver the response in the 
 same HTTP connection.
 
 In this example, the `QUPC_IN160101UK05` Spine message is used. This Spine message is used when requesting the Summary Care Record of a patient.
@@ -92,7 +92,7 @@ In this pattern, a request is made to Spine, but the response is not provided on
 to your MHS with the response. I.e the response from Spine is delivered like a call back to your MHS.
 
 The MHS Adaptor has hidden all this asynchronous callback detail behind a synchronous interface, so your HTTP client just sees a simple HTTP 
-request/response. This is what the MHS Adpator has termed the Sync-Async wrapper. When you set the sync-async  message header you are requesting 
+request/response. This is what the MHS Adpator has termed the Sync-Async wrapper. When you set the wait-for-response  message header you are requesting 
 the MHS Adaptor to hide this asynchronous response from you, and deliver the response in the same hTTP connection.
 
 In this example, the `QUPC_IN160101UK05` Spine message is used again. 
@@ -129,7 +129,7 @@ Key points to note:
  - Balancing of load across instances of the inbound service has been implemented throught the
  use of a Network Load Balancer to enable the inbound service itself to implement TLS mututal
  authentication.
- - DynamoDB is used to implement the state database and sync-re-sync database.
+ - DynamoDB and MongoDB are used to implement the state database and sync-re-sync database.
  - Elasticache for Redis HA is used to implement the routing and reliability cache which is a dependency
  of the routing service.
  - Cloudwatch is used as the logging

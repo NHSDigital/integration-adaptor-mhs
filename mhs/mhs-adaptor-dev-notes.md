@@ -58,7 +58,7 @@ contain sensitive information such as the content of messages being sent.
 * `MHS_SECRET_CLIENT_CERT` Your endpoint certificate
 * `MHS_SECRET_CLIENT_KEY` Your endpoint private key
 * `MHS_SECRET_CA_CERTS` Should include the following in this order: endpoint issuing subCA certificate, root CA Certificate.
-* `MHS_STATE_TABLE_NAME` (inbound & outbound only) The name of the DynamoDB table used to store MHS state.
+* `MHS_STATE_TABLE_NAME` (inbound & outbound only) The name of the DB table used to store MHS state.
 * `MHS_SYNC_ASYNC_STATE_TABLE_NAME` (inbound & outbound only) The table name used to store sync async responses
 * `MHS_STATE_STORE_MAX_RETRIES'` (inbound & outbound only) The max number of retries when attempting to interact with either the work description or sync-async store. Defaults to `3`
 * `MHS_OUTBOUND_TRANSMISSION_MAX_RETRIES` (outbound only) This is the maximum number of retries for outbound requests. If no value is given a default of `3` is used.
@@ -68,6 +68,7 @@ contain sensitive information such as the content of messages being sent.
 * `MHS_OUTBOUND_VALIDATE_CERTIFICATE` (outbound only) Verification of the server certificate received when making a connection to the spine MHS.
 * `MHS_INBOUND_QUEUE_BROKERS` (inbound only) The url(s) of the amqp inbound queue broker(s). e.g. `amqps://example.com:port`. Note that if the amqp connection being used is a secured connection (which it should be in production), then the url should start with `amqps://` and not `amqp+ssl://`. This URL should not include the queue name. Can be a coma-separated list or urls for HA
 * `MHS_INBOUND_QUEUE_NAME` The name of the queue on the broker identified by `MHS_INBOUND_QUEUE_BROKERS` to place inbound messages on. e.g `queue-name`
+* `MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS` Defines Time-To-Live of inbound queue messages
 * `MHS_SECRET_INBOUND_QUEUE_USERNAME` (inbound only) The username to use when connecting to the amqp inbound queue.
 * `MHS_SECRET_INBOUND_QUEUE_PASSWORD` (inbound only) The password to use when connecting to the amqp inbound queue.
 * `MHS_INBOUND_QUEUE_MAX_RETRIES` (inbound only) The max number of times to retry putting a message onto the amqp inbound queue. Defaults to `3`.
