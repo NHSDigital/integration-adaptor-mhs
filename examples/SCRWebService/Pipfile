@@ -9,9 +9,9 @@ unittest-xml-reporting = "~=2.5"
 
 [packages]
 requests = "~=2.22"
-integration-adaptors-common = {editable = true,git = "https://git@github.com/nhsconnect/integration-adaptor-common.git",tag = '0.1.7'}
 scr = {editable = true,path = "./../SCR"}
 tornado = "~=6.0"
+integration-adaptors-common = {editable = true, path = "../../common"}
 
 [requires]
 python_version = "3.7"

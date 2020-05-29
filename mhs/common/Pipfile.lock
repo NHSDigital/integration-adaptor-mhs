@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3daf62e3f823fc8cda17bc1ee91f4bed2a3e71fff709a451ec3af69e8bc98d23"
+            "sha256": "5b8011413ec6096d4f2130a00317959e4c85f5b081404375b17ec9283945662b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -118,8 +118,7 @@
         },
         "integration-adaptors-common": {
             "editable": true,
-            "git": "https://git@github.com/nhsconnect/integration-adaptor-common.git",
-            "ref": "d1e4d1dfc3721de1006afd369112c557cb032e18"
+            "path": "./../../common"
         },
         "isodate": {
             "hashes": [
@@ -284,10 +283,10 @@
         },
         "six": {
             "hashes": [
-                "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a",
-                "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"
+                "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
+                "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"
             ],
-            "version": "==1.14.0"
+            "version": "==1.15.0"
         },
         "tornado": {
             "hashes": [
@@ -390,10 +389,10 @@
         },
         "six": {
             "hashes": [
-                "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a",
-                "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"
+                "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
+                "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"
             ],
-            "version": "==1.14.0"
+            "version": "==1.15.0"
         },
         "unittest-xml-reporting": {
             "hashes": [

@@ -2,9 +2,6 @@ FROM nhsdev/nia-mhs-inbound-base:latest
 
 RUN mkdir -p /usr/src/app/mhs/inbound
 
-COPY mhs/inbound/Pipfile /usr/src/app
-COPY mhs/inbound/Pipfile.lock /usr/src/app
-
 RUN pip install pipenv
 
 COPY common/ /usr/src/app/common/

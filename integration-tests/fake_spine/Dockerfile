@@ -3,6 +3,7 @@ RUN apt-get update
 RUN apt-get install build-essential git -y
 RUN mkdir -p /usr/src/app/mhs/fakespine
 RUN pip install pipenv
+COPY common/ /usr/src/app/common/
 COPY integration-tests/fake_spine/ /usr/src/app/mhs/fakespine
 WORKDIR /usr/src/app/mhs/fakespine
 COPY integration-tests/fake_spine/Pipfile /usr/src/app

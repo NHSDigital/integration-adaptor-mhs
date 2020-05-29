@@ -153,3 +153,5 @@ export-env-vars-and-run-mhs-docker.sh
 
 **/export-env-vars.sh
 out/
+
+*.env

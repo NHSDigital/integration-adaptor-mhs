@@ -8,91 +8,107 @@ pipeline {
         BUILD_TAG_LOWER = sh label: 'Lowercase build tag', returnStdout: true, script: "echo -n ${BUILD_TAG} | tr '[:upper:]' '[:lower:]'"
         ENVIRONMENT_ID = "build"
         MHS_INBOUND_QUEUE_NAME = "${ENVIRONMENT_ID}-inbound"
+        LOCAL_INBOUND_IMAGE_NAME = "local/mhs-inbound:${BUILD_TAG}"
+        LOCAL_OUTBOUND_IMAGE_NAME = "local/mhs-outbound:${BUILD_TAG}"
+        LOCAL_ROUTE_IMAGE_NAME = "local/mhs-route:${BUILD_TAG}"
+        INBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/inbound:${BUILD_TAG}"
+        OUTBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/outbound:${BUILD_TAG}"
+        ROUTE_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/route:${BUILD_TAG}"
     }
 
     stages {
-        stage('Build & test MHS Common') {
-            steps {
-                dir('mhs/common') {
-                    buildModules('Installing mhs common dependencies')
-                    executeUnitTestsWithCoverage()
-                }
-            }
-        }
-
+//         stage('Build & test Common') {
+//             steps {
+//                 dir('common') {
+//                     buildModules('Installing common dependencies')
+//                     executeUnitTestsWithCoverage()
+//                 }
+//             }
+//         }
+//         stage('Build & test MHS Common') {
+//             steps {
+//                 dir('mhs/common') {
+//                     buildModules('Installing mhs common dependencies')
+//                     executeUnitTestsWithCoverage()
+//                 }
+//             }
+//         }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
                     stages {
-                        stage('Build') {
-                            steps {
-                                dir('mhs/inbound') {
-                                    buildModules('Installing inbound dependencies')
-                                }
+//                         stage('Build') {
+//                             steps {
+//                                 dir('mhs/inbound') {
+//                                     buildModules('Installing inbound dependencies')
+//                                 }
+//                             }
+//                         }
+//                         stage('Unit test') {
+//                             steps {
+//                                 dir('mhs/inbound') {
+//                                     executeUnitTestsWithCoverage()
+//                                 }
+//                             }
+//                         }
+                        stage('Build and Push image') {
+                            when {
+                                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
                             }
-                        }
-                        stage('Unit test') {
                             steps {
-                                dir('mhs/inbound') {
-                                    executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
-                        stage('Push image') {
-                            steps {
-                                script {
-                                    sh label: 'Pushing inbound image', script: "packer build -color=false pipeline/packer/inbound.json"
-                                }
+                                buildAndPushImage('${LOCAL_INBOUND_IMAGE_NAME}', '${INBOUND_IMAGE_NAME}', 'mhs/inbound/Dockerfile')
                             }
                         }
                     }
                 }
                 stage('Outbound') {
                     stages {
-                        stage('Build') {
-                            steps {
-                                dir('mhs/outbound') {
-                                    buildModules('Installing outbound dependencies')
-                                }
-                            }
-                        }
-                        stage('Unit test') {
-                            steps {
-                                dir('mhs/outbound') {
-                                    executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
-                        stage('Push image') {
-                            steps {
-                                script {
-                                    sh label: 'Pushing outbound image', script: "packer build -color=false pipeline/packer/outbound.json"
-                                }
-                            }
+//                         stage('Build') {
+//                             steps {
+//                                 dir('mhs/outbound') {
+//                                     buildModules('Installing outbound dependencies')
+//                                 }
+//                             }
+//                         }
+//                         stage('Unit test') {
+//                             steps {
+//                                 dir('mhs/outbound') {
+//                                     executeUnitTestsWithCoverage()
+//                                 }
+//                             }
+//                         }
+                        stage('Build and Push image') {
+                          when {
+                              expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+                          }
+                          steps {
+                              buildAndPushImage('${LOCAL_OUTBOUND_IMAGE_NAME}', '${OUTBOUND_IMAGE_NAME}', 'mhs/outbound/Dockerfile')
+                          }
                         }
                     }
                 }
                 stage('Route') {
                     stages {
-                        stage('Build') {
-                            steps {
-                                dir('mhs/spineroutelookup') {
-                                    buildModules('Installing route lookup dependencies')
-                                }
+//                         stage('Build') {
+//                             steps {
+//                                 dir('mhs/spineroutelookup') {
+//                                     buildModules('Installing route lookup dependencies')
+//                                 }
+//                             }
+//                         }
+//                         stage('Unit test') {
+//                             steps {
+//                                 dir('mhs/spineroutelookup') {
+//                                     executeUnitTestsWithCoverage()
+//                                 }
+//                             }
+//                         }
+                        stage('Build and Push image') {
+                            when {
+                                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
                             }
-                        }
-                        stage('Unit test') {
                             steps {
-                                dir('mhs/spineroutelookup') {
-                                    executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
-                        stage('Push image') {
-                            steps {
-                                script {
-                                    sh label: 'Pushing spine route lookup image', script: "packer build -color=false pipeline/packer/spineroutelookup.json"
-                                }
+                                buildAndPushImage('${LOCAL_ROUTE_IMAGE_NAME}', '${ROUTE_IMAGE_NAME}', 'mhs/spineroutelookup/Dockerfile')
                             }
                         }
                     }
@@ -304,4 +320,19 @@ void executeUnitTestsWithCoverage() {
 
 void buildModules(String action) {
     sh label: action, script: 'pipenv install --dev --deploy --ignore-pipfile'
+}
+
+int ecrLogin(String aws_region) {
+    String ecrCommand = "aws ecr get-login --region ${aws_region}"
+    String dockerLogin = sh (label: "Getting Docker login from ECR", script: ecrCommand, returnStdout: true).replace("-e none","") // some parameters that AWS provides and docker does not recognize
+    return sh(label: "Logging in with Docker", script: dockerLogin, returnStatus: true)
+}
+
+void buildAndPushImage(String localImageName, String imageName, String dockerFile, String context = '.') {
+    sh label: 'Running docker build', script: 'docker build -t ' + localImageName + ' -f ' + dockerFile + ' ' + context
+    if (ecrLogin(TF_STATE_BUCKET_REGION) != 0 )  { error("Docker login to ECR failed") }
+    sh label: 'Tag ecr image', script: 'docker tag ' + localImageName + ' ' + imageName
+    String dockerPushCommand = "docker push " + imageName
+    if (sh (label: "Pushing image", script: dockerPushCommand, returnStatus: true) !=0) { error("Docker push image failed") }
+    sh label: 'Deleting local ECR image', script: 'docker rmi ' + imageName
 }
