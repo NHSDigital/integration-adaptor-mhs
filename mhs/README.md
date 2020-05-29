@@ -74,26 +74,25 @@ Before sending these requests, you will need to create a setting.json file as de
 Before sending requests directly to the inbound service, you will need to switch off ssl by setting 'MHS_INBOUND_USE_SSL: false' in .yaml inbound configuration file.
 It is necessary to send requests to inbound without ssl.  
 
-#### "Async Express Pattern Message  - Synchronous Response" 
-
+## Async Express Pattern Message
 The Asynchronous Express Messaging Pattern is one of the Spine messaging patterns which is defined in the Spine External Interface Specification. 
 In this pattern, a request is made to Spine, but the response is not provided on the same connection. Instead, spine initiates a connection back to your 
-MHS with the response. I.e the response from Spine is delivered like a call back to your MHS. The MHS Adaptor has hidden all this asynchronous callback 
-detail behind a synchronous interface, so your HTTP client just sees a simple HTTP request/response. This is what the MHS Adaptor has termed the "Sync-Async wrapper". 
-When you set the `wait-for-response` message header to `true` you are requesting the MHS Adaptor to hide this asynchronous response from you, and deliver the response in the 
+MHS with the response. I.e the response from Spine is delivered like a call back to your MHS.
+
+You have the option of receiving the response synchronously on the same connection, or asynchronously via an inbound queue.
+
+### Async Express Pattern Message- Synchronous Response 
+The MHS Adaptor can deliver the response to you *synchronously* on the same connection you made the request on, so your HTTP client just 
+sees a simple HTTP request/response. This is what the MHS Adaptor has termed the "Sync-Async wrapper". 
+When you set the `wait-for-response` message header to `true` you are requesting the MHS Adaptor to deliver the response in the 
 same HTTP connection.
 
 In this example, the `QUPC_IN160101UK05` Spine message is used. This Spine message is used when requesting the Summary Care Record of a patient.
  
-#### "Async Express Pattern Message  - Asynchronous Response" 
-
-The Asynchronous Express Messaging Pattern is one of the Spine messaging patterns which is defined in the Spine External Interface Specification. 
-In this pattern, a request is made to Spine, but the response is not provided on the same connection. Instead, spine initiates a connection back 
-to your MHS with the response. I.e the response from Spine is delivered like a call back to your MHS.
-
-The MHS Adaptor has hidden all this asynchronous callback detail behind a synchronous interface, so your HTTP client just sees a simple HTTP 
-request/response. This is what the MHS Adpator has termed the Sync-Async wrapper. When you set the wait-for-response  message header you are requesting 
-the MHS Adaptor to hide this asynchronous response from you, and deliver the response in the same hTTP connection.
+### Async Express Pattern Message - Asynchronous Response
+The MHS Adaptor can deliver the message *asynchronously* to you by placing the response onto an inbound queue.
+When you set the `wait-for-response`  message header to `false` you are requesting that the MHS Adaptor places
+the response onto the inbound queue. Your HTTP client will receive a 202 Accepted, and you will have to pick the message off the queue.
 
 In this example, the `QUPC_IN160101UK05` Spine message is used again. 
 
