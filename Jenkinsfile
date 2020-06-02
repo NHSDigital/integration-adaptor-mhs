@@ -6,7 +6,7 @@ pipeline {
     environment {
         BUILD_TAG = sh label: 'Generating build tag', returnStdout: true, script: 'python3 pipeline/scripts/tag.py ${GIT_BRANCH} ${BUILD_NUMBER} ${GIT_COMMIT}'
         BUILD_TAG_LOWER = sh label: 'Lowercase build tag', returnStdout: true, script: "echo -n ${BUILD_TAG} | tr '[:upper:]' '[:lower:]'"
-        ENVIRONMENT_ID = "build"
+        ENVIRONMENT_ID = "vp-testing"
         MHS_INBOUND_QUEUE_NAME = "${ENVIRONMENT_ID}-inbound"
         LOCAL_INBOUND_IMAGE_NAME = "local/mhs-inbound:${BUILD_TAG}"
         LOCAL_OUTBOUND_IMAGE_NAME = "local/mhs-outbound:${BUILD_TAG}"
