@@ -134,6 +134,16 @@ class CommonWorkflow(abc.ABC):
             logger.warning('Received more than one URL when looking up endpoint details. Using {url}. {urls_received}',
                            fparams={'url': url, 'urls_received': endpoint_urls})
 
+        # TEMP!!!
+        logger.info('Spine url to be called {url}', fparams={'url': url})
+
+        url = url.replace('https://192.168.128.11/reliablemessaging/reliablerequest', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        url = url.replace('https://192.168.128.11/reliablemessaging/queryrequest', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        url = url.replace('https://192.168.128.11/sync-service', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        url = url.replace('https://192.168.128.11', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+    
+        logger.info('Spine url to be called (after updating) {url}', fparams={'url': url})
+
         return url
 
     @staticmethod

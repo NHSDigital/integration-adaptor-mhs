@@ -1,5 +1,6 @@
 """This module defines the outbound synchronous request handler component."""
 import json
+import uuid;
 
 import marshmallow
 import mhs_common.state.work_description as wd
@@ -18,6 +19,7 @@ from outbound.request import request_body_schema
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
+UUID_PLACEHOLDER = "{{UUID}}"
 
 class SynchronousHandler(base_handler.BaseHandler):
     """A Tornado request handler intended to handle incoming HTTP requests from a supplier system."""
@@ -125,7 +127,10 @@ class SynchronousHandler(base_handler.BaseHandler):
                 $ref: '#/definitions/RequestBody'
           description: The HL7 payload (and optional attachments) to be sent to Spine.
         """
-        message_id = self._extract_message_id()
+        new_uuid = str(uuid.uuid4()).upper()
+
+        message_id = self._replace_uuid_placeholder(self._extract_message_id(), new_uuid)
+
         correlation_id = self._extract_correlation_id()
         interaction_id = self._extract_interaction_id()
         wait_for_response_header = self._extract_wait_for_response_header()
@@ -134,7 +139,7 @@ class SynchronousHandler(base_handler.BaseHandler):
 
         logger.info('Outbound POST received. {Request}', fparams={'Request': str(self.request)})
 
-        body = self._parse_body()
+        body = self._replace_uuid_placeholder(self._parse_body(), new_uuid)
 
         interaction_details = self._retrieve_interaction_details(interaction_id)
         wf = self._extract_default_workflow(interaction_details, interaction_id)
@@ -308,3 +313,9 @@ class SynchronousHandler(base_handler.BaseHandler):
         interaction_details[ebxml_envelope.ACTION] = interaction_id
 
         return interaction_details
+
+    def _replace_uuid_placeholder(self, text: str, new_uuid: str):
+        mdc.message_id.set(new_uuid)
+        logger.info('Replacing UUID placeholder with auto-generated UUID: {new_uuid}',
+                     fparams={'new_uuid': new_uuid})
+        return text.replace(UUID_PLACEHOLDER, new_uuid)

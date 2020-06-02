@@ -47,8 +47,8 @@ class MHSAttributeLookup(object):
                          fparams={'ods_code': ods_code, 'interaction_id': interaction_id})
 
         endpoint_details = await self.sds_client.get_mhs_details(ods_code, interaction_id)
-        logger.info('MHS details obtained from sds, adding to cache for {ods_code} & {interaction_id}',
-                    fparams={'ods_code': ods_code, 'interaction_id': interaction_id})
+        logger.info('MHS details obtained from sds, adding to cache for {ods_code} & {interaction_id}. {endpoint_details}',
+                    fparams={'ods_code': ods_code, 'interaction_id': interaction_id, 'endpoint_details': endpoint_details})
 
         try:
             await self.cache.add_cache_value(ods_code, interaction_id, endpoint_details)

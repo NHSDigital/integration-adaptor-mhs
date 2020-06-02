@@ -86,7 +86,7 @@ class AsynchronousExpressWorkflow(common_asynchronous.CommonAsynchronousWorkflow
                 logger.warning('Received soap errors from Spine. {HTTPStatus} {Errors}',
                                fparams={'HTTPStatus': response.code, 'Errors': parsed_response})
             else:
-                logger.warning("Received an unexpected response from Spine",
+                logger.warning("Received an unexpected response from Spine. {HTTPStatus}",
                                fparams={'HTTPStatus': response.code})
                 parsed_response = "Didn't get expected response from Spine"
 

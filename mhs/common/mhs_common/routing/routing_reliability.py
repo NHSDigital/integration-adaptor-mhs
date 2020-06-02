@@ -55,7 +55,6 @@ class RoutingAndReliability:
         url = self._build_request_url(ROUTING_PATH, org_code, service_id)
 
         try:
-
             logger.info("Requesting endpoint details from Spine route lookup service for {org_code} & {service_id}.",
                         fparams={"org_code": org_code, "service_id": service_id})
             http_response = await common_https.CommonHttps.make_request(url=url, method="GET",
