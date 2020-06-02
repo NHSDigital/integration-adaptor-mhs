@@ -1,0 +1,152 @@
+
+pipeline {
+    agent{
+        label 'jenkins-workers'
+    }
+    parameters {
+        string(name: 'BUILD_TAG',
+            defaultValue: '',
+            description: 'Build tag to deploy')
+        string(name: 'INBOUND_MINIMUM_IMAGES',
+            defaultValue: '1',
+            description: 'Inbound minumum images')
+        string(name: 'INBOUND_MAXIMUM_IMAGES',
+            defaultValue: '10',
+            description: 'Inbound maximum images')
+        string(name: 'OUTBOUND_MINIMUM_IMAGES',
+            defaultValue: '1',
+            description: 'Outbound minumum images')
+        string(name: 'OUTBOUND_MAXIMUM_IMAGES',
+            defaultValue: '10',
+            description: 'Outbound maximum images')
+        string(name: 'ROUTE_MINIMUM_IMAGES',
+            defaultValue: '1',
+            description: 'Route minumum images')
+        string(name: 'ROUTE_MAXIMUM_IMAGES',
+            defaultValue: '10',
+            description: 'Route maximum images')
+        string(name: 'FAKE_SPINE_MINIMUM_IMAGES',
+            defaultValue: '1',
+            description: 'Fake Spine minumum images')
+        string(name: 'FAKE_SPINE_MAXIMUM_IMAGES',
+            defaultValue: '10',
+            description: 'Fake Spine maximum images')
+        string(name: 'MHS_STATE_TABLE_READ_CAPACITY',
+            defaultValue: '20',
+            description: 'DynamoDb MHS State Table read capacity')
+        string(name: 'MHS_STATE_TABLE_WRITE_CAPACITY',
+            defaultValue: '100',
+            description: 'DynamoDb MHS State Table write capacity')
+    }
+
+    environment {
+        ENVIRONMENT_ID = "vp-testing"
+        MHS_INBOUND_QUEUE_NAME = "${ENVIRONMENT_ID}-inbound"
+    }
+
+    stages {
+        stage('Run Integration Tests') {
+            when {
+                expression { params.BUILD_TAG != '' }
+            }
+            options {
+                lock('exemplar-test-environment')
+            }
+            stages {
+                stage('Deploy MHS') {
+                    steps {
+                        dir('pipeline/terraform/mhs-vp-environment') {
+                            script {
+                                String initCommand = """
+                                    terraform init \
+                                        -backend-config="bucket=${TF_STATE_BUCKET}" \
+                                        -backend-config="region=${TF_STATE_BUCKET_REGION}" \
+                                        -backend-config="key=${ENVIRONMENT_ID}-mhs.tfstate" \
+                                        -input=false -no-color
+                                    """
+
+                                // Create a consistent list of variables for both Plan and Apply
+                                Map<String, String> tfVariables = [
+                                        "build_id":                         "${BUILD_TAG}",
+                                        "ca_certs_arn":                     "${FAKESPINE_CA_STORE}",
+                                        "client_cert_arn":                  "${FAKESPINE_CERTIFICATE}",
+                                        "client_key_arn":                   "${FAKESPINE_PRIVATE_KEY}",
+                                        "dlt_vpc_id":                       "${DLT_VPC_ID}",
+                                        "ecr_address":                      "${DOCKER_REGISTRY}",
+                                        "elasticache_node_type":            "cache.t2.micro",
+                                        "environment_id":                   "${ENVIRONMENT_ID}",
+                                        "execution_role_arn":               "${TASK_EXECUTION_ROLE}",
+                                        "fake_spine_alb_certificate_arn":   "${FAKESPINE_ALB_CERT_ARN}",
+                                        "fake_spine_ca_store":              "${FAKESPINE_CA_STORE}",
+                                        "fake_spine_certificate":           "${FAKESPINE_CERTIFICATE}",
+                                        "fake_spine_inbound_delay_ms":      "${FAKESPINE_INBOUND_DELAY}",
+                                        "fake_spine_inbound_proxy_port":    "8888",
+                                        "fake_spine_outbound_delay_ms":     "${FAKESPINE_OUTBOUND_DELAY}",
+                                        "fake_spine_outbound_ssl_enabled":  "${FAKE_SPINE_OUTBOUND_SSL_ENABLED}",
+                                        "fake_spine_party_key":             "${FAKESPINE_PARTY_KEY}",
+                                        "fake_spine_port":                  "${FAKE_SPINE_PORT}",
+                                        "fake_spine_private_key":           "${FAKESPINE_PRIVATE_KEY}",
+                                        "fake_spine_proxy_validate_cert":   "false",
+                                        "fake_spine_url":                   "${FAKESPINE_URL}",
+                                        "inbound_queue_brokers":            "${MHS_INBOUND_QUEUE_BROKERS}",
+                                        "inbound_queue_message_ttl":        "0",
+                                        "inbound_queue_name":               "${MHS_INBOUND_QUEUE_NAME}",
+                                        "inbound_queue_password_arn":       "${INBOUND_QUEUE_PASSWORD_ARN}",
+                                        "inbound_queue_username_arn":       "${INBOUND_QUEUE_USERNAME_ARN}",
+                                        "inbound_server_port":              "443",
+                                        "inbound_server_base_url":          "${INBOUND_SERVER_BASE_URL}",
+                                        "inbound_use_ssl":                  "False",
+                                        "internal_root_domain":             "${INTERNAL_ROOT_DOMAIN}",
+                                        "mq_sg_id":                         "${MQ_SECURITY_GROUP_ID}",
+                                        "mq_vpc_id":                        "${MQ_VPC_ID}",
+                                        "mhs_fake_spine_service_minimum_instance_count":    "${FAKE_SPINE_MINIMUM_IMAGES}",
+                                        "mhs_fake_spine_service_maximum_instance_count":    "${FAKE_SPINE_MAXIMUM_IMAGES}",
+                                        "mhs_log_level":                    "INFO",
+                                        "opentest_vpc_id":                  "${OPENTEST_VPC_ID}",
+                                        "supplier_vpc_id":                  "${SUPPLIER_VPC_ID}",
+                                        "task_role_arn":                    "${TASK_ROLE}",
+                                        "task_scaling_role_arn":            "${TASK_SCALING_ROLE}",
+                                        "internal_root_domain":             "${INTERNAL_ROOT_DOMAIN}",
+                                        "mhs_forward_reliable_endpoint_url": "${FAKESPINE_FORWARD_RELIABLE_URL}",
+                                        "mhs_inbound_service_minimum_instance_count": "${INBOUND_MINIMUM_IMAGES}",
+                                        "mhs_inbound_service_maximum_instance_count": "${INBOUND_MAXIMUM_IMAGES}",
+                                        "mhs_outbound_http_proxy":          "",
+                                        "mhs_outbound_service_minimum_instance_count": "${OUTBOUND_MINIMUM_IMAGES}",
+                                        "mhs_outbound_service_maximum_instance_count": "${OUTBOUND_MAXIMUM_IMAGES}",
+                                        "mhs_outbound_validate_certificate": "False",
+                                        "mhs_resynchroniser_interval":      "${MHS_RESYNC_INTERVAL}",
+                                        "mhs_resynchroniser_max_retries":   "${MHS_RESYNC_RETRIES}",
+                                        "mhs_route_service_minimum_instance_count": "${ROUTE_MINIMUM_IMAGES}",
+                                        "mhs_route_service_maximum_instance_count": "${ROUTE_MAXIMUM_IMAGES}",
+                                        "mhs_sds_cache_expiry_time":        "43200",
+                                        "mhs_spine_org_code":               "${SPINE_ORG_CODE}",
+                                        "mhs_state_table_read_capacity":    "${MHS_STATE_TABLE_READ_CAPACITY}",
+                                        "mhs_state_table_write_capacity":   "${MHS_STATE_TABLE_WRITE_CAPACITY}",
+                                        "mhs_sync_async_table_read_capacity": "5",
+                                        "mhs_sync_async_table_write_capacity": "10",
+                                        "outbound_alb_certificate_arn":     "${VP_TESTING_OUTBOUND_ALB_CERT_ARN}",
+                                        "party_key_arn":                    "${PARTY_KEY_ARN}",
+                                        "route_alb_certificate_arn":        "${VP_TESTING_ROUTE_ALB_CERT_ARN}",
+                                        "route_ca_certs_arn":               "${VP_TESTING_ROUTE_CA_CERTS_ARN}",
+                                        "spineroutelookup_service_disable_sds_tls": "${SPINEROUTELOOKUP_SERVICE_DISABLE_TLS}",
+                                        "spineroutelookup_service_sds_url": "${SPINEROUTELOOKUP_SERVICE_LDAP_URL}",
+                                        "spineroutelookup_service_search_base": "${SPINEROUTELOOKUP_SERVICE_SEARCH_BASE}"
+                                ]
+
+                                sh(label:"Terraform: init", script: initCommand)
+                                terraform("plan",  "vp", ["-no-color"], tfVariables )
+                                terraform("apply", "vp", ["-no-color", "-auto-approve"], tfVariables )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void terraform(String action, String component, List<String> parameters, Map<String, String> variables, Map<String, String> backendConfig=[:]) {
+    List<String> variablesList=variables.collect { key, value -> "-var ${key}=${value}" }
+    String command = "terraform ${action} ${parameters.join(" ")} ${variablesList.join(" ")}"
+    sh(label:"Terraform: "+action, script: command)
+}

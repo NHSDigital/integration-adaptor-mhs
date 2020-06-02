@@ -11,9 +11,11 @@ pipeline {
         LOCAL_INBOUND_IMAGE_NAME = "local/mhs-inbound:${BUILD_TAG}"
         LOCAL_OUTBOUND_IMAGE_NAME = "local/mhs-outbound:${BUILD_TAG}"
         LOCAL_ROUTE_IMAGE_NAME = "local/mhs-route:${BUILD_TAG}"
+        LOCAL_FAKE_SPINE_IMAGE_NAME = "local/fake-spine:${BUILD_TAG}"
         INBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/inbound:${BUILD_TAG}"
         OUTBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/outbound:${BUILD_TAG}"
         ROUTE_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/route:${BUILD_TAG}"
+        FAKE_SPINE_IMAGE_NAME = "${DOCKER_REGISTRY}/fake-spine:${BUILD_TAG}"
     }
 
     stages {
@@ -109,6 +111,15 @@ pipeline {
                             }
                             steps {
                                 buildAndPushImage('${LOCAL_ROUTE_IMAGE_NAME}', '${ROUTE_IMAGE_NAME}', 'mhs/spineroutelookup/Dockerfile')
+                            }
+                        }
+                    }
+                }
+                stage('Fake Spine') {
+                    stages {
+                        stage('Build and Push image') {
+                            steps {
+                                buildAndPushImage('${LOCAL_FAKE_SPINE_IMAGE_NAME}', '${FAKE_SPINE_IMAGE_NAME}', 'integration-tests/fake_spine/Dockerfile')
                             }
                         }
                     }
@@ -297,7 +308,6 @@ pipeline {
             } // parallel
         }
     }
-
     post {
         always {
             cobertura coberturaReportFile: '**/coverage.xml'
