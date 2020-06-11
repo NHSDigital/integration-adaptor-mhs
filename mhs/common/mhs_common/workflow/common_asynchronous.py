@@ -5,13 +5,14 @@ from tornado import httpclient
 
 import utilities.integration_adaptors_logger as log
 from comms import queue_adaptor
+from comms.http_headers import HttpHeaders
 from mhs_common.messages import ebxml_request_envelope, ebxml_envelope
 from mhs_common.routing import routing_reliability
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
 from mhs_common.workflow.common import CommonWorkflow, MessageData
 from persistence import persistence_adaptor
-from utilities import timing
+from utilities import timing, mdc
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -73,6 +74,9 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
                          f'RequestSize={len(message)}'), None, None
 
         logger.info('Outbound message prepared')
+        http_headers[HttpHeaders.CORRELATION_ID] = correlation_id
+        http_headers[HttpHeaders.MESSAGE_ID] = message_id
+        http_headers[HttpHeaders.INTERACTION_ID] = str(mdc.interaction_id.get())
 
         return None, http_headers, message
 

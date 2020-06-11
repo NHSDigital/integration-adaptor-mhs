@@ -299,6 +299,11 @@ variable "fake_spine_port" {
   description = "Port on which the outbound request handler receives requests to fake spine"
 }
 
+variable "fake_spine_url" {
+  type = string
+  description = "The url for the fake spine component"
+}
+
 variable "fake_spine_private_key" {
   type = string
   description = "TLS private key for both HTTPS outbound request handler and inbound mutual TLS"
@@ -363,4 +368,14 @@ variable "container_insights" {
   type = string
   default = "enabled"
   description = "(Optional) Container Insights for containers in the cluster, default is disabled"
+}
+
+variable "mq_sg_id" {
+  type = string
+  description = "The name of the MQ security group we add our rules to for access to and from MHS"
+}
+
+variable "mq_vpc_id" {
+  type = string
+  description = "The ID of the MQ VPC"
 }

@@ -32,10 +32,10 @@ pipeline {
             defaultValue: '20',
             description: 'Fake Spine maximum images')
         string(name: 'MHS_STATE_TABLE_READ_CAPACITY',
-            defaultValue: '5',
+            defaultValue: '100',
             description: 'DynamoDb MHS State Table read capacity')
         string(name: 'MHS_STATE_TABLE_WRITE_CAPACITY',
-            defaultValue: '200',
+            defaultValue: '500',
             description: 'DynamoDb MHS State Table write capacity')
     }
 
@@ -87,6 +87,7 @@ pipeline {
                                         "fake_spine_port":                  "${FAKE_SPINE_PORT}",
                                         "fake_spine_private_key":           "${FAKESPINE_PRIVATE_KEY}",
                                         "fake_spine_proxy_validate_cert":   "false",
+                                        "fake_spine_url":                   "${FAKESPINE_URL}",
                                         "inbound_queue_brokers": "${MHS_INBOUND_QUEUE_BROKERS}",
                                         "inbound_queue_message_ttl": "300",
                                         "inbound_queue_name": "${MHS_INBOUND_QUEUE_NAME}",
@@ -96,15 +97,17 @@ pipeline {
                                         "inbound_server_base_url": "http://mhs-inbound.vp-testing.nhsredteam.internal.nhs.uk:443",
                                         "inbound_use_ssl": "False",
                                         "internal_root_domain": "${INTERNAL_ROOT_DOMAIN}",
+                                        "mq_sg_id": "${MQ_SECURITY_GROUP_ID}",
+                                        "mq_vpc_id": "${MQ_VPC_ID}",
                                         "mhs_fake_spine_service_minimum_instance_count":    "${FAKE_SPINE_MINIMUM_IMAGES}",
                                         "mhs_fake_spine_service_maximum_instance_count":    "${FAKE_SPINE_MAXIMUM_IMAGES}",
-                                        "mhs_log_level":                    "INFO",
+                                        "mhs_log_level":                    "DEBUG",
                                         "opentest_vpc_id": "${OPENTEST_VPC_ID}",
                                         "supplier_vpc_id": "${SUPPLIER_VPC_ID}",
                                         "task_role_arn":                    "${TASK_ROLE}",
                                         "task_scaling_role_arn":            "${TASK_SCALING_ROLE}",
                                         "internal_root_domain": "${INTERNAL_ROOT_DOMAIN}",
-                                        "mhs_forward_reliable_endpoint_url": "http://fakespine.vp-testing.nhsredteam.internal.nhs.uk:80",
+                                        "mhs_forward_reliable_endpoint_url": "${FAKESPINE_FORWARD_RELIABLE_URL}",
                                         "mhs_inbound_service_minimum_instance_count": "${INBOUND_MINIMUM_IMAGES}",
                                         "mhs_inbound_service_maximum_instance_count": "${INBOUND_MAXIMUM_IMAGES}",
                                         "mhs_outbound_http_proxy": "",

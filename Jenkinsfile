@@ -19,40 +19,40 @@ pipeline {
     }
 
     stages {
-//         stage('Build & test Common') {
-//             steps {
-//                 dir('common') {
-//                     buildModules('Installing common dependencies')
-//                     executeUnitTestsWithCoverage()
-//                 }
-//             }
-//         }
-//         stage('Build & test MHS Common') {
-//             steps {
-//                 dir('mhs/common') {
-//                     buildModules('Installing mhs common dependencies')
-//                     executeUnitTestsWithCoverage()
-//                 }
-//             }
-//         }
+        // stage('Build & test Common') {
+        //     steps {
+        //         dir('common') {
+        //             buildModules('Installing common dependencies')
+        //             executeUnitTestsWithCoverage()
+        //         }
+        //     }
+        // }
+        // stage('Build & test MHS Common') {
+        //     steps {
+        //         dir('mhs/common') {
+        //             buildModules('Installing mhs common dependencies')
+        //             executeUnitTestsWithCoverage()
+        //         }
+        //     }
+        // }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
                     stages {
-                //         stage('Build') {
-                //             steps {
-                //                 dir('mhs/inbound') {
-                //                     buildModules('Installing inbound dependencies')
-                //                 }
-                //             }
-                //         }
-                //         stage('Unit test') {
-                //             steps {
-                //                 dir('mhs/inbound') {
-                //                     executeUnitTestsWithCoverage()
-                //                 }
-                //             }
-                //         }
+                        // stage('Build') {
+                        //     steps {
+                        //         dir('mhs/inbound') {
+                        //             buildModules('Installing inbound dependencies')
+                        //         }
+                        //     }
+                        // }
+                        // stage('Unit test') {
+                        //     steps {
+                        //         dir('mhs/inbound') {
+                        //             executeUnitTestsWithCoverage()
+                        //         }
+                        //     }
+                        // }
                         stage('Build and Push image') {
                             when {
                                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
@@ -65,20 +65,20 @@ pipeline {
                 }
                 stage('Outbound') {
                     stages {
-                //         stage('Build') {
-                //             steps {
-                //                 dir('mhs/outbound') {
-                //                     buildModules('Installing outbound dependencies')
-                //                 }
-                //             }
-                //         }
-                //         stage('Unit test') {
-                //             steps {
-                //                 dir('mhs/outbound') {
-                //                     executeUnitTestsWithCoverage()
-                //                 }
-                //             }
-                //         }
+                        // stage('Build') {
+                        //     steps {
+                        //         dir('mhs/outbound') {
+                        //             buildModules('Installing outbound dependencies')
+                        //         }
+                        //     }
+                        // }
+                        // stage('Unit test') {
+                        //     steps {
+                        //         dir('mhs/outbound') {
+                        //             executeUnitTestsWithCoverage()
+                        //         }
+                        //     }
+                        // }
                         stage('Build and Push image') {
                           when {
                               expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
@@ -91,20 +91,20 @@ pipeline {
                 }
                 stage('Route') {
                     stages {
-                //         stage('Build') {
-                //             steps {
-                //                 dir('mhs/spineroutelookup') {
-                //                     buildModules('Installing route lookup dependencies')
-                //                 }
-                //             }
-                //         }
-                //         stage('Unit test') {
-                //             steps {
-                //                 dir('mhs/spineroutelookup') {
-                //                     executeUnitTestsWithCoverage()
-                //                 }
-                //             }
-                //         }
+                        // stage('Build') {
+                        //     steps {
+                        //         dir('mhs/spineroutelookup') {
+                        //             buildModules('Installing route lookup dependencies')
+                        //         }
+                        //     }
+                        // }
+                        // stage('Unit test') {
+                        //     steps {
+                        //         dir('mhs/spineroutelookup') {
+                        //             executeUnitTestsWithCoverage()
+                        //         }
+                        //     }
+                        // }
                         stage('Build and Push image') {
                             when {
                                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }

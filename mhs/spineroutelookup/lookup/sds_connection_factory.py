@@ -80,6 +80,9 @@ def build_real_sds_connection(sds_url: str, tls: bool = True) -> ldap3.Connectio
     :param tls: A flag to indicate whether TLS should be enabled for the SDS connection.
     :return:
     """
+    logger.info('Configuring connection to SDS using {url} {tls}', fparams={
+                "url": sds_url, "tls": tls})
+                
     if tls:
         client_key = secrets.get_secret_config('CLIENT_KEY')
         client_cert = secrets.get_secret_config('CLIENT_CERT')

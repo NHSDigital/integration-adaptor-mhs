@@ -133,7 +133,8 @@ class TestForwardReliableWorkflow(unittest.TestCase):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
                                                                              PAYLOAD, None)
-            mock_get_config.assert_called_once_with('FORWARD_RELIABLE_ENDPOINT_URL')
+            mock_get_config.assert_called_with(
+                'FORWARD_RELIABLE_ENDPOINT_URL')
 
         self.assertEqual(202, status)
         self.assertEqual('', message)

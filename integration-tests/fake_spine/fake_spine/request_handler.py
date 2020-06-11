@@ -1,11 +1,13 @@
 import asyncio
 from fake_spine import fake_spine_configuration
 from fake_spine.base_handler import BaseHandler
+from comms.http_headers import HttpHeaders
 
 from fake_spine.inbound_client import InboundClient
 from fake_spine.request_matching import SpineRequestResponseMapper
 from fake_spine.spine_responses import InboundRequest
 from utilities import integration_adaptors_logger as log
+from tornado.ioloop import IOLoop
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -36,10 +38,12 @@ class SpineRequestHandler(BaseHandler):
         await self._do_outbound_delay()
 
         self.set_header('Content-Type', 'text/xml')
+        self.set_header('Correlation-Id', self.request.headers.get(HttpHeaders.CORRELATION_ID))
         self.set_status(status)
         self.write(response)
 
         # fire-and-forget the inbound request to allow it to happen some time after the outbound request completes
         inbound_request = responses.get_inbound_request(self.request)
         if inbound_request:
-            asyncio.create_task(self._do_inbound_request(inbound_request))
+            IOLoop.current().spawn_callback(inbound_request)
+            # await self._do_inbound_request(inbound_request)

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Tuple, Optional, Dict, List
 
 import utilities.integration_adaptors_logger as log
+from utilities import timing, config
 
 import mhs_common.state.work_description as wd
 from mhs_common.messages import ebxml_envelope
@@ -137,10 +138,12 @@ class CommonWorkflow(abc.ABC):
         # TEMP!!!
         logger.info('Spine url to be called {url}', fparams={'url': url})
 
-        url = url.replace('https://192.168.128.11/reliablemessaging/reliablerequest', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
-        url = url.replace('https://192.168.128.11/reliablemessaging/queryrequest', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
-        url = url.replace('https://192.168.128.11/sync-service', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
-        url = url.replace('https://192.168.128.11', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        url = config.get_config("FAKE_SPINE_URL", url)
+        # url = 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80'
+        # url = url.replace('https://192.168.128.11/reliablemessaging/reliablerequest', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        # url = url.replace('https://192.168.128.11/reliablemessaging/queryrequest', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        # url = url.replace('https://192.168.128.11/sync-service', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
+        # url = url.replace('https://192.168.128.11', 'http://mhs-fake-spine.vp-testing.nhsredteam.internal.nhs.uk:80')
     
         logger.info('Spine url to be called (after updating) {url}', fparams={'url': url})
 

@@ -11,6 +11,7 @@ resource "aws_lb" "outbound_alb" {
   internal = true
   load_balancer_type = "application"
   subnets = aws_subnet.mhs_subnet.*.id
+  name = "${var.environment_id}-mhs-outbound-alb"
   security_groups = [
     aws_security_group.alb_outbound_security_group.id
   ]
@@ -40,6 +41,7 @@ resource "aws_lb_target_group" "outbound_alb_target_group" {
   protocol = "HTTP"
   target_type = "ip"
   vpc_id = aws_vpc.mhs_vpc.id
+  name = "${var.environment_id}-outbound-alb-trg-grp"
 
   health_check {
     path = "/healthcheck"
@@ -85,6 +87,7 @@ resource "aws_lb" "route_alb" {
   internal = true
   load_balancer_type = "application"
   subnets = aws_subnet.mhs_subnet.*.id
+  name = "${var.environment_id}-mhs-route-alb"
   security_groups = [
     aws_security_group.alb_route_security_group.id
   ]
@@ -114,6 +117,7 @@ resource "aws_lb_target_group" "route_alb_target_group" {
   protocol = "HTTP"
   target_type = "ip"
   vpc_id = aws_vpc.mhs_vpc.id
+  name = "${var.environment_id}-route-alb-trg-grp"
 
   health_check {
     path = "/healthcheck"
@@ -162,6 +166,7 @@ resource "aws_lb" "fake_spine_alb" {
   internal = true
   load_balancer_type = "application"
   subnets = aws_subnet.mhs_subnet.*.id
+  name = "${var.environment_id}-mhs-fake-spine-alb"
   security_groups = [
     aws_security_group.alb_fake_spine_security_group.id
   ]
@@ -191,6 +196,7 @@ resource "aws_lb_target_group" "fake_spine_alb_target_group" {
   protocol = "HTTP"
   target_type = "ip"
   vpc_id = aws_vpc.mhs_vpc.id
+  name = "${var.environment_id}-fke-spne-alb-trg-grp"
 
   health_check {
     path = "/healthcheck"
@@ -238,6 +244,7 @@ resource "aws_lb" "inbound_nlb" {
   load_balancer_type = "network"
   subnets = aws_subnet.mhs_subnet.*.id
   enable_cross_zone_load_balancing = true
+  name = "${var.environment_id}-mhs-inbound-nlb"
 
   access_logs {
     bucket = aws_s3_bucket.mhs_access_logs_bucket.bucket
@@ -257,6 +264,18 @@ resource "aws_lb" "inbound_nlb" {
   }
 }
 
+# Listener for MHS inbound load balancer that forwards requests to the correct target group
+resource "aws_lb_listener" "inbound_nlb_listener" {
+  load_balancer_arn = aws_lb.inbound_nlb.arn
+  port = 443
+  protocol = "TCP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.inbound_nlb_target_group.arn
+  }
+}
+
 # Target group for the network load balancer for MHS inbound
 # The MHS inbound ECS service registers it's tasks here.
 resource "aws_lb_target_group" "inbound_nlb_target_group" {
@@ -264,6 +283,7 @@ resource "aws_lb_target_group" "inbound_nlb_target_group" {
   protocol = "TCP"
   target_type = "ip"
   vpc_id = aws_vpc.mhs_vpc.id
+  name = "${var.environment_id}-inbound-nlb-trg-grp"
 
   health_check {
     protocol = "HTTP"
@@ -287,14 +307,3 @@ output "inbound_lb_target_group_arn" {
   description = "The ARN of the MHS inbound service load balancers's target group."
 }
 
-# Listener for MHS inbound load balancer that forwards requests to the correct target group
-resource "aws_lb_listener" "inbound_nlb_listener" {
-  load_balancer_arn = aws_lb.inbound_nlb.arn
-  port = 443
-  protocol = "TCP"
-
-  default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.inbound_nlb_target_group.arn
-  }
-}

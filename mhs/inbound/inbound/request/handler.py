@@ -9,6 +9,7 @@ import mhs_common.messages.ebxml_nack_envelope as ebxml_nack_envelope
 import mhs_common.messages.ebxml_request_envelope as ebxml_request_envelope
 import mhs_common.workflow as workflow
 import tornado.web
+from tornado.ioloop import IOLoop
 
 from mhs_common.workflow.common import MessageData
 from utilities import mdc
@@ -47,39 +48,49 @@ class InboundHandler(base_handler.BaseHandler):
 
     @time_request
     async def post(self):
-        logger.info('Inbound POST received: {request}', fparams={'request': self.request})
+        logger.info('Inbound POST received: {request}', fparams={
+                    'request': self.request})
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
+            logger.debug('Request body: %s', self.request.body.decode()
+                         if self.request.body else None)
         request_message = self._extract_incoming_ebxml_request_message()
 
+        logger.debug('Extracted request message: {request_message}', fparams={'request_message': request_message})
+
         message_id = self._extract_message_id(request_message)
+        logger.debug('Extracted values: {message_id}', fparams={'message_id': message_id})
         interaction_id = self._extract_interaction_id(request_message)
+        logger.debug('Extracted values: {interaction_id}', fparams={'interaction_id': interaction_id})
         ref_to_message_id = self._extract_ref_message(request_message)
+        logger.debug('Extracted values: {ref_to_message_id}', fparams={'ref_to_message_id': ref_to_message_id})
         correlation_id = self._extract_correlation_id(request_message)
+        logger.debug('Extracted values: {correlation_id}', fparams={'correlation_id': correlation_id})
 
         if not self._is_message_intended_for_receiving_mhs(request_message):
-            logger.info("Skipping message as it was not intended for this recipient")
+            logger.info(
+                "Skipping message as it was not intended for this recipient")
             self._return_message_to_message_initiator(request_message)
             return
 
-        ebxml = request_message.message_dictionary[ebxml_request_envelope.EBXML]
-        payload = request_message.message_dictionary[ebxml_request_envelope.MESSAGE]
-        attachments = request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS]
-
-        message_data = MessageData(ebxml, payload, attachments)
+        message_data = MessageData(request_message.message_dictionary[ebxml_request_envelope.EBXML],
+                                   request_message.message_dictionary[ebxml_request_envelope.MESSAGE],
+                                   request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS])
 
         if ref_to_message_id:
-            logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
+            logger.info(
+                f'RefToMessageId on inbound reply: handling as an referenced reply message')
             await self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
         else:
-            logger.info(f'No RefToMessageId on inbound reply: handling as an unsolicited message')
+            logger.info(
+                f'No RefToMessageId on inbound reply: handling as an unsolicited message')
             await self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
-        self._send_ack(request_message)
+        await IOLoop.current().run_in_executor(None, self._send_ack, request_message)
 
     async def _handle_referenced_reply_message(self, message_id: str, correlation_id: str, message_data: MessageData):
         work_description = await self._get_work_description_from_store(message_id)
         message_workflow = self.workflows[work_description.workflow]
-        logger.info('Forwarding message {message_id} to {workflow}', fparams={'workflow': message_workflow, 'message_id': message_id})
+        logger.info('Forwarding message {message_id} to {workflow}', fparams={
+                    'workflow': message_workflow, 'message_id': message_id})
 
         try:
             await message_workflow.handle_inbound_message(message_id, correlation_id, work_description, message_data)
@@ -91,10 +102,12 @@ class InboundHandler(base_handler.BaseHandler):
     async def _get_work_description_from_store(self, message_id: str):
         work_description = await wd.get_work_description_from_store(self.work_description_store, message_id)
         if work_description:
-            logger.info(f'Retrieved work description for message {message_id} from state store')
+            logger.info(
+                f'Retrieved work description for message {message_id} from state store')
             return work_description
         else:
-            logger.error(f'No work description found in state store for message {message_id}')
+            logger.error(
+                f'No work description found in state store for message {message_id}')
             raise tornado.web.HTTPError(500, f'Unknown message reference {message_id}',
                                         reason="Unknown message reference")
 
@@ -102,7 +115,8 @@ class InboundHandler(base_handler.BaseHandler):
                                           interaction_id: str, message_data: MessageData):
         # Lookup workflow for request
         interaction_details = self._get_interaction_details(interaction_id)
-        message_workflow = self._extract_default_workflow(interaction_details, interaction_id)
+        message_workflow = self._extract_default_workflow(
+            interaction_details, interaction_id)
 
         # If it matches forward reliable workflow, then this will be an unsolicited request from another GP system.
         # So let the workflow handle this.
@@ -129,11 +143,13 @@ class InboundHandler(base_handler.BaseHandler):
 
     def _send_ack(self, parsed_message: ebxml_envelope.EbxmlEnvelope):
         logger.info('Building and sending acknowledgement')
-        self._send_ebxml_message(parsed_message, is_positive_ack=True, additional_context={})
+        self._send_ebxml_message(
+            parsed_message, is_positive_ack=True, additional_context={})
 
     def _send_nack(self, request_message: ebxml_envelope.EbxmlEnvelope, nack_context):
         logger.info('Building and sending negative acknowledgement')
-        self._send_ebxml_message(request_message, is_positive_ack=False, additional_context=nack_context)
+        self._send_ebxml_message(
+            request_message, is_positive_ack=False, additional_context=nack_context)
 
     def _send_ebxml_message(self, parsed_message, is_positive_ack, additional_context):
         message_details = parsed_message.message_dictionary
@@ -161,7 +177,7 @@ class InboundHandler(base_handler.BaseHandler):
         self.write(serialized_message)
 
     def _extract_correlation_id(self, message):
-        correlation_id = message.message_dictionary[CONVERSATION_ID]
+        correlation_id = message.message_dictionary[ebxml_envelope.CONVERSATION_ID]
         mdc.correlation_id.set(correlation_id)
         logger.info('Set correlation id from inbound request.')
         return correlation_id
@@ -172,7 +188,9 @@ class InboundHandler(base_handler.BaseHandler):
         :param message:
         :return: the inbound message id assigned to this message by sender
         """
+        logger.info('_extract_message_id before message_id')
         message_id = message.message_dictionary[MESSAGE_ID]
+        logger.info('_extract_message_id before mdc set of {message_id}', fparams={'message_id': message_id})
         mdc.inbound_message_id.set(message_id)
         logger.info('Found inbound message id on request.')
         return message_id
@@ -188,9 +206,9 @@ class InboundHandler(base_handler.BaseHandler):
             mdc.message_id.set(message_id)
             logger.info('Found "reference to" message id on inbound message.')
             return message_id
-        logger.info('Inbound message did not contain a "reference to" message id')
+        logger.info(
+            'Inbound message did not contain a "reference to" message id')
         return None
-
 
     def _extract_interaction_id(self, message):
         """
@@ -200,7 +218,8 @@ class InboundHandler(base_handler.BaseHandler):
         """
         interaction_id = message.message_dictionary[ebxml_envelope.ACTION]
         mdc.interaction_id.set(interaction_id)
-        logger.info("Found interaction id '%s' on inbound message.", interaction_id)
+        logger.info(
+            "Found interaction id '%s' on inbound message.", interaction_id)
         return interaction_id
 
     def _extract_incoming_ebxml_request_message(self):

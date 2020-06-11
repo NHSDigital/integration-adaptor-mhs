@@ -24,16 +24,6 @@ provider "aws" {
 # Get the list of availability zones for the selected AWS region
 data "aws_availability_zones" "all" {}
 
-# Get details of the DLT VPC the V&P VPC will have a peering connection with
-data "aws_vpc" "dlt_vpc" {
-  id = var.dlt_vpc_id
-}
-
-# Get details of the supplier VPC the MHS VPC will have a peering connection with
-data "aws_vpc" "supplier_vpc" {
-  id = var.supplier_vpc_id
-}
-
 # The MHS VPC that contains the running MHS
 resource "aws_vpc" "mhs_vpc" {
   # Note that this cidr block must not overlap with the cidr blocks of the VPCs

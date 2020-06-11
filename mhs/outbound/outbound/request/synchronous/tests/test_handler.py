@@ -165,7 +165,6 @@ class TestSynchronousHandler(BaseHandlerTest):
         expected_response = "Hello world!"
         self.workflow.handle_outbound_message.return_value = test_utilities.awaitable(
             (200, expected_response, None))
-        mock_get_uuid.return_value = MOCK_UUID
         self.config_manager.get_interaction_details.return_value = INTERACTION_DETAILS
 
         self.fetch("/", method="POST",
@@ -174,7 +173,6 @@ class TestSynchronousHandler(BaseHandlerTest):
                             'wait-for-response': 'false'},
                    body=REQUEST_BODY)
 
-        mock_message_id.set.assert_called_with(MOCK_UUID)
         mock_correlation_id.set.assert_called_with(correlation_id)
         mock_interaction_id.set.assert_called_with(INTERACTION_NAME)
 

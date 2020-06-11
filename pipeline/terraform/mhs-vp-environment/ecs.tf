@@ -95,6 +95,10 @@ locals {
     {
       name = "MHS_OUTBOUND_VALIDATE_CERTIFICATE"
       value = var.mhs_outbound_validate_certificate
+    },
+    {
+      name = "MHS_FAKE_SPINE_URL"
+      value = var.fake_spine_url
     }
   ]
   mhs_outbound_base_secrets = [
@@ -422,6 +426,13 @@ resource "aws_ecs_task_definition" "mhs_fake_spine_task" {
           valueFrom = var.fake_spine_party_key
         }
       ]
+      ulimits = [
+        {
+          softlimit = 50000,
+          hardlimit = 50000,
+          name = "nofile"
+        }
+      ]
       essential = true
       logConfiguration = {
         logDriver = "awslogs"
@@ -525,7 +536,7 @@ resource "aws_appautoscaling_policy" "mhs_outbound_autoscaling_policy" {
   }
 }
 
-# MHS inbound service that runs multiple of the MHS outbound task definition
+# MHS inbound service that runs multiple of the MHS inbound task definition
 # defined above
 resource "aws_ecs_service" "mhs_inbound_service" {
   name = "${var.environment_id}-mhs-inbound"

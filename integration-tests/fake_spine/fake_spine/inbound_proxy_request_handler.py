@@ -22,17 +22,23 @@ class InboundProxyRequestHandler(BaseHandler):
         http_client = httpclient.AsyncHTTPClient()
         logger.info(f"max_clients for inbound_proxy_request_handler: {http_client.max_clients}")
 
-        response = await http_client\
-            .fetch(self.config.INBOUND_SERVER_BASE_URL,
-                   raise_error=False,
-                   method="POST",
-                   body=self.request.body,
-                   headers=self.request.headers,
-                   client_cert=self.inbound_certs.local_cert_path,
-                   client_key=self.inbound_certs.private_key_path,
-                   ca_certs=self.inbound_certs.ca_certs_path,
-                   validate_cert=self.config.FAKE_SPINE_PROXY_VALIDATE_CERT)
+        logger.info(f"About to post to: {self.config.INBOUND_SERVER_BASE_URL}")
+        
+        try:
+            response = await http_client\
+                .fetch(self.config.INBOUND_SERVER_BASE_URL,
+                    raise_error=True,
+                    method="POST",
+                    body=self.request.body,
+                    headers=self.request.headers,
+                    client_cert=self.inbound_certs.local_cert_path,
+                    client_key=self.inbound_certs.private_key_path,
+                    ca_certs=self.inbound_certs.ca_certs_path,
+                    validate_cert=self.config.FAKE_SPINE_PROXY_VALIDATE_CERT)
 
-        logger.info(f"inbound responded with code: {response.code} and body: {response.body}")
-        self.set_status(response.code)
-        self.write(response.body)
+            logger.info(f"inbound responded with code: {response.code} and body: {response.body}")
+            self.set_status(response.code)
+            self.write(response.body)
+        except Exception as e:
+            logger.exception('Exception in InboundProxyRequestHandler.post')
+            raise e

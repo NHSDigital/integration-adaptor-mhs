@@ -130,8 +130,11 @@ class SynchronousHandler(base_handler.BaseHandler):
         new_uuid = str(uuid.uuid4()).upper()
 
         message_id = self._replace_uuid_placeholder(self._extract_message_id(), new_uuid)
+        correlation_id = self._replace_uuid_placeholder(self._extract_correlation_id(), new_uuid)
 
-        correlation_id = self._extract_correlation_id()
+        mdc.message_id.set(message_id)
+        mdc.correlation_id.set(correlation_id)
+
         interaction_id = self._extract_interaction_id()
         wait_for_response_header = self._extract_wait_for_response_header()
         from_asid = self._extract_from_asid()
@@ -315,7 +318,7 @@ class SynchronousHandler(base_handler.BaseHandler):
         return interaction_details
 
     def _replace_uuid_placeholder(self, text: str, new_uuid: str):
-        mdc.message_id.set(new_uuid)
+        # mdc.message_id.set(new_uuid)
         logger.info('Replacing UUID placeholder with auto-generated UUID: {new_uuid}',
                      fparams={'new_uuid': new_uuid})
         return text.replace(UUID_PLACEHOLDER, new_uuid)
