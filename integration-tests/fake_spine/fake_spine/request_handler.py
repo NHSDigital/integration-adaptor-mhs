@@ -45,5 +45,4 @@ class SpineRequestHandler(BaseHandler):
         # fire-and-forget the inbound request to allow it to happen some time after the outbound request completes
         inbound_request = responses.get_inbound_request(self.request)
         if inbound_request:
-            IOLoop.current().spawn_callback(inbound_request)
-            # await self._do_inbound_request(inbound_request)
+            asyncio.create_task(self._do_inbound_request(inbound_request))
