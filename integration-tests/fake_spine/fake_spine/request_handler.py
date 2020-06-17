@@ -7,7 +7,6 @@ from fake_spine.inbound_client import InboundClient
 from fake_spine.request_matching import SpineRequestResponseMapper
 from fake_spine.spine_responses import InboundRequest
 from utilities import integration_adaptors_logger as log
-from tornado.ioloop import IOLoop
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -27,7 +26,7 @@ class SpineRequestHandler(BaseHandler):
     async def _do_inbound_request(self, inbound_request: InboundRequest):
         logger.debug(f'Delaying inbound request by {self.config.INBOUND_DELAY_MS}ms')
         await asyncio.sleep(self.config.INBOUND_DELAY_MS / 1000.0)
-        asyncio.create_task(self.inbound_client.make_request(inbound_request))
+        await self.inbound_client.make_request(inbound_request)
 
     async def post(self):
         logger.info(f"request accepted {self.request} with headers: {self.request.headers}, and body: {self.request.body}")
@@ -45,4 +44,4 @@ class SpineRequestHandler(BaseHandler):
         # fire-and-forget the inbound request to allow it to happen some time after the outbound request completes
         inbound_request = responses.get_inbound_request(self.request)
         if inbound_request:
-            asyncio.create_task(self._do_inbound_request(inbound_request))
+            await self._do_inbound_request(inbound_request)
