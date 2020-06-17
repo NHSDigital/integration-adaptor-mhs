@@ -27,4 +27,4 @@ class InboundClient(object):
                                                 body=request.body,
                                                 raise_error=True,
                                                 request_timeout=2,
-                                                headers={**self.HEADERS, **request.headers}
+                                                headers={**self.HEADERS, **request.headers})
