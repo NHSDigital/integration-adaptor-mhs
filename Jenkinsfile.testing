@@ -89,7 +89,6 @@ pipeline {
                                         "fake_spine_proxy_validate_cert":   "false",
                                         "fake_spine_url":                   "${FAKESPINE_URL}",
                                         "inbound_queue_brokers": "${MHS_INBOUND_QUEUE_BROKERS}",
-                                        "inbound_queue_message_ttl": "300",
                                         "inbound_queue_name": "${MHS_INBOUND_QUEUE_NAME}",
                                         "inbound_queue_password_arn": "${INBOUND_QUEUE_PASSWORD_ARN}",
                                         "inbound_queue_username_arn": "${INBOUND_QUEUE_USERNAME_ARN}",
