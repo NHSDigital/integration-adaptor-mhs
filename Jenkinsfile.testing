@@ -8,13 +8,13 @@ pipeline {
             defaultValue: '',
             description: 'Build tag to deploy')
         string(name: 'INBOUND_MINIMUM_IMAGES',
-            defaultValue: '5',
+            defaultValue: '1',
             description: 'Inbound minumum images')
         string(name: 'INBOUND_MAXIMUM_IMAGES',
             defaultValue: '10',
             description: 'Inbound maximum images')
         string(name: 'OUTBOUND_MINIMUM_IMAGES',
-            defaultValue: '5',
+            defaultValue: '1',
             description: 'Outbound minumum images')
         string(name: 'OUTBOUND_MAXIMUM_IMAGES',
             defaultValue: '10',
@@ -26,16 +26,16 @@ pipeline {
             defaultValue: '10',
             description: 'Route maximum images')
         string(name: 'FAKE_SPINE_MINIMUM_IMAGES',
-            defaultValue: '5',
+            defaultValue: '1',
             description: 'Fake Spine minumum images')
         string(name: 'FAKE_SPINE_MAXIMUM_IMAGES',
-            defaultValue: '20',
+            defaultValue: '10',
             description: 'Fake Spine maximum images')
         string(name: 'MHS_STATE_TABLE_READ_CAPACITY',
-            defaultValue: '100',
+            defaultValue: '20',
             description: 'DynamoDb MHS State Table read capacity')
         string(name: 'MHS_STATE_TABLE_WRITE_CAPACITY',
-            defaultValue: '500',
+            defaultValue: '100',
             description: 'DynamoDb MHS State Table write capacity')
     }
 

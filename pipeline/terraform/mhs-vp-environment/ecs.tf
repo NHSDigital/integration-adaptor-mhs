@@ -215,6 +215,10 @@ resource "aws_ecs_task_definition" "mhs_inbound_task" {
         {
           name = "MHS_INBOUND_SERVER_PORT"
           value = var.inbound_server_port
+        },
+        {
+          name = "MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS"
+          value = var.inbound_queue_message_ttl
         }
       ]
       secrets = [
