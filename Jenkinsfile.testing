@@ -118,6 +118,7 @@ pipeline {
                                         "mhs_resynchroniser_max_retries": "${MHS_RESYNC_RETRIES}",
                                         "mhs_route_service_minimum_instance_count": "${ROUTE_MINIMUM_IMAGES}",
                                         "mhs_route_service_maximum_instance_count": "${ROUTE_MAXIMUM_IMAGES}",
+                                        "mhs_sds_cache_expiry_time": "43200"
                                         "mhs_spine_org_code": "${SPINE_ORG_CODE}",
                                         "mhs_state_table_read_capacity": "${MHS_STATE_TABLE_READ_CAPACITY}",
                                         "mhs_state_table_write_capacity": "${MHS_STATE_TABLE_WRITE_CAPACITY}",

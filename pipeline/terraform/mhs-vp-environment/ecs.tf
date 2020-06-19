@@ -316,6 +316,10 @@ resource "aws_ecs_task_definition" "mhs_route_task" {
         {
           name = "MHS_SDS_REDIS_CACHE_PORT"
           value = tostring(aws_elasticache_replication_group.elasticache_replication_group.port)
+        },
+        {
+          name = "MHS_SDS_CACHE_EXPIRY_TIME"
+          value = var.mhs_sds_cache_expiry_time
         }
       ]
       secrets = [

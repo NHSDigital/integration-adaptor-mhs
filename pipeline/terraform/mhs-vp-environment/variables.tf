@@ -379,3 +379,8 @@ variable "mq_vpc_id" {
   type = string
   description = "The ID of the MQ VPC"
 }
+
+variable "mhs_sds_cache_expiry_time" {
+  type = string
+  description = "An optional value that specifies the time (in seconds) that a value should be held in the SDS cache."
+}
