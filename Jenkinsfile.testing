@@ -101,7 +101,7 @@ pipeline {
                                         "mq_vpc_id": "${MQ_VPC_ID}",
                                         "mhs_fake_spine_service_minimum_instance_count":    "${FAKE_SPINE_MINIMUM_IMAGES}",
                                         "mhs_fake_spine_service_maximum_instance_count":    "${FAKE_SPINE_MAXIMUM_IMAGES}",
-                                        "mhs_log_level":                    "DEBUG",
+                                        "mhs_log_level":                    "INFO",
                                         "opentest_vpc_id": "${OPENTEST_VPC_ID}",
                                         "supplier_vpc_id": "${SUPPLIER_VPC_ID}",
                                         "task_role_arn":                    "${TASK_ROLE}",
