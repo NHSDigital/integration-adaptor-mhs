@@ -193,7 +193,7 @@ pipeline {
                                         """
                                         //terraform apply -auto-approve -no-color \
                                     sh label: 'Applying Terraform configuration, part 1', script: """
-                                            terraform plan -destroy -no-color \
+                                            terraform destroy -auto-approve -no-color \
                                             -var environment_id=${ENVIRONMENT_ID} \
                                             -var build_id=${BUILD_TAG} \
                                             -var supplier_vpc_id=${SUPPLIER_VPC_ID} \
