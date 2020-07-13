@@ -24,17 +24,21 @@ class InboundProxyRequestHandler(BaseHandler):
 
         logger.info(f"About to post to: {self.config.INBOUND_SERVER_BASE_URL}")
         
-        response = await http_client\
-            .fetch(self.config.INBOUND_SERVER_BASE_URL,
-                raise_error=True,
-                method="POST",
-                body=self.request.body,
-                headers=self.request.headers,
-                client_cert=self.inbound_certs.local_cert_path,
-                client_key=self.inbound_certs.private_key_path,
-                ca_certs=self.inbound_certs.ca_certs_path,
-                validate_cert=self.config.FAKE_SPINE_PROXY_VALIDATE_CERT)
+        try:
+            response = await http_client\
+                .fetch(self.config.INBOUND_SERVER_BASE_URL,
+                    raise_error=False,
+                    method="POST",
+                    body=self.request.body,
+                    headers=self.request.headers,
+                    client_cert=self.inbound_certs.local_cert_path,
+                    client_key=self.inbound_certs.private_key_path,
+                    ca_certs=self.inbound_certs.ca_certs_path,
+                    validate_cert=self.config.FAKE_SPINE_PROXY_VALIDATE_CERT)
 
-        logger.info(f"inbound responded with code: {response.code} and body: {response.body}")
-        self.set_status(response.code)
-        self.write(response.body)
+            logger.info(f"inbound responded with code: {response.code} and body: {response.body}")
+            self.set_status(response.code)
+            self.write(response.body)
+        except Exception as e:
+            logger.exception('Exception in InboundProxyRequestHandler.post')
+            raise e
