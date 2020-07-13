@@ -11,6 +11,7 @@ pipeline {
     }
 
     stages {
+    /*
         stage('Build & test common') {
             steps {
                 dir('common') {
@@ -27,7 +28,7 @@ pipeline {
                 }
             }
         }
-
+    *//*
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
@@ -114,11 +115,12 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Test') {
             // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
             //parallel {
             stages {
+/*
                 stage('Run Component Tests') {
                     options {
                         lock('local-docker-compose-environment')
@@ -172,7 +174,7 @@ pipeline {
                         }
                     }
                 }
-
+*/
                 stage('Run Integration Tests') {
                     options {
                         lock('exemplar-test-environment')
@@ -189,8 +191,9 @@ pipeline {
                                             -backend-config="dynamodb_table=${ENVIRONMENT_ID}-${TF_MHS_LOCK_TABLE_NAME}" \
                                             -input=false -no-color
                                         """
+                                        //terraform apply -auto-approve -no-color \
                                     sh label: 'Applying Terraform configuration, part 1', script: """
-                                            terraform apply -auto-approve -no-color \
+                                            terraform plan -destroy -no-color \
                                             -var environment_id=${ENVIRONMENT_ID} \
                                             -var build_id=${BUILD_TAG} \
                                             -var supplier_vpc_id=${SUPPLIER_VPC_ID} \
