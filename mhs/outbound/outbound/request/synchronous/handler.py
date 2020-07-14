@@ -18,115 +18,18 @@ from outbound.request import request_body_schema
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
-
 class SynchronousHandler(base_handler.BaseHandler):
     """A Tornado request handler intended to handle incoming HTTP requests from a supplier system."""
 
     @timing.time_request
     async def post(self):
-        """
-        ---
-        summary: Make a request to the MHS
-        description: Make a request to the MHS
-        operationId: postMHS
-        parameters:
-          - name: Interaction-Id
-            in: header
-            required: true
-            schema:
-              type: string
-            description: ID of the interaction that you want to invoke. e.g. QUPC_IN160101UK05
-          - name: wait-for-response
-            in: header
-            required: true
-            schema:
-              type: string
-              enum: ["true", "false"]
-            description: >-
-              If set to true and the interaction ID is for an async interaction
-              that supports sync-async, then the HTTP response will be the
-              response from Spine, and the response will not be put onto the
-              inbound queue.
-
-
-              If set to false for an async interaction, then the response from
-              Spine will be put onto the inbound queue and the HTTP response will
-              just acknowledge sending the request successfully to Spine.
-
-
-              For sync interactions or async interactions that don't support
-              sync-async, this header must be set to false.
-          - name: from-asid
-            in: header
-            required: false
-            schema:
-              type: string
-            description: >-
-              The ASID of the sending system. This should be the same as the from-asid
-              value within the HL7 payload. This header is optional and only
-              required/used for interactions that use the sync workflow.
-          - name: Message-Id
-            in: header
-            required: false
-            schema:
-              type: string
-            description: >-
-              Message ID of the message to send to Spine. If not sent, the MHS
-              generates a random message ID.
-
-
-              When performing async requests where the response is put on the
-              inbound queue, the message ID will be put with the response on the
-              queue.
-          - name: Correlation-Id
-            in: header
-            required: false
-            schema:
-              type: string
-            description: >-
-              Correlation ID that is used when logging. If not passed, a random
-              correlation ID is generated. The idea is that log messages produced
-              by the MHS include this correlation ID which allows correlating logs
-              relating to a single request together. If the supplier system uses
-              it's own correlation ID when producing it's logs, then that should
-              be passed in here, so that logs for a single request can be tied
-              together across the supplier system and the MHS.
-
-
-              When performing async requests where the response is put on the
-              inbound queue, the correlation ID will be put with the response on the
-              queue.
-
-
-              Note that this correlation ID gets sent to/from Spine.
-          - name: ods-code
-            in: header
-            required: false
-            schema:
-              type: string
-            description: >-
-              ODS Code receiving system. It defaults to Spines ODS Code if not porvided and is primarily used for
-              indirect messaging, i.e. forward reliable for example, where the destination system is not Spine. The
-              ODS Code is used to lookup the constract properties in SDS.
-        responses:
-          200:
-            description: Successful response from Spine.
-            content:
-              text/xml: {}
-          202:
-            description: >-
-              Acknowledgement that we successfully sent the message to Spine
-              (response will come asynchronously on the inbound queue).
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/RequestBody'
-          description: The HL7 payload (and optional attachments) to be sent to Spine.
-        """
+       
         message_id = self._extract_message_id()
         correlation_id = self._extract_correlation_id()
+
+        mdc.message_id.set(message_id)
+        mdc.correlation_id.set(correlation_id)
+
         interaction_id = self._extract_interaction_id()
         wait_for_response_header = self._extract_wait_for_response_header()
         from_asid = self._extract_from_asid()

@@ -1,4 +1,8 @@
-import tornado.web
+import tornado
+
+from utilities import integration_adaptors_logger as log
+
+logger = log.IntegrationAdaptorsLogger(__name__)
 
 
 class HealthcheckHandler(tornado.web.RequestHandler):

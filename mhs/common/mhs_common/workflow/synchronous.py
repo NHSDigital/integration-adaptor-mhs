@@ -3,16 +3,17 @@ from typing import Tuple, Optional
 import utilities.integration_adaptors_logger as log
 from tornado import httpclient
 
-from mhs_common.workflow.common import MessageData
-from utilities import timing
+from comms.http_headers import HttpHeaders
 from mhs_common import workflow
 from mhs_common.errors.soap_handler import handle_soap_error
 from mhs_common.messages import soap_envelope
+from mhs_common.routing import routing_reliability
 from persistence import persistence_adaptor as pa
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
 from mhs_common.workflow import common_synchronous
-from mhs_common.routing import routing_reliability
+from mhs_common.workflow.common import MessageData
+from utilities import timing, mdc
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -65,7 +66,7 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
             return 500, 'Error obtaining outbound URL', None
 
         try:
-            message_id, headers, message = await self._prepare_outbound_message(message_id,
+            message_id, http_headers, message = await self._prepare_outbound_message(message_id,
                                                                                 to_asid,
                                                                                 from_asid=from_asid,
                                                                                 interaction_details=interaction_details,
@@ -83,8 +84,12 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
                         f'RequestSize={len(message)}', None
 
         logger.info('Outbound message prepared')
+        http_headers[HttpHeaders.CORRELATION_ID] = correlation_id
+        http_headers[HttpHeaders.MESSAGE_ID] = message_id
+        http_headers[HttpHeaders.INTERACTION_ID] = str(mdc.interaction_id.get())
+
         try:
-            response = await self.transmission.make_request(url, headers, message)
+            response = await self.transmission.make_request(url, http_headers, message)
         except httpclient.HTTPClientError as e:
             code, error = await self._handle_http_exception(e, wdo)
             return code, error, wdo

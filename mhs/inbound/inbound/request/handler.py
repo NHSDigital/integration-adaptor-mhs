@@ -62,11 +62,9 @@ class InboundHandler(base_handler.BaseHandler):
             self._return_message_to_message_initiator(request_message)
             return
 
-        ebxml = request_message.message_dictionary[ebxml_request_envelope.EBXML]
-        payload = request_message.message_dictionary[ebxml_request_envelope.MESSAGE]
-        attachments = request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS]
-
-        message_data = MessageData(ebxml, payload, attachments)
+        message_data = MessageData(request_message.message_dictionary[ebxml_request_envelope.EBXML],
+                                   request_message.message_dictionary[ebxml_request_envelope.MESSAGE],
+                                   request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS])
 
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
@@ -79,7 +77,8 @@ class InboundHandler(base_handler.BaseHandler):
     async def _handle_referenced_reply_message(self, message_id: str, correlation_id: str, message_data: MessageData):
         work_description = await self._get_work_description_from_store(message_id)
         message_workflow = self.workflows[work_description.workflow]
-        logger.info('Forwarding message {message_id} to {workflow}', fparams={'workflow': message_workflow, 'message_id': message_id})
+        logger.info('Forwarding message {message_id} to {workflow}', fparams={
+                    'workflow': message_workflow, 'message_id': message_id})
 
         try:
             await message_workflow.handle_inbound_message(message_id, correlation_id, work_description, message_data)
@@ -161,7 +160,7 @@ class InboundHandler(base_handler.BaseHandler):
         self.write(serialized_message)
 
     def _extract_correlation_id(self, message):
-        correlation_id = message.message_dictionary[CONVERSATION_ID]
+        correlation_id = message.message_dictionary[ebxml_envelope.CONVERSATION_ID]
         mdc.correlation_id.set(correlation_id)
         logger.info('Set correlation id from inbound request.')
         return correlation_id
@@ -190,7 +189,6 @@ class InboundHandler(base_handler.BaseHandler):
             return message_id
         logger.info('Inbound message did not contain a "reference to" message id')
         return None
-
 
     def _extract_interaction_id(self, message):
         """
