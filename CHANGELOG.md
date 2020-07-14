@@ -9,6 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2020-07-14
 
 ### Added
-
+- A pre-assured MHS adaptor
+ 
 ### Changed
-- Some performance improvements as a result of soak testing
