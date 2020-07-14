@@ -7,8 +7,11 @@ cd ..
 ./build.sh
 
 docker tag local/mhs-inbound:${BUILD_TAG} nhsdev/nia-mhs-inbound:${BUILD_TAG}
+docker tag local/mhs-inbound:${BUILD_TAG} nhsdev/nia-mhs-inbound:latest
 docker tag local/mhs-outbound:${BUILD_TAG} nhsdev/nia-mhs-outbound:${BUILD_TAG}
+docker tag local/mhs-outbound:${BUILD_TAG} nhsdev/nia-mhs-outbound:latest
 docker tag local/mhs-route:${BUILD_TAG} nhsdev/nia-mhs-route:${BUILD_TAG}
+docker tag local/mhs-route:${BUILD_TAG} nhsdev/nia-mhs-route:latest
 
 if [ "$1" == "-y" ];
 then
@@ -23,6 +26,9 @@ then
     docker push nhsdev/nia-mhs-inbound:${BUILD_TAG}
     docker push nhsdev/nia-mhs-outbound:${BUILD_TAG}
     docker push nhsdev/nia-mhs-route:${BUILD_TAG}
+    docker push nhsdev/nia-mhs-inbound:latest
+    docker push nhsdev/nia-mhs-outboundlatest
+    docker push nhsdev/nia-mhs-route:latest
     git tag -a ${BUILD_TAG} -m "Release ${BUILD_TAG}"
     git push origin ${BUILD_TAG}
 fi
