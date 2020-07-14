@@ -2,10 +2,7 @@ version: '3'
 
 services:
   inbound:
-    image: local/mhs-inbound:latest
-    ports:
-      - "443"
-      - "80"
+    image:  nhsdev/nia-mhs-inbound:1.0.0
     environment:
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SECRET_PARTY_KEY
@@ -28,9 +25,7 @@ services:
       - SERVICE_PORTS=443,80
       
   outbound:
-    image: local/mhs-outbound:latest
-    ports:
-      - "80"
+    image: nhsdev/nia-mhs-outbound:1.0.0
     environment:
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SECRET_PARTY_KEY
@@ -54,7 +49,7 @@ services:
       - SERVICE_PORTS=80
 
   route:
-    image: local/mhs-route:latest
+    image: nhsdev/nia-mhs-route:1.0.0
     ports:
         - "8080:80"
     environment:
