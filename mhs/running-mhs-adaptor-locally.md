@@ -1,6 +1,6 @@
-# Running the MHS and SCR adaptors locally
+# Running the MHS adaptor locally
 
-It may be useful to run these adaptors in a local environment. The following is a step-by-step guide on how to set this up.
+It may be useful to run this adaptor in a local environment. The following is a step-by-step guide on how to set this up.
 
 * Pre-requisite: [Set up NHS Digital OpenTest connection](../setup-opentest.md)
 * Requirements: 
@@ -40,7 +40,7 @@ firewall to allow inbound traffic from the Spine through port 443.
 * Note that the `MHS_LOG_LEVEL` environment variable (as documented [here](mhs-adaptor-dev-notes.md#environment-variables)) is set by default to `NOTSET` in the
 `docker-compose.yml` file but should be changed if needed.
 
-## Smoke Testing your local MHS and SCR adaptor
+## Smoke Testing your local MHS adaptor
 
 The Outbound service, Inbound Service and the Spine Lookup Service all expose a health-check endpoint which can also be
 used to facilitate health checks in a load balanced environment.
