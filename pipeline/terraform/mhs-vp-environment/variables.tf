@@ -17,7 +17,7 @@ variable "build_id" {
 variable "mhs_vpc_cidr_block" {
   type = string
   description = "The CIDR block to use for the MHS VPC that is created. Should be a /16 block. Note that this cidr block must not overlap with the cidr blocks of the VPCs that the MHS VPC is to be peered with."
-  default = "10.0.0.0/16"
+  default = "10.4.0.0/16"
 }
 
 variable "supplier_vpc_id" {
@@ -28,6 +28,11 @@ variable "supplier_vpc_id" {
 variable "opentest_vpc_id" {
   type = string
   description = "VPC id of the VPC that contains the Opentest connection to Spine"
+}
+
+variable "dlt_vpc_id" {
+  type = string
+  description = "VPC id of the DLT-Distributed Load Testing system that connects to the MHS"
 }
 
 variable "internal_root_domain" {
@@ -175,6 +180,17 @@ variable "inbound_queue_password_arn" {
   description = "ARN of the secrets manager secret of the password to use when connecting to the inbound queue."
 }
 
+variable "inbound_use_ssl" {
+  type = string
+  description = ""
+  default = "True"
+}
+
+variable "inbound_server_port" {
+  type = string
+  description = "The port the inbound server runs on"
+}
+
 variable "party_key_arn" {
   type = string
   description = "ARN of the secrets manager secret of the party key associated with the MHS."
@@ -211,11 +227,6 @@ variable "route_alb_certificate_arn" {
   description = "ARN of the TLS certificate that the outbound load balancer should present. This can be a certificate stored in IAM or ACM."
 }
 
-variable "spineroutelookup_service_sds_url" {
-  type = string
-  description = "The SDS URL the Spine Route Lookup service should communicate with."
-}
-
 variable "spineroutelookup_service_search_base" {
   type = string
   description = "The LDAP location the Spine Route Lookup service should use as the base of its searches when querying SDS."
@@ -225,6 +236,11 @@ variable "spineroutelookup_service_disable_sds_tls" {
   type = string
   description = "Whether TLS should be disabled for connections to SDS."
   default = "False"
+}
+
+variable "spineroutelookup_service_sds_url" {
+  type = string
+  description = "The SDS URL the Spine Route Lookup service should communicate with."
 }
 
 variable "elasticache_node_type" {
@@ -259,4 +275,112 @@ variable "healthcheck_threshold" {
   type = number
   default = 3
   description = "Retries for confirming target status - healthy or unhealthy, AWS default is 3"
+}
+
+variable "fake_spine_outbound_delay_ms" {
+  type = string
+  description = "To simulate actual Spine response times, the number of milliseconds to wait before returning an outbound response"
+}
+
+variable "fake_spine_inbound_delay_ms" {
+  type = string
+  description = "To simulate actual Spine asynchronous response times, the number of milliseconds to wait before sending a reply to the inbound service"
+}
+
+variable "fake_spine_outbound_ssl_enabled" {
+  type = string
+  default = "True"
+  description = "If False then the outbound request handler will use HTTP instead of HTTPS"
+}
+
+variable "fake_spine_port" {
+  type = string
+  default = 443
+  description = "Port on which the outbound request handler receives requests to fake spine"
+}
+
+variable "fake_spine_url" {
+  type = string
+  description = "The url for the fake spine component"
+}
+
+variable "fake_spine_private_key" {
+  type = string
+  description = "TLS private key for both HTTPS outbound request handler and inbound mutual TLS"
+}
+
+variable "fake_spine_inbound_proxy_port" {
+  type = string
+  default = "8888"
+  description = "Port on which the inbound proxy runs to proxy request made internally to the inbound service"
+}
+
+variable "fake_spine_proxy_validate_cert" {
+  type = string
+  default = "True"
+  description = "If False then certificate validation errors on requests made to inbound are ignored"
+}
+
+variable "inbound_server_base_url" {
+  type = string
+  description = "The url (including URI scheme) to which the inbound proxy makes requests (example: https://inbound/)"
+}
+
+variable "fake_spine_ca_store" {
+  type = string
+}
+
+variable "inbound_queue_message_ttl" {
+  type = string
+}
+
+variable "fake_spine_alb_certificate_arn" {
+  type = string
+}
+
+variable "fake_spine_certificate" {
+  type = string
+  description = "TLS certificate for both HTTPS outbound request handler and inbound mutual TLS"
+}
+
+variable "fake_spine_party_key" {
+  type = string
+  description = "The party key (recipient) used to make request to inbound. *Must* match the party key used to configure the inbound service"
+}
+
+variable "mhs_fake_spine_service_minimum_instance_count" {
+  type = number
+  description = "The minimum number of instances of MHS fake spine service to run. This will be the number of instances deployed initially."
+}
+
+variable "mhs_fake_spine_service_maximum_instance_count" {
+  type = number
+  description = "The maximum number of instances of MHS fake spine service to run."
+}
+
+variable "mhs_fake_spine_service_target_request_count" {
+  type = number
+  description = "The target number of requests per minute that an MHS fake spine service should handle. The number of services will be autoscaled so each instance handles this number of requests. This value should be tuned based on the results of performance testing."
+  default = 1200
+}
+
+variable "container_insights" {
+  type = string
+  default = "enabled"
+  description = "(Optional) Container Insights for containers in the cluster, default is disabled"
+}
+
+variable "mq_sg_id" {
+  type = string
+  description = "The name of the MQ security group we add our rules to for access to and from MHS"
+}
+
+variable "mq_vpc_id" {
+  type = string
+  description = "The ID of the MQ VPC"
+}
+
+variable "mhs_sds_cache_expiry_time" {
+  type = string
+  description = "An optional value that specifies the time (in seconds) that a value should be held in the SDS cache."
 }

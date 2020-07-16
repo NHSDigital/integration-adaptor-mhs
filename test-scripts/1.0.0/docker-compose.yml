@@ -2,7 +2,7 @@ version: '3'
 
 services:
   inbound:
-    image:  nhsdev/nia-mhs-inbound:0.0.1
+    image:  nhsdev/nia-mhs-inbound:1.0.0
     environment:
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SECRET_PARTY_KEY
@@ -15,7 +15,7 @@ services:
       - MHS_SECRET_INBOUND_QUEUE_PASSWORD=guest
       - MHS_STATE_TABLE_NAME=mhs_state
       - MHS_SYNC_ASYNC_STATE_TABLE_NAME=sync_async_state
-      - MHS_DYNAMODB_ENDPOINT_URL=http://dynamodb:8000
+      - MHS_DB_ENDPOINT_URL=http://dynamodb:8000
       - MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS=0
       # boto3 requires some AWS creds to be provided, even
       # when connecting to local DynamoDB
@@ -25,7 +25,7 @@ services:
       - SERVICE_PORTS=443,80
       
   outbound:
-    image: nhsdev/nia-mhs-outbound:0.0.1
+    image: nhsdev/nia-mhs-outbound:1.0.0
     environment:
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SECRET_PARTY_KEY
@@ -33,7 +33,7 @@ services:
       - MHS_SECRET_CLIENT_KEY
       - MHS_SECRET_CA_CERTS
       - MHS_STATE_TABLE_NAME=mhs_state
-      - MHS_DYNAMODB_ENDPOINT_URL=http://dynamodb:8000
+      - MHS_DB_ENDPOINT_URL=http://dynamodb:8000
       - MHS_SYNC_ASYNC_STATE_TABLE_NAME=sync_async_state
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
@@ -45,11 +45,11 @@ services:
       # Note that this endpoint URL is Opentest-specific
       - MHS_FORWARD_RELIABLE_ENDPOINT_URL=https://192.168.128.11/reliablemessaging/forwardreliable
       # This is for disabling hostname validation so OpenTest ip address will work
-      - MHS_OUTBOUND_VALIDATE_CERTIFICATE=${MHS_OUTBOUND_VALIDATE_CERTIFICATE:-True}
+      - MHS_OUTBOUND_VALIDATE_CERTIFICATE=False
       - SERVICE_PORTS=80
 
   route:
-    image: nhsdev/nia-mhs-route:0.0.1
+    image: nhsdev/nia-mhs-route:1.0.0
     ports:
         - "8080:80"
     environment:
