@@ -47,5 +47,8 @@ This adaptor supports a number of patterns. More information on these patterns c
 ### Outbound Service Open API Specification
 An [Open API spec](mhs/MHS-Outbound.yaml) has been created specifically for the MHS adaptors outbound service.
 
+### Developer Notes
+The [Developer Notes](mhs/mhs-adaptor-dev-notes.md) readme has a number of sections that are intended to provide the necessary information on how to configure and run the MHS adaptor locally.  It also contains a list of environment variables and their desciptions and how to run unit and integration tests.
+
 ### Operational Considerations 
 Useful information on how you may [operate the MHS adaptor](mhs/operating-mhs-adaptor.md) in your own infrastructure.  This covers areas such as log consumption, tooling, audit plus many other useful topics.
