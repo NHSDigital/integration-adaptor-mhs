@@ -49,7 +49,8 @@ generates HTML docs. An invocation of this command can be seen
 [here](https://htmlpreview.github.io/?https://github.com/nhsconnect/integration-adaptors/blob/develop/mhs/outbound/openapi-docs.html).
 
 ### Environment Variables
-MHS takes a number of environment variables when it is run. These are:
+MHS takes a number of environment variables when it is run. Some of the variables are environment specific (OpenTest, PTL and if necessary the Fakespine).  You can find more information on environment config values in the [OpenTest](https://digital.nhs.uk/services/spine/open-access-test-environment-for-spine-opentest) and [Path To Live](https://digital.nhs.uk/services/path-to-live-environments) portal pages.
+The list of environment variables are:
 * `MHS_LOG_LEVEL` This is required to be set to one of: `INFO`, `WARNING`, `ERROR` or `CRITICAL`, where `INFO` displays
 the most logs and `CRITICAL` displays the least. Note: Setting this value to one of the more detailed 'standard' Python
 log levels (such as `DEBUG` or `NOTSET`) may result in the libraries used by this application logging details that
