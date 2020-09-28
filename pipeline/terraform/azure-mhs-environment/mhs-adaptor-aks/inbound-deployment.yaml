@@ -25,33 +25,39 @@ spec:
     spec:
       containers:
       - env:
-        - name: AWS_ACCESS_KEY_ID
-          value: test
-        - name: AWS_SECRET_ACCESS_KEY
-          value: test
-        - name: MHS_DB_ENDPOINT_URL
-          value: http://dynamodb:8000
         - name: MHS_INBOUND_QUEUE_BROKERS
           value: amqp://rabbitmq:5672
-        - name: MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS
-          value: "0"
         - name: MHS_INBOUND_QUEUE_NAME
           value: inbound
         - name: MHS_LOG_LEVEL
-          value: NOTSET
-        - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
-          value: guest
-        - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
-          value: guest
+          value: DEBUG
         - name: MHS_STATE_TABLE_NAME
           value: mhs_state
         - name: MHS_SYNC_ASYNC_STATE_TABLE_NAME
           value: sync_async_state
+        - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
+          value: guest
+        - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
+          value: guest
+        - name: MHS_SECRET_PARTY_KEY
+          value: party_key
+        - name: MHS_SECRET_CLIENT_CERT
+          value: "Here goes client cert"
+        - name: MHS_SECRET_CLIENT_KEY	
+          value: "Here goes client cert key"
+        - name: MHS_SECRET_CA_CERTS
+          value: "Here goes list of CA certs"
+        - name: MHS_DB_ENDPOINT_URL
+          value: http://dynamodb:8000
+        - name: MHS_INBOUND_USE_SSL
+          value: "false"
+        - name: MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS
+          value: "0"
         - name: SERVICE_PORTS
           value: 443,80
         - name: TCP_PORTS
           value: "443"
-        image: nhsdev/nia-mhs-inbound:0.0.2
+        image: nhsdev/nia-mhs-inbound:1.0.0
         imagePullPolicy: ""
         name: inbound
         ports:

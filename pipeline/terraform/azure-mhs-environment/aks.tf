@@ -1,4 +1,18 @@
 
+# Public IP for AKS cluster
+# resource "azurerm_public_ip" "example" {
+#   name                = "${var.cluster_name}_public_ip"
+#   resource_group_name = azurerm_resource_group.mhs_adaptor.name
+#   location            = azurerm_resource_group.mhs_adaptor.location
+#   allocation_method   = "Static"
+
+#   tags = {
+#     environment = "Production"
+#   }
+# }
+
+
+
 ## AKS kubernetes cluster ##
 resource "azurerm_kubernetes_cluster" "mhs_adaptor_exemplar" { 
   name                = var.cluster_name
@@ -12,6 +26,12 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_exemplar" {
     ## SSH key is generated using "tls_private_key" resource
     ssh_key {
       key_data = "${trimspace(tls_private_key.key.public_key_openssh)} ${var.admin_username}@azure.com"
+    }
+  }
+
+  addon_profile {
+    http_application_routing {
+      enabled = true
     }
   }
 

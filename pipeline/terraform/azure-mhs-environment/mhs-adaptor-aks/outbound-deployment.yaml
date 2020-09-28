@@ -25,35 +25,42 @@ spec:
     spec:
       containers:
       - env:
-        - name: AWS_ACCESS_KEY_ID
-          value: test
-        - name: AWS_SECRET_ACCESS_KEY
-          value: test
-        - name: MAX_RESYNC_RETRIES
-          value: "20"
-        - name: MHS_DB_ENDPOINT_URL
-          value: http://dynamodb:8000
         - name: MHS_FORWARD_RELIABLE_ENDPOINT_URL
           value: https://192.168.128.11/reliablemessaging/forwardreliable
         - name: MHS_LOG_LEVEL
-          value: NOTSET
+          value: DEBUG
+        - name: MHS_OUTBOUND_HTTP_PROXY
+          value: ec2-35-178-206-91.eu-west-2.compute.amazonaws.com
         - name: MHS_OUTBOUND_VALIDATE_CERTIFICATE
           value: "False"
+        - name: MHS_RESYNC_INITIAL_DELAY
+          value: "0.15"
         - name: MHS_RESYNC_INTERVAL
           value: "1"
+        - name: MHS_RESYNC_RETRIES
+          value: "20"
         - name: MHS_SPINE_ORG_CODE
-          value: YES
+          value: "YES"
         - name: MHS_SPINE_REQUEST_MAX_SIZE
-          value: NOTSET
+          value: "4999600"
         - name: MHS_SPINE_ROUTE_LOOKUP_URL
-          value: http://route
+          value: "http://route"
         - name: MHS_STATE_TABLE_NAME
           value: mhs_state
         - name: MHS_SYNC_ASYNC_STATE_TABLE_NAME
           value: sync_async_state
-        - name: SERVICE_PORTS
-          value: "80"
-        image: nhsdev/nia-mhs-outbound:0.0.2
+        - name: MHS_SECRET_SPINE_ROUTE_LOOKUP_CA_CERTS
+          value: "Here goes spine CA certs"
+        - name: MHS_SECRET_PARTY_KEY
+          value: party_key
+        - name: MHS_SECRET_CLIENT_CERT
+          value: "Here goes client cert"
+        - name: MHS_SECRET_CLIENT_KEY	
+          value: "Here goes client cert key"
+        - name: MHS_SECRET_CA_CERTS
+          value: "Here goes list of CA certs"
+
+        image: nhsdev/nia-mhs-outbound:1.0.0
         imagePullPolicy: ""
         name: outbound
         ports:
@@ -63,3 +70,4 @@ spec:
       serviceAccountName: ""
       volumes: null
 status: {}
+
