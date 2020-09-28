@@ -1,5 +1,4 @@
 set -e
-packer build -except publish pipeline/packer/inbound.json
-packer build -except publish pipeline/packer/outbound.json
-packer build -except publish pipeline/packer/spineroutelookup.json
-packer build -except publish pipeline/packer/scr-web-service.json
+docker build -t local/mhs-inbound:${BUILD_TAG} -f mhs/inbound/Dockerfile .
+docker build -t local/mhs-outbound:${BUILD_TAG} -f mhs/outbound/Dockerfile .
+docker build -t local/mhs-route:${BUILD_TAG} -f mhs/spineroutelookup/Dockerfile .

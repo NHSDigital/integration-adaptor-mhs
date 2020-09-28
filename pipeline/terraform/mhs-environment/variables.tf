@@ -24,6 +24,7 @@ variable "supplier_vpc_id" {
   type = string
   description = "VPC id of the supplier system that connects to the MHS"
 }
+
 variable "opentest_vpc_id" {
   type = string
   description = "VPC id of the VPC that contains the Opentest connection to Spine"
@@ -246,4 +247,16 @@ variable "mhs_spine_request_max_size" {
 variable "mhs_forward_reliable_endpoint_url" {
   type = string
   description = "The URL to communicate with Spine for Forward Reliable messaging from the outbound service"
+}
+
+variable "lb_deregistration_delay" {
+  type = number
+  default = 40
+  description = "How long the LB should wait before removing deregistered members, AWS default is 300 seconds"
+}
+
+variable "healthcheck_threshold" {
+  type = number
+  default = 3
+  description = "Retries for confirming target status - healthy or unhealthy, AWS default is 3"
 }

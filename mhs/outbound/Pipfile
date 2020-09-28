@@ -10,17 +10,17 @@ apispec = "~=3.0"
 apispec-webframeworks = "~=0.5"
 
 [packages]
-tornado = "*"
+tornado = "~=6.0"
 defusedxml = "~=0.6"
-integration-adaptors-common = {editable = true,path = "./../../common"}
 mhs-common = {editable = true,path = "./../common"}
-isodate = "*"
+isodate = "~=0.6"
 # Temporarily hack the pycurl dependency so that we use a binary package
 # on Windows. This hack should be removed once
 # https://github.com/pycurl/pycurl/issues/569 is fixed.
 pycurl = {version = "~=7.43",platform_system = "!= 'Windows'"}
 pycurl-windows = {file = "https://ci.appveyor.com/api/buildjobs/k46mau52pldh189m/artifacts/dist/pycurl-7.43.0.3-cp37-cp37m-win32.whl",platform_system = "== 'Windows'"}
 marshmallow = "~=3.2"
+integration-adaptors-common = {editable = true, path = "./../../common"}
 
 [requires]
 python_version = "3.7"

@@ -42,7 +42,7 @@ def get_config(key: str, default: Optional[str] = _config_default) -> str:
         logging.info(f'Obtained config ConfigName="{key}" ConfigValue="{config[key]}"')
         return config[key]
     elif default is not _config_default:
-        logging.info(f'Failed to get config ConfigName="{key}". Returning DefaultValue="{default}".')
+        logging.info(f'Config not provided for ConfigName="{key}". Returning DefaultValue="{default}".')
         return default
     else:
         logging.error(f'Failed to get config ConfigName="{key}"')

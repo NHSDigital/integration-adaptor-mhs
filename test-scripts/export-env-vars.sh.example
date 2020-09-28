@@ -1,0 +1,14 @@
+#!/bin/bash 
+
+export FROM_ASID=""
+
+export MHS_SECRET_PARTY_KEY=""
+
+# Your endpoint certificate here
+export MHS_SECRET_CLIENT_CERT=""
+
+# Your endpoint private key here
+export MHS_SECRET_CLIENT_KEY=""
+
+# Endpoint issuing subCA certificate and Root CA certificate here
+export MHS_SECRET_CA_CERTS=""

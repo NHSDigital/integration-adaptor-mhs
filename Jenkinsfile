@@ -8,10 +8,18 @@ pipeline {
         BUILD_TAG_LOWER = sh label: 'Lowercase build tag', returnStdout: true, script: "echo -n ${BUILD_TAG} | tr '[:upper:]' '[:lower:]'"
         ENVIRONMENT_ID = "build"
         MHS_INBOUND_QUEUE_NAME = "${ENVIRONMENT_ID}-inbound"
+        LOCAL_INBOUND_IMAGE_NAME = "local/mhs-inbound:${BUILD_TAG}"
+        LOCAL_OUTBOUND_IMAGE_NAME = "local/mhs-outbound:${BUILD_TAG}"
+        LOCAL_ROUTE_IMAGE_NAME = "local/mhs-route:${BUILD_TAG}"
+        LOCAL_FAKE_SPINE_IMAGE_NAME = "local/fake-spine:${BUILD_TAG}"
+        INBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/inbound:${BUILD_TAG}"
+        OUTBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/outbound:${BUILD_TAG}"
+        ROUTE_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/route:${BUILD_TAG}"
+        FAKE_SPINE_IMAGE_NAME = "${DOCKER_REGISTRY}/fake-spine:${BUILD_TAG}"
     }
 
     stages {
-        stage('Build & test common') {
+        stage('Build & test Common') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
@@ -27,7 +35,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
@@ -46,11 +53,12 @@ pipeline {
                                 }
                             }
                         }
-                        stage('Push image') {
+                        stage('Build and Push image') {
+                            when {
+                                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+                            }
                             steps {
-                                script {
-                                    sh label: 'Pushing inbound image', script: "packer build -color=false pipeline/packer/inbound.json"
-                                }
+                                buildAndPushImage('${LOCAL_INBOUND_IMAGE_NAME}', '${INBOUND_IMAGE_NAME}', 'mhs/inbound/Dockerfile')
                             }
                         }
                     }
@@ -71,19 +79,13 @@ pipeline {
                                 }
                             }
                         }
-                        stage('Check documentation') {
-                            steps {
-                                dir('mhs/outbound') {
-                                    sh label: 'Check API docs can be generated', script: 'pipenv run generate-openapi-docs > /dev/null'
-                                }
-                            }
-                        }
-                        stage('Push image') {
-                            steps {
-                                script {
-                                    sh label: 'Pushing outbound image', script: "packer build -color=false pipeline/packer/outbound.json"
-                                }
-                            }
+                        stage('Build and Push image') {
+                          when {
+                              expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+                          }
+                          steps {
+                              buildAndPushImage('${LOCAL_OUTBOUND_IMAGE_NAME}', '${OUTBOUND_IMAGE_NAME}', 'mhs/outbound/Dockerfile')
+                          }
                         }
                     }
                 }
@@ -103,11 +105,21 @@ pipeline {
                                 }
                             }
                         }
-                        stage('Push image') {
+                        stage('Build and Push image') {
+                            when {
+                                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+                            }
                             steps {
-                                script {
-                                    sh label: 'Pushing spine route lookup image', script: "packer build -color=false pipeline/packer/spineroutelookup.json"
-                                }
+                                buildAndPushImage('${LOCAL_ROUTE_IMAGE_NAME}', '${ROUTE_IMAGE_NAME}', 'mhs/spineroutelookup/Dockerfile')
+                            }
+                        }
+                    }
+                }
+                stage('Fake Spine') {
+                    stages {
+                        stage('Build and Push image') {
+                            steps {
+                                buildAndPushImage('${LOCAL_FAKE_SPINE_IMAGE_NAME}', '${FAKE_SPINE_IMAGE_NAME}', 'integration-tests/fake_spine/Dockerfile')
                             }
                         }
                     }
@@ -143,7 +155,7 @@ pipeline {
                                         --env "MHS_ADDRESS=http://outbound" \
                                         --env "AWS_ACCESS_KEY_ID=test" \
                                         --env "AWS_SECRET_ACCESS_KEY=test" \
-                                        --env "MHS_DYNAMODB_ENDPOINT_URL=http://dynamodb:8000" \
+                                        --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
                                         --env "FAKE_SPINE_ADDRESS=http://fakespine" \
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
@@ -254,13 +266,13 @@ pipeline {
                                             returnStdout: true,
                                             script: "terraform output route_lb_target_group_arn"
                                         ).trim()
-                                        env.MHS_DYNAMODB_TABLE_NAME = sh (
-                                            label: 'Obtaining the dynamodb table name used for the MHS state',
+                                        env.MHS_STATE_TABLE_NAME = sh (
+                                            label: 'Obtaining the table name used for the MHS state',
                                             returnStdout: true,
                                             script: "terraform output mhs_state_table_name"
                                         ).trim()
                                         env.MHS_SYNC_ASYNC_TABLE_NAME = sh (
-                                            label: 'Obtaining the dynamodb table name used for the MHS sync/async state',
+                                            label: 'Obtaining the table name used for the MHS sync/async state',
                                             returnStdout: true,
                                             script: "terraform output mhs_sync_async_table_name"
                                         ).trim()
@@ -296,7 +308,6 @@ pipeline {
             } // parallel
         }
     }
-
     post {
         always {
             cobertura coberturaReportFile: '**/coverage.xml'
@@ -319,4 +330,19 @@ void executeUnitTestsWithCoverage() {
 
 void buildModules(String action) {
     sh label: action, script: 'pipenv install --dev --deploy --ignore-pipfile'
+}
+
+int ecrLogin(String aws_region) {
+    String ecrCommand = "aws ecr get-login --region ${aws_region}"
+    String dockerLogin = sh (label: "Getting Docker login from ECR", script: ecrCommand, returnStdout: true).replace("-e none","") // some parameters that AWS provides and docker does not recognize
+    return sh(label: "Logging in with Docker", script: dockerLogin, returnStatus: true)
+}
+
+void buildAndPushImage(String localImageName, String imageName, String dockerFile, String context = '.') {
+    sh label: 'Running docker build', script: 'docker build -t ' + localImageName + ' -f ' + dockerFile + ' ' + context
+    if (ecrLogin(TF_STATE_BUCKET_REGION) != 0 )  { error("Docker login to ECR failed") }
+    sh label: 'Tag ecr image', script: 'docker tag ' + localImageName + ' ' + imageName
+    String dockerPushCommand = "docker push " + imageName
+    if (sh (label: "Pushing image", script: dockerPushCommand, returnStatus: true) !=0) { error("Docker push image failed") }
+    sh label: 'Deleting local ECR image', script: 'docker rmi ' + imageName
 }

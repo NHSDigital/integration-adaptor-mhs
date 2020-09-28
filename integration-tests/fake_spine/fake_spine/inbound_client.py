@@ -16,14 +16,15 @@ class InboundClient(object):
 
     def __init__(self):
         self.http_client = httpclient.AsyncHTTPClient()
+        logger.info(f"max_clients for inbound_client: {self.http_client.max_clients}")
         config = fake_spine_configuration.FakeSpineConfiguration()
         self.inbound_url = f'http://localhost:{config.INBOUND_PROXY_PORT}/inbound-proxy'
 
     async def make_request(self, request: InboundRequest):
         logger.info(f'Making inbound request to {self.inbound_url}')
-        response = await self.http_client.fetch(self.inbound_url,
+        await self.http_client.fetch(self.inbound_url,
                                                 method='POST',
                                                 body=request.body,
                                                 raise_error=True,
+                                                request_timeout=10,
                                                 headers={**self.HEADERS, **request.headers})
-        return response

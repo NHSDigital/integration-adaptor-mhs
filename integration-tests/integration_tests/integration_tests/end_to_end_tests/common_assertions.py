@@ -1,5 +1,5 @@
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
-from integration_tests.dynamo.dynamo_mhs_table import DynamoMhsTableStateAssertor
+from integration_tests.db.mhs_table import MhsTableStateAssertor
 from integration_tests.xml.hl7_xml_assertor import Hl7XmlResponseAssertor
 
 
@@ -18,7 +18,7 @@ class CommonAssertions(object):
             .assert_property('correlation-id', '1') \
             .assert_json_content_type()
 
-    def message_status_recorded_as_successfully_processed(self, state_table_assertor: DynamoMhsTableStateAssertor, message_id):
+    def message_status_recorded_as_successfully_processed(self, state_table_assertor: MhsTableStateAssertor, message_id):
         return state_table_assertor \
             .assert_single_item_exists_with_key(message_id) \
             .assert_item_contains_values({
@@ -30,4 +30,4 @@ class CommonAssertions(object):
     def hl7_xml_contains_response_code_and_patient_id(self, hl7_xml_message_assertor: Hl7XmlResponseAssertor):
         hl7_xml_message_assertor \
             .assert_element_attribute('.//queryAck//queryResponseCode', 'code', 'OK') \
-            .assert_element_attribute('.//patient//id', 'extension', '9689177923')
+            .assert_element_attribute('.//patient//id', 'extension', '9691035456')

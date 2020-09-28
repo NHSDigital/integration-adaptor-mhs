@@ -8,13 +8,14 @@ coverage = "~=4.5"
 unittest-xml-reporting = "~=2.5"
 
 [packages]
-requests = "*"
-integration-adaptors-common = {editable = true,path = "./../../common"}
-ldap3 = "*"
-tornado = "*"
-aioboto3 = "*"
+requests = "~=2.23"
+ldap3 = "~=2.7"
+tornado = "~=6.0"
+aioboto3 = "~=8.0"
 defusedxml = "~=0.6"
-dpath = "*"
+dpath = "~=2.0"
+pymongo = "~=3.9"
+integration-adaptors-common = {editable = true, path = "../../common"}
 
 [requires]
 python_version = "3.7"
