@@ -13,12 +13,13 @@ services:
     ports:
       - "6061:443"
       - "6062:80"
-    environment: 
+    environment:
       - FAKE_SPINE_CERTIFICATE
       - FAKE_SPINE_PRIVATE_KEY
       - FAKE_SPINE_CA_STORE
       - INBOUND_SERVER_BASE_URL=https://inbound
       - MHS_LOG_LEVEL=INFO
+      - MHS_SECRET_PARTY_KEY
 
   inbound:
     environment:

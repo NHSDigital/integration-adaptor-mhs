@@ -18,7 +18,7 @@ class VnpSpineResponseException(Exception):
 
 class VnpSpineResponseBuilder(SpineResponseBuilder):
 
-    root_id_expression = re.compile('<id root="(?P<messageId>.+)"\\s*/>')
+    root_id_expression = re.compile('<id root=".+?"\s*/>')
     conversation_id_expression = re.compile('<eb:ConversationId>(?P<conversationId>.+)</eb:ConversationId>')
 
     def __init__(self):
@@ -28,9 +28,10 @@ class VnpSpineResponseBuilder(SpineResponseBuilder):
 
     def _extract_message_id(self, request: HTTPServerRequest):
         body = request.body.decode()
+        logger.debug("Extracting messageId from {body}", fparams={'body': body})
         matches = self.root_id_expression.search(body)
         if matches:
-            return matches.group('messageId')
+            return matches[0].split('"')[1]
         raise VnpSpineResponseException(f'Unable to find a MessageId in the request')
 
     def _extract_conversation_id(self, request: HTTPServerRequest):

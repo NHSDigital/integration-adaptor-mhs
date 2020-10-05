@@ -34,7 +34,6 @@ Content-Transfer-Encoding: 8bit
             <eb:MessageData>
                 <eb:MessageId>{{message_id}}</eb:MessageId>
                 <eb:Timestamp>2020-03-19T14:05:22Z</eb:Timestamp>
-                <eb:RefToMessageId>{{ref_to_message_id}}</eb:RefToMessageId>
             </eb:MessageData>
             <eb:DuplicateElimination/>
         </eb:MessageHeader>
@@ -59,41 +58,57 @@ Content-Type: application/xml
 Content-Transfer-Encoding: 8bit
 
 <?xml version='1.0' encoding='UTF-8'?>
-<hl7:MCCI_IN010000UK13 xmlns:hl7="urn:hl7-org:v3">
-    <hl7:id root="{{message_id}}"/>
-    <hl7:creationTime value="20200319140522"/>
-    <hl7:versionCode code="V3NPfIT4.2.00"/>
-    <hl7:interactionId root="2.16.840.1.113883.2.1.3.2.4.12" extension="MCCI_IN010000UK13"/>
-    <hl7:processingCode code="P"/>
-    <hl7:processingModeCode code="T"/>
-    <hl7:acceptAckCode code="NE"/>
-    <hl7:acknowledgement typeCode="AA">
-        <hl7:messageRef>
-            <hl7:id root="{{ref_to_message_id}}"/>
-        </hl7:messageRef>
-    </hl7:acknowledgement>
-    <hl7:communicationFunctionRcv typeCode="RCV">
-        <hl7:device classCode="DEV" determinerCode="INSTANCE">
-            <hl7:id root="1.2.826.0.1285.0.2.0.107" extension="918999198975"/>
-        </hl7:device>
-    </hl7:communicationFunctionRcv>
-    <hl7:communicationFunctionSnd typeCode="SND">
-        <hl7:device classCode="DEV" determinerCode="INSTANCE">
-            <hl7:id root="1.2.826.0.1285.0.2.0.107" extension="227319907548"/>
-        </hl7:device>
-    </hl7:communicationFunctionSnd>
-    <hl7:ControlActEvent classCode="CACT" moodCode="EVN">
-        <hl7:author1 typeCode="AUT">
-            <hl7:AgentSystemSDS classCode="AGNT">
-                <hl7:agentSystemSDS classCode="DEV" determinerCode="INSTANCE">
-                    <hl7:id root="1.2.826.0.1285.0.2.0.107" extension="227319907548"/>
-                </hl7:agentSystemSDS>
-            </hl7:AgentSystemSDS>
-        </hl7:author1>
-        <hl7:requestSuccessDetail>
-            <hl7:detail>GP Summary upload successful</hl7:detail>
-            <hl7:id root="Not Known"/>
-        </hl7:requestSuccessDetail>
-    </hl7:ControlActEvent>
-</hl7:MCCI_IN010000UK13>
+<RCMR_IN010000UK05 xmlns="urn:hl7-org:v3"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:hl7-org:v3 RCMR_IN010000UK05.xsd">
+    <id root="{{message_id}}" />
+    <creationTime value="20200218164108" />
+    <versionCode code="V3NPfIT3.1.10"/>
+    <interactionId extension="RCMR_IN010000UK05" root="2.16.840.1.113883.2.1.3.2.4.12"/>
+    <processingCode code="P"/>
+    <processingModeCode code="T"/>
+    <acceptAckCode code="NE"/>
+    <communicationFunctionRcv typeCode="RCV">
+        <device classCode="DEV" determinerCode="INSTANCE">
+            <id extension="200000000149" root="1.2.826.0.1285.0.2.0.107"/>
+        </device>
+    </communicationFunctionRcv>
+    <communicationFunctionSnd typeCode="SND">
+        <device classCode="DEV" determinerCode="INSTANCE">
+            <id extension="200000001161" root="1.2.826.0.1285.0.2.0.107"/>
+        </device>
+    </communicationFunctionSnd>
+    <ControlActEvent classCode="CACT" moodCode="EVN">
+        <author1 typeCode="AUT">
+            <AgentSystemSDS classCode="AGNT">
+                <agentSystemSDS classCode="DEV" determinerCode="INSTANCE">
+                    <id extension="200000001161" root="1.2.826.0.1285.0.2.0.107"/>
+                </agentSystemSDS>
+            </AgentSystemSDS>
+        </author1>
+        <subject contextConductionInd="false" typeCode="SUBJ">
+            <EhrRequest classCode="EXTRACT" moodCode="RQO">
+                <id root="{{message_id}}"/>
+                <recordTarget typeCode="RCT">
+                    <patient classCode="PAT">
+                        <id root="2.16.840.1.113883.2.1.4.1" extension="9658218873"/>
+                    </patient>
+                </recordTarget>
+                <author typeCode="AUT">
+                    <AgentOrgSDS classCode="AGNT">
+                        <agentOrganizationSDS classCode="ORG" determinerCode="INSTANCE">
+                            <id root="1.2.826.0.1285.0.1.10" extension="B86041"/>
+                        </agentOrganizationSDS>
+                    </AgentOrgSDS>
+                </author>
+                <destination typeCode="DST">
+                    <AgentOrgSDS classCode="AGNT">
+                        <agentOrganizationSDS classCode="ORG" determinerCode="INSTANCE">
+                            <id root="1.2.826.0.1285.0.1.10" extension="M85019"/>
+                        </agentOrganizationSDS>
+                    </AgentOrgSDS>
+                </destination>
+            </EhrRequest>
+        </subject>
+    </ControlActEvent>
+</RCMR_IN010000UK05>
 ----=_MIME-Boundary--
