@@ -28,7 +28,7 @@ spec:
         - name: MHS_DISABLE_SDS_TLS
           value: "True"
         - name: MHS_LOG_LEVEL
-          value: NOTSET
+          value: DEBUG
         - name: MHS_SDS_REDIS_CACHE_HOST
           value: redis
         - name: MHS_SDS_REDIS_DISABLE_TLS

@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-export FROM_ASID=""
+export FROM_ASID="227319907548"
 
 export MHS_SECRET_PARTY_KEY=""
 

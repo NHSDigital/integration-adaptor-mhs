@@ -9,7 +9,7 @@ UUID=`uuidgen`
 echo $FROM_ASID
 
 curl -i --request POST \
---url http://localhost:80/ \
+--url http://outbound80.fe50331779a548dda05c.ukwest.aksapp.io:80/ \
 --header 'content-type: application/json' \
 --header 'from-asid: '$FROM_ASID'' \
 --header 'interaction-id: QUPA_IN040000UK32' \

@@ -48,7 +48,9 @@ spec:
         - name: MHS_SECRET_CA_CERTS
           value: "Here goes list of CA certs"
         - name: MHS_DB_ENDPOINT_URL
-          value: http://dynamodb:8000
+          value: "mongodb://mhs-adaptor-mongodb:IbqwUBIcIsWlsP0c6H6BBpZUJAiHcHMcbXuF7xgVWOywubtCIUtuuWULbalu3RNCRqdPTUwG7rNeMFhEjVLzhA==@mhs-adaptor-mongodb.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"
+        - name: MHS_PERSISTENCE_ADAPTOR
+          value: mongodb
         - name: MHS_INBOUND_USE_SSL
           value: "false"
         - name: MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS
