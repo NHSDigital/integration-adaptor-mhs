@@ -8,6 +8,7 @@ import tornado.escape
 import tornado.locks
 import tornado.web
 
+from lxml import etree
 from comms.http_headers import HttpHeaders
 from utilities import mdc
 from mhs_common.handler import base_handler
@@ -182,12 +183,30 @@ class SynchronousHandler(base_handler.BaseHandler):
                 await wf.set_failure_message_response(wdo)
 
     async def invoke_default_workflow(self, from_asid, message_id, correlation_id, interaction_details, body, wf):
-            status, response, work_description_response = await wf.handle_outbound_message(from_asid, message_id,
-                                                                                           correlation_id,
-                                                                                           interaction_details,
-                                                                                           body,
-                                                                                           None)
-            await self.write_response_with_store_updates(status, response, work_description_response, wf, message_id, correlation_id)
+        status, response, work_description_response = await wf.handle_outbound_message(from_asid, message_id,
+                                                                                       correlation_id,
+                                                                                       interaction_details,
+                                                                                       body,
+                                                                                       None)
+
+        if status == 200:
+            response = self._extract_hl7_from_synchronous_response(response)
+
+        await self.write_response_with_store_updates(status, response, work_description_response, wf, message_id, correlation_id)
+
+    @staticmethod
+    def _extract_hl7_from_synchronous_response(response):
+        root = etree.fromstring(response.encode("utf-8"))
+        namespaces = {
+            "SOAP-ENV": "http://schemas.xmlsoap.org/soap/envelope/",
+            "hl7": "urn:hl7-org:v3"
+        }
+        nodes = root.xpath('/SOAP-ENV:Envelope/SOAP-ENV:Body/hl7:retrievalQueryResponse/*', namespaces=namespaces)
+        if len(nodes) != 1:
+            raise ValueError("Unexpected SOAP response:\n" + response)
+        node = nodes[0]
+        xmlstr = etree.tostring(node, encoding='utf-8')
+        return xmlstr.decode("utf-8")
 
     def _write_response(self, status: int, message: str, message_id: str, correlation_id: str) -> None:
         """Write the given message to the response.
