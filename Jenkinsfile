@@ -325,7 +325,8 @@ void executeUnitTestsWithCoverage() {
     sh label: 'Running unit tests', script: 'pipenv run unittests-cov'
     sh label: 'Displaying code coverage report', script: 'pipenv run coverage-report'
     sh label: 'Exporting code coverage report', script: 'pipenv run coverage-report-xml'
-    sh label: 'Running SonarQube analysis', script: "sonar-scanner -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}"
+//     SonarQube disabled as atm it's not set up on AWS
+//     sh label: 'Running SonarQube analysis', script: "sonar-scanner -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}"
 }
 
 void buildModules(String action) {
