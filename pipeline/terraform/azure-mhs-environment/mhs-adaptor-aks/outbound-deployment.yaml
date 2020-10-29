@@ -44,9 +44,9 @@ spec:
         - name: MHS_SPINE_REQUEST_MAX_SIZE
           value: "4999600"
         - name: MHS_SPINE_ROUTE_LOOKUP_URL
-          value: "http://route80.fe50331779a548dda05c.ukwest.aksapp.io"
+          value: "route:8080"
         - name: MHS_DB_ENDPOINT_URL
-          value: "REDACTED - sort out secrets"
+          value: "add from secrets"
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_STATE_TABLE_NAME
