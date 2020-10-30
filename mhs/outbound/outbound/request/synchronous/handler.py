@@ -205,7 +205,7 @@ class SynchronousHandler(base_handler.BaseHandler):
         if len(nodes) != 1:
             raise ValueError("Unexpected SOAP response:\n" + response)
         node = nodes[0]
-        xmlstr = etree.tostring(node, encoding='utf-8')
+        xmlstr = etree.tostring(node, pretty_print=True, xml_declaration=True, encoding='utf-8')
         return xmlstr.decode("utf-8")
 
     def _write_response(self, status: int, message: str, message_id: str, correlation_id: str) -> None:
