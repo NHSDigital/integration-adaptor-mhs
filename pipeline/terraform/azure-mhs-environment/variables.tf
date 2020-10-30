@@ -12,7 +12,6 @@ variable resource_group_name {
   default = "mhs-rg"
 }
 
-
 ## AKS kubernetes cluster variables ##
 variable cluster_name {
   default = "mhs-adaptor"
@@ -65,13 +64,3 @@ variable "firewall_subnet_cidr" {
 variable "jumpbox_subnet_cidr" {
   default = "10.20.5.0/24"
 }
-
-
-
-# variable "pods_subnet_cidr" {
-#   default = "10.20.2.0/24"
-# }
-
-# variable "services_subnet_cidr" {
-#   default = "10.20.3.0/24"
-# }
