@@ -30,7 +30,7 @@ spec:
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_OUTBOUND_HTTP_PROXY
-          value: ec2-35-178-206-91.eu-west-2.compute.amazonaws.com
+          value: "NotSet"
         - name: MHS_OUTBOUND_VALIDATE_CERTIFICATE
           value: "False"
         - name: MHS_RESYNC_INITIAL_DELAY
