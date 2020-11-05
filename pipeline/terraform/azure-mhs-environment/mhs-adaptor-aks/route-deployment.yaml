@@ -30,7 +30,9 @@ spec:
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_SDS_REDIS_CACHE_HOST
-          value: redis
+          value: mhs-adaptor-cache.redis.cache.windows.net
+        - name: MHS_SDS_REDIS_CACHE_PORT
+          value: "6379"
         - name: MHS_SDS_REDIS_DISABLE_TLS
           value: "True"
         - name: MHS_SDS_SEARCH_BASE

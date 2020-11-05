@@ -33,6 +33,13 @@ resource "azurerm_subnet" "mhs_jumpbox_subnet" {
   ]
 }
 
+resource "azurerm_subnet" "mhs_redis_subnet" {
+  name = "mhs_redis_subnet"
+  resource_group_name = azurerm_resource_group.mhs_adaptor.name
+  virtual_network_name = azurerm_virtual_network.mhs_vnet.name
+  address_prefixes = [var.redis_subnet_cidr]
+}
+
 resource "azurerm_route_table" "mhs_aks_route_table" {
   name = "mhs_aks_route_table"
   resource_group_name = azurerm_resource_group.mhs_adaptor.name
