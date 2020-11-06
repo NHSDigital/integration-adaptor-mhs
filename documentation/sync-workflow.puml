@@ -16,7 +16,7 @@ alt Success
     Outbound -> SDS: Endpoint details
 else Exception
     Outbound -> "State Db": OUTBOUND_MESSAGE_PREPARATION_FAILED
-    "GP System" <-- Outbound: 500 Error obtaining outbound URL    
+    "GP System" <-- Outbound: 500 Error obtaining outbound URL - test    
 end
 Outbound -> Outbound: Prepare outbound message
 alt Failed to prepare outbound message

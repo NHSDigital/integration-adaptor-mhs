@@ -58,9 +58,9 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
             to_party_key = details[self.ENDPOINT_PARTY_KEY]
             cpa_id = details[self.ENDPOINT_CPA_ID]
         except Exception:
-            logger.exception('Error obtaining outbound URL')
+            logger.exception('Error obtaining outbound URL - test')
             await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
-            return 500, 'Error obtaining outbound URL', None
+            return 500, 'Error obtaining outbound URL - test', None
 
         reliability_details = await self._lookup_reliability_details(interaction_details)
         retry_interval_xml_datetime = reliability_details[common_asynchronous.MHS_RETRY_INTERVAL]
