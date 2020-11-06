@@ -56,10 +56,10 @@ class AsynchronousExpressWorkflow(common_asynchronous.CommonAsynchronousWorkflow
             url = details[self.ENDPOINT_URL]
             to_party_key = details[self.ENDPOINT_PARTY_KEY]
             cpa_id = details[self.ENDPOINT_CPA_ID]
-        except Exception:
-            logger.exception('Error obtaining outbound URL - test')
+        except Exception as exception:
+            logger.error('Error obtaining outbound URL', exc_info=exception)
             await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
-            return 500, 'Error obtaining outbound URL - test', None
+            return 500, 'Error obtaining outbound URL', None
 
         error, http_headers, message = await self._serialize_outbound_message(message_id, correlation_id,
                                                                               interaction_details,

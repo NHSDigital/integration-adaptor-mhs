@@ -73,7 +73,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
         self.assertEqual(error, 500)
-        self.assertEqual(text, 'Error obtaining outbound URL - test')
+        self.assertEqual(text, 'Error obtaining outbound URL')
 
     @mock.patch.object(sync, 'logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')

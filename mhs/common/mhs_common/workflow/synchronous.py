@@ -61,10 +61,10 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
             endpoint_details = await self._lookup_endpoint_details(interaction_details)
             url = endpoint_details[self.ENDPOINT_URL]
             to_asid = endpoint_details[self.ENDPOINT_TO_ASID]
-        except Exception:
-            logger.exception('Error obtaining outbound URL - test')
+        except Exception as exception:
+            logger.error('Error obtaining outbound URL', exc_info=exception)
             await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
-            return 500, 'Error obtaining outbound URL - test', None
+            return 500, 'Error obtaining outbound URL', None
 
         try:
             message_id, http_headers, message = await self._prepare_outbound_message(message_id,
