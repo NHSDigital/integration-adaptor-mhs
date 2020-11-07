@@ -52,27 +52,37 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
                                              message_id,
                                              workflow.SYNC,
                                              outbound_status=wd.MessageStatus.OUTBOUND_MESSAGE_RECEIVED)
+        logger.debug('TEST - Created WD')
         await wdo.publish()
+        logger.debug('TEST - Published WD')
 
         if not from_asid:
+            logger.debug('TEST - Missing from asid')
             return 400, '`from_asid` header field required for sync messages', None
 
         try:
+            logger.debug('TEST - Enter try')
             endpoint_details = await self._lookup_endpoint_details(interaction_details)
+            logger.debug('TEST - Got endpoint details')
             url = endpoint_details[self.ENDPOINT_URL]
             to_asid = endpoint_details[self.ENDPOINT_TO_ASID]
+            logger.debug('TEST - Extracted values')
         except Exception as exception:
-            logger.error('Error obtaining outbound URL', exc_info=exception)
+            logger.debug('TEST - Exception')
+            logger.debug('TEST - Exception with value', exc_info=exception)
             await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
+            logger.debug('TEST - Returning error')
             return 500, 'Error obtaining outbound URL', None
 
         try:
+            logger.debug('TEST - Preparing outbound mesage')
             message_id, http_headers, message = await self._prepare_outbound_message(message_id,
                                                                                 to_asid,
                                                                                 from_asid=from_asid,
                                                                                 interaction_details=interaction_details,
                                                                                 message=payload)
         except Exception:
+            logger.debug('TEST - Failed to prepare outbound message')
             logger.exception('Failed to prepare outbound message')
             await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
             return 500, 'Failed message preparation', None
