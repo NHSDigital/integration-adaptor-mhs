@@ -1,7 +1,7 @@
 """
 Provides tests around the Synchronous workflow
 """
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from integration_tests.db.db_wrapper_factory import MHS_STATE_TABLE_WRAPPER
 from integration_tests.db.mhs_table import MhsTableStateAssertor
@@ -47,6 +47,7 @@ class SynchronousMessagingPatternTests(TestCase):
             .assert_element_attribute('.//patientRole//id', 'extension', '9691813343') \
             .assert_element_attribute('.//messageRef//id', 'root', message_id)
 
+    @skip('temp')
     def test_should_record_synchronous_message_status_as_successful(self):
         # Arrange
         message, message_id = build_message('QUPA_IN040000UK32', '9691813343')
