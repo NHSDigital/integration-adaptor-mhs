@@ -179,7 +179,7 @@ pipeline {
                                 docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
-                            sh label: 'Docker compose logs', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} logs'
+//                             sh label: 'Docker compose logs', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} logs'
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
                         }
                     }
