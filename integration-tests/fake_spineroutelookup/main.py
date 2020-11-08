@@ -11,15 +11,6 @@ from fake_spineroutelookup.request_matcher_wrappers import query_argument_contai
 from fake_spineroutelookup.routing_response import RoutingResponse
 from fake_spineroutelookup.reliability_response import ReliabilityResponse
 
-root = logging.getLogger()
-root.setLevel(logging.DEBUG)
-
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-root.addHandler(handler)
-
 logger = logging.getLogger(__name__)
 
 
