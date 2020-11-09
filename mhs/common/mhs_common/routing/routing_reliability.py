@@ -64,6 +64,7 @@ class RoutingAndReliability:
             http_response = await common_https.CommonHttps.make_request(url=url, method="GET",
                                                                         headers=build_tracking_headers(),
                                                                         body=None,
+                                                                        validate_cert=False,
                                                                         client_cert=self._client_cert,
                                                                         client_key=self._client_key,
                                                                         ca_certs=self._ca_certs,
