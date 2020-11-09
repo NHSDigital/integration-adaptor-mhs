@@ -65,7 +65,7 @@ locals {
     },
     {
       name = "MHS_SPINE_ROUTE_LOOKUP_URL"
-      value = "http://${aws_route53_record.mhs_route_load_balancer_record.name}"
+      value = "https://${aws_route53_record.mhs_route_load_balancer_record.name}"
     },
     {
       name = "MHS_SPINE_ORG_CODE"
