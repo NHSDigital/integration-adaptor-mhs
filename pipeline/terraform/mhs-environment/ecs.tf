@@ -82,6 +82,10 @@ locals {
     {
       name = "MHS_OUTBOUND_VALIDATE_CERTIFICATE"
       value = var.mhs_outbound_validate_certificate
+    },
+    {
+      name = "MHS_OUTBOUND_SPINE_ROUTE_LOOKUP_VALIDATE_CERT"
+      value = var.mhs_outbound_spineroutelookup_verify_certificate
     }
   ]
   mhs_outbound_base_secrets = [

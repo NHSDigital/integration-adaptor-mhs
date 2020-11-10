@@ -1,8 +1,7 @@
 """
 Provides tests around the Asynchronous Express workflow, including sync-async wrapping
 """
-import json
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
 from integration_tests.amq.mhs_inbound_queue import MHS_INBOUND_QUEUE
@@ -13,7 +12,7 @@ from integration_tests.db.sync_async_mhs_table import SyncAsyncMhsTableStateAsse
 from integration_tests.end_to_end_tests.common_assertions import CommonAssertions
 from integration_tests.helpers.build_message import build_message
 from integration_tests.helpers.concurrent_requests import send_messages_concurrently, \
-    assert_all_messages_succeeded, has_errors
+    assert_all_messages_succeeded
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
 
 
@@ -40,7 +39,6 @@ class AsynchronousExpressMessagingPatternTests(TestCase):
         MHS_INBOUND_QUEUE.drain()
         self.assertions = CommonAssertions('async-express')
 
-    @skip('temp')
     def test_should_return_successful_response_from_spine_to_message_queue(self):
         # Arrange
         message, message_id = build_message('QUPC_IN160101UK05', '9691035456')
@@ -65,7 +63,6 @@ class AsynchronousExpressMessagingPatternTests(TestCase):
         self.assertions.hl7_xml_contains_response_code_and_patient_id(hl7_xml_message_assertor)
         self.assertions.message_status_recorded_as_successfully_processed(state_table_assertor, message_id)
 
-    @skip('temp')
     def test_should_return_successful_response_and_record_spine_reply_in_resync_table_if_wait_for_response_requested(self):
         # Arrange
         messages = [build_message('QUPC_IN160101UK05', '9691035456') for _ in range(1)]

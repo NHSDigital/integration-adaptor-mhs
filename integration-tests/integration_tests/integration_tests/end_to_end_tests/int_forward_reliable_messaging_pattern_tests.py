@@ -1,7 +1,7 @@
 """
 Provides tests around the Forward Reliable workflow, including sync-async wrapping
 """
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
 from integration_tests.amq.mhs_inbound_queue import MHS_INBOUND_QUEUE
@@ -38,7 +38,6 @@ class ForwardReliableMessagingPatternTests(TestCase):
         MHS_INBOUND_QUEUE.drain()
         self.assertions = CommonAssertions('forward-reliable')
 
-    @skip('temp')
     def test_should_return_successful_response_from_spine_to_message_queue(self):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
@@ -61,7 +60,6 @@ class ForwardReliableMessagingPatternTests(TestCase):
             .assertor_for_hl7_xml_message() \
             .assert_element_attribute('.//acknowledgement//messageRef//id', 'root', message_id)
 
-    @skip('temp')
     def test_should_record_forward_reliable_message_status_as_successful(self):
         # Arrange
         # The to_party_id, and to_asid are fixed values that the forward reliable responder in opentest will respond to.

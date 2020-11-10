@@ -51,6 +51,11 @@ variable "mhs_outbound_service_target_request_count" {
   default = 1200
 }
 
+variable "mhs_outbound_spineroutelookup_verify_certificate" {
+  type = string
+  description = "Should the certificate be validated when making request to Spine Route Lookup service"
+}
+
 variable "mhs_inbound_service_minimum_instance_count" {
   type = number
   description = "The minimum number of instances of MHS inbound to run. This will be the number of instances deployed initially."

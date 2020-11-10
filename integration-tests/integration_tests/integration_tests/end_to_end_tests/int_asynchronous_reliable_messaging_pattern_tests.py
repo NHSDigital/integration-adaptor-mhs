@@ -1,8 +1,7 @@
 """
 Provides tests around the Asynchronous Reliable workflow, including sync-async wrapping
 """
-import json
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
 from integration_tests.amq.mhs_inbound_queue import MHS_INBOUND_QUEUE
@@ -13,7 +12,7 @@ from integration_tests.db.sync_async_mhs_table import SyncAsyncMhsTableStateAsse
 from integration_tests.end_to_end_tests.common_assertions import CommonAssertions
 from integration_tests.helpers.build_message import build_message
 from integration_tests.helpers.concurrent_requests import send_messages_concurrently, \
-    assert_all_messages_succeeded, has_errors
+    assert_all_messages_succeeded
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
 from integration_tests.xml.hl7_xml_assertor import Hl7XmlResponseAssertor
 
@@ -45,7 +44,6 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
     def _assert_gp_summary_upload_success_detail_is_present(self, hl7_xml_assertor: Hl7XmlResponseAssertor):
         hl7_xml_assertor.assert_element_exists_with_value('.//requestSuccessDetail//detail', 'GP Summary upload successful')
 
-    @skip('temp')
     def test_should_return_successful_response_from_spine_to_message_queue(self):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
@@ -65,7 +63,6 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
         hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
         self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
 
-    @skip('temp')
     def test_should_record_asynchronous_reliable_message_status_as_successful(self):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
@@ -90,7 +87,6 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
         dynamo_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
         self.assertions.message_status_recorded_as_successfully_processed(dynamo_assertor, message_id)
 
-    @skip('temp')
     def test_should_return_successful_response_and_record_spline_reply_in_resync_table_if_wait_for_response_requested(self):
         # Arrange
         messages = [build_message('REPC_IN150016UK05', '9446245796') for i in range(1)]
