@@ -19,7 +19,7 @@ resource "azurerm_network_security_rule" "SSH" {
     protocol                    = "Tcp"
     source_port_range           = "*"
     destination_port_range      = "22"
-    source_address_prefixes     = ["83.21.55.125/32", "91.222.71.98/32", "195.89.171.5/32", "62.254.63.50/32", "62.254.63.52/32"]
+    source_address_prefixes     = ["83.21.9.65/32", "91.222.71.98/32", "195.89.171.5/32", "62.254.63.50/32", "62.254.63.52/32"]
     destination_address_prefix  = "*"
     resource_group_name         = azurerm_resource_group.mhs_adaptor.name
     network_security_group_name = azurerm_network_security_group.jumpbox_sg.name
