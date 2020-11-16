@@ -64,3 +64,7 @@ variable "firewall_subnet_cidr" {
 variable "jumpbox_subnet_cidr" {
   default = "10.20.5.0/24"
 }
+
+variable "redis_subnet_cidr" {
+  default = "10.20.6.0/24"
+}

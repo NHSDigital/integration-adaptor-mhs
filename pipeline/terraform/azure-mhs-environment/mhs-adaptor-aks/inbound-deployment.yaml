@@ -26,9 +26,13 @@ spec:
       containers:
       - env:
         - name: MHS_INBOUND_QUEUE_BROKERS
-          value: amqp://rabbitmq:5672
+          value: amqps://mhs-adaptor-service-bus.servicebus.windows.net:5671/?sasl=plain
         - name: MHS_INBOUND_QUEUE_NAME
-          value: inbound
+          value: mhs-adaptor-service-bus-queue
+        - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
+          value: mhs-adaptor-servicebus-queue-ar
+        - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
+          value: "add from secrets"
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_STATE_TABLE_NAME
