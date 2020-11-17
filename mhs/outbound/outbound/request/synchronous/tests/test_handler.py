@@ -25,7 +25,27 @@ WORKFLOW_NAME = "workflow name"
 INTERACTION_DETAILS = {'workflow': WORKFLOW_NAME, 'sync_async': True}
 SYNC_ASYNC_WORKFLOW = "sync-async"
 CORRELATION_ID = '12345'
-
+SYNC_RESPONSE = '''<?xml version='1.0' encoding='UTF-8'?>
+<SOAP-ENV:Envelope xmlns:crs="http://national.carerecords.nhs.uk/schema/crs/"
+    xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+    xmlns="urn:hl7-org:v3"
+    xmlns:hl7="urn:hl7-org:v3">
+    <SOAP-ENV:Header>
+        <anything/>
+    </SOAP-ENV:Header>
+    <SOAP-ENV:Body>
+        <retrievalQueryResponse>
+            <QUPA_IN050000UK32>
+                <id root="4723EFB2-1A87-11EB-8EB9-6C3BE5A861CD"/>
+            </QUPA_IN050000UK32>
+        </retrievalQueryResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>'''
+HL7_EXTRACTED_SYNC_RESPONSE = '''<?xml version='1.0' encoding='utf-8'?>
+<QUPA_IN050000UK32 xmlns="urn:hl7-org:v3" xmlns:crs="http://national.carerecords.nhs.uk/schema/crs/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:hl7="urn:hl7-org:v3">
+                <id root="4723EFB2-1A87-11EB-8EB9-6C3BE5A861CD"/>
+            </QUPA_IN050000UK32>'''
 
 class BaseHandlerTest(tornado.testing.AsyncHTTPTestCase):
 
@@ -58,7 +78,7 @@ class TestSynchronousHandler(BaseHandlerTest):
     @patch.object(mdc, "correlation_id")
     @patch.object(mdc, "message_id")
     def test_post_message(self, mock_message_id, mock_correlation_id, mock_get_uuid):
-        expected_response = "Hello world!"
+        expected_response = SYNC_RESPONSE
         self.workflow.handle_outbound_message.return_value = test_utilities.awaitable((200, expected_response, None))
         mock_get_uuid.side_effect = [MOCK_UUID, MOCK_UUID_2]
         self.config_manager.get_interaction_details.return_value = INTERACTION_DETAILS
@@ -69,7 +89,7 @@ class TestSynchronousHandler(BaseHandlerTest):
         self.assertEqual(response.headers["Content-Type"], "text/xml")
         self.assertEqual(response.headers["Message-Id"], MOCK_UUID)
         self.assertEqual(response.headers["Correlation-Id"], MOCK_UUID_2)
-        self.assertEqual(response.body.decode(), expected_response)
+        self.assertEqual(response.body.decode().strip(), HL7_EXTRACTED_SYNC_RESPONSE.strip())
 
         self.config_manager.get_interaction_details.assert_called_with(INTERACTION_NAME)
         self.workflow.handle_outbound_message.assert_called_with(None, MOCK_UUID, MOCK_UUID_2, INTERACTION_DETAILS,
@@ -87,7 +107,7 @@ class TestSynchronousHandler(BaseHandlerTest):
         for is_base64, content_type, payload in textual_sub_tests + binary_sub_tests:
             with self.subTest(content_type=content_type):
                 self.workflow.handle_outbound_message.return_value = test_utilities.awaitable(
-                    (200, "Hello world!", None))
+                    (200, SYNC_RESPONSE, None))
                 self.config_manager.get_interaction_details.return_value = INTERACTION_DETAILS
 
                 body = {
@@ -108,7 +128,7 @@ class TestSynchronousHandler(BaseHandlerTest):
     @patch.object(mdc, "message_id")
     def test_post_message_with_message_id_passed_in(self, mock_message_id, mock_correlation_id, mock_get_uuid):
         message_id = "message-id"
-        expected_response = "Hello world!"
+        expected_response = SYNC_RESPONSE
         self.workflow.handle_outbound_message.return_value = test_utilities.awaitable((200, expected_response, None))
         mock_get_uuid.return_value = MOCK_UUID
         self.config_manager.get_interaction_details.return_value = INTERACTION_DETAILS
@@ -120,7 +140,7 @@ class TestSynchronousHandler(BaseHandlerTest):
                               body=REQUEST_BODY)
 
         self.assertEqual(response.code, 200)
-        self.assertEqual(response.body.decode(), expected_response)
+        self.assertEqual(response.body.decode().strip(), HL7_EXTRACTED_SYNC_RESPONSE.strip())
         self.assertEqual(response.headers["Correlation-Id"], MOCK_UUID)
         mock_get_uuid.assert_called()
 
@@ -132,7 +152,7 @@ class TestSynchronousHandler(BaseHandlerTest):
 
     @patch.object(message_utilities, "get_uuid")
     def test_post_message_with_correlation_id_passed_in_should_call_workflow(self, mock_get_uuid):
-        expected_response = "Hello world!"
+        expected_response = SYNC_RESPONSE
         self.workflow.handle_outbound_message.return_value = test_utilities.awaitable((200, expected_response, None))
         mock_get_uuid.return_value = MOCK_UUID
         self.config_manager.get_interaction_details.return_value = INTERACTION_DETAILS
@@ -144,7 +164,7 @@ class TestSynchronousHandler(BaseHandlerTest):
                               body=REQUEST_BODY)
 
         self.assertEqual(response.code, 200)
-        self.assertEqual(response.body.decode(), expected_response)
+        self.assertEqual(response.body.decode().strip(), HL7_EXTRACTED_SYNC_RESPONSE.strip())
         self.assertEqual(response.headers["Correlation-Id"], CORRELATION_ID)
         self.assertEqual(response.headers["Message-Id"], MOCK_UUID)
         mock_get_uuid.assert_called_once()
@@ -363,7 +383,7 @@ class TestSynchronousHandler(BaseHandlerTest):
         self.assertEqual(response.headers["Correlation-Id"], CORRELATION_ID)
 
     def test_sync_async_workflow_not_invoked(self):
-        expected_response = "Hello world!"
+        expected_response = SYNC_RESPONSE
         wdo = unittest.mock.MagicMock()
         wdo.set_outbound_status.return_value = test_utilities.awaitable(True)
         result = test_utilities.awaitable((200, expected_response, None))
@@ -377,7 +397,7 @@ class TestSynchronousHandler(BaseHandlerTest):
 
         self.sync_async_workflow.handle_sync_async_outbound_message.assert_not_called()
         self.workflow.handle_outbound_message.assert_called_once()
-        self.assertEqual(expected_response.encode(), response.body)
+        self.assertEqual(HL7_EXTRACTED_SYNC_RESPONSE.strip(), response.body.decode().strip())
         self.assertEqual(response.headers["Correlation-Id"], CORRELATION_ID)
 
     def test_error_when_no_wait_for_response_header_present(self):
@@ -611,7 +631,7 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
 
         wdo_mock = unittest.mock.MagicMock()
         wdo_mock.set_outbound_status.return_value = test_utilities.awaitable(True)
-        self.workflow.handle_outbound_message.return_value = test_utilities.awaitable((200, "Success", wdo_mock))
+        self.workflow.handle_outbound_message.return_value = test_utilities.awaitable((200, SYNC_RESPONSE, wdo_mock))
         self.workflow.set_successful_message_response.return_value = test_utilities.awaitable(None)
 
         self.call_handler()
@@ -625,7 +645,7 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
         # self.workflow.set_failure_message_response.return_value = 5
         # self.workflow.set_success_message_response.return_value = 5
         write_mock.side_effect = Exception('Dam the connection was closed')
-        expected_response = "Hello world!"
+        expected_response = SYNC_RESPONSE
         wdo = unittest.mock.MagicMock()
         wdo.set_outbound_status.return_value = test_utilities.awaitable(True)
         result = test_utilities.awaitable((200, expected_response, wdo))
@@ -640,7 +660,7 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
         self.workflow.set_failure_message_response.assert_called_once_with(wdo)
 
     def test_null_wdo_doesnt_error(self):
-        expected_response = "Hello world!"
+        expected_response = SYNC_RESPONSE
         result = test_utilities.awaitable((200, expected_response, None))
 
         self.workflow.handle_outbound_message.return_value = result

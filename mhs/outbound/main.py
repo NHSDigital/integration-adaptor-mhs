@@ -67,6 +67,7 @@ def initialise_workflows(transmission: outbound_transmission.OutboundTransmissio
 def initialise_routing():
     spine_route_lookup_url = config.get_config('SPINE_ROUTE_LOOKUP_URL')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
+    validate_cert = str2bool(config.get_config('SPINE_ROUTE_LOOKUP_VALIDATE_CERT', default=str(True)))
 
     route_data_dir = pathlib.Path(definitions.ROOT_DIR) / "route"
     certificates = certs.Certs.create_certs_files(route_data_dir,
@@ -86,7 +87,9 @@ def initialise_routing():
                                                      client_cert=certificates.local_cert_path,
                                                      client_key=certificates.private_key_path,
                                                      ca_certs=certificates.ca_certs_path,
-                                                     http_proxy_host=route_proxy_host, http_proxy_port=route_proxy_port)
+                                                     http_proxy_host=route_proxy_host,
+                                                     http_proxy_port=route_proxy_port,
+                                                     validate_cert=validate_cert)
 
 
 def start_tornado_server(data_dir: pathlib.Path, workflows: Dict[str, workflow.CommonWorkflow]) -> None:
