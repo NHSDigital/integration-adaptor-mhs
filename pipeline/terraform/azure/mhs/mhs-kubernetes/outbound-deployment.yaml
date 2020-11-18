@@ -46,7 +46,7 @@ spec:
         - name: MHS_SPINE_ROUTE_LOOKUP_URL
           value: "route:8080"
         - name: MHS_DB_ENDPOINT_URL
-          value: "use secrets"
+          value: "add from secrets"
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_STATE_TABLE_NAME
