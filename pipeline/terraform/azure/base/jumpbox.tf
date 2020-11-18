@@ -52,8 +52,8 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
   size                            = "Standard_DS1_v2"
   computer_name                   = "jumpboxvm"
   admin_username                  = var.jumpbox_user
-  admin_password                  = random_password.adminpassword.result
-  disable_password_authentication = false
+  #admin_password                  = random_password.adminpassword.result
+  disable_password_authentication = true
 
   admin_ssh_key {
     username = var.jumpbox_user
@@ -93,16 +93,16 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
   }
 }
 
-resource "random_password" "adminpassword" {
-  keepers = {
-    resource_group = azurerm_resource_group.nia_base.name
-  }
+# resource "random_password" "adminpassword" {
+#   keepers = {
+#     resource_group = azurerm_resource_group.nia_base.name
+#   }
 
-  length      = 10
-  min_lower   = 1
-  min_upper   = 1
-  min_numeric = 1
-}
+#   length      = 10
+#   min_lower   = 1
+#   min_upper   = 1
+#   min_numeric = 1
+# }
 
 output "jumpbox_password" {
   description = "Jumpbox VM admin password"

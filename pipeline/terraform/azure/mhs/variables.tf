@@ -7,26 +7,6 @@ variable location {
   default = "UK West"
 }
 
-# state file settings
-
-# variable state_bucket_rg {
-#   description = "Resource group which contains bucket with TF state file"
-# }
-
-# variable state_bucket_storage_account {
-#   description = "Name of storage account with TF state bucket"
-# }
-
-# variable "state_bucket_name" {
-#   description = "Name of bucket (container) with state file"
-# }
-
-# variable "state_bucket_file" {
-#   description = "Name of file with TF state"
-# }
-
-
-
 ## Resource group variables ##
 variable resource_group_name {
   default = "mhs-rg"

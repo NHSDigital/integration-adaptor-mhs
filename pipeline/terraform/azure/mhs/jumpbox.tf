@@ -72,25 +72,6 @@ resource "azurerm_linux_virtual_machine" "mhs_jumpbox" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
-
-  # provisioner "remote-exec" {
-  #   connection {
-  #     host     = self.public_ip_address
-  #     type     = "ssh"
-  #     user     = var.jumpbox_user
-  #     #private_key = file("~/.ssh/azure_mhs_jumpbox")
-  #     password = random_password.adminpassword.result
-  #   }
-
-  #   inline = [
-  #     "sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2",
-  #     "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -",
-  #     "echo 'deb https://apt.kubernetes.io/ kubernetes-xenial main' | sudo tee -a /etc/apt/sources.list.d/kubernetes.list",
-  #     "sudo apt-get update",
-  #     "sudo apt-get install -y kubectl",
-  #     "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
-  #   ]
-  # }
 }
 
 resource "random_password" "adminpassword" {
