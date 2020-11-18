@@ -19,7 +19,7 @@ resource "azurerm_network_security_rule" "SSH" {
     protocol                    = "Tcp"
     source_port_range           = "*"
     destination_port_range      = "22"
-    source_address_prefixes     = ["83.21.9.65/32", "91.222.71.98/32", "195.89.171.5/32", "62.254.63.50/32", "62.254.63.52/32"]
+    source_address_prefixes     = var.jumpbox_allowed_ips
     destination_address_prefix  = "*"
     resource_group_name         = azurerm_resource_group.mhs_adaptor.name
     network_security_group_name = azurerm_network_security_group.jumpbox_sg.name
@@ -52,12 +52,12 @@ resource "azurerm_linux_virtual_machine" "mhs_jumpbox" {
   size                            = "Standard_DS1_v2"
   computer_name                   = "jumpboxvm"
   admin_username                  = var.jumpbox_user
-  #admin_password                  = random_password.adminpassword.result
-  disable_password_authentication = true
+  admin_password                  = random_password.adminpassword.result
+  disable_password_authentication = false
 
   admin_ssh_key {
     username = var.jumpbox_user
-    public_key = file("files/admin_ssh_key.pub")
+    public_key = file("../files/admin_ssh_key.pub")
   }
 
   os_disk {
@@ -72,24 +72,22 @@ resource "azurerm_linux_virtual_machine" "mhs_jumpbox" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+}
 
-  provisioner "remote-exec" {
-    connection {
-      host     = self.public_ip_address
-      type     = "ssh"
-      user     = var.jumpbox_user
-      private_key = file("~/.ssh/azure_mhs_jumpbox")
-    }
-
-    inline = [
-      "sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2",
-      "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -",
-      "echo 'deb https://apt.kubernetes.io/ kubernetes-xenial main' | sudo tee -a /etc/apt/sources.list.d/kubernetes.list",
-      "sudo apt-get update",
-      "sudo apt-get install -y kubectl",
-      "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
-    ]
+resource "random_password" "adminpassword" {
+  keepers = {
+    resource_group = azurerm_resource_group.mhs_adaptor.name
   }
+
+  length      = 10
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+}
+
+output "jumpbox_password" {
+  description = "Jumpbox VM admin password"
+  value       = random_password.adminpassword.result
 }
 
 output "jumpbox_ip" {

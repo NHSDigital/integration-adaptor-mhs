@@ -50,6 +50,12 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
   tags = {
     Environment = "Production"
   }
+
+  depends_on = [
+    azurerm_subnet.mhs_aks_subnet,
+    azurerm_route_table.mhs_aks_route_table,
+    azurerm_subnet_route_table_association.mhs_aks_subnet_association
+  ]
 }
 
 # https://github.com/Azure/AKS/issues/1557

@@ -151,9 +151,9 @@ export-env-vars-and-run-mhs-docker.sh
 /mhs/spineroutelookup/mock_ldap_data/*.json
 
 # Azure env variables
-/pipeline/terraform/azure-mhs-environment/export_tf_vars.sh
-/pipeline/terraform/azure-mhs-environment/.kube/aksconfig
-/pipeline/terraform/azure-mhs-environment/.ssh/id_rsa
+/pipeline/terraform/azure/export_tf_vars.sh
+/pipeline/terraform/azure/mhs/.kube/aksconfig
+/pipeline/terraform/azure/mhs/.ssh/id_rsa
 
 
 **/export-env-vars.sh
