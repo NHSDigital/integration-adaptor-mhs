@@ -1,7 +1,6 @@
 """
 Provides tests around the Asynchronous Express workflow, including sync-async wrapping
 """
-import json
 from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
@@ -13,7 +12,7 @@ from integration_tests.db.sync_async_mhs_table import SyncAsyncMhsTableStateAsse
 from integration_tests.end_to_end_tests.common_assertions import CommonAssertions
 from integration_tests.helpers.build_message import build_message
 from integration_tests.helpers.concurrent_requests import send_messages_concurrently, \
-    assert_all_messages_succeeded, has_errors
+    assert_all_messages_succeeded
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
 
 

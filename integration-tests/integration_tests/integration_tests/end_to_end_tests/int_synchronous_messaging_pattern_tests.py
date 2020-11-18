@@ -42,7 +42,7 @@ class SynchronousMessagingPatternTests(TestCase):
 
         # Assert
         Hl7XmlResponseAssertor(response.text) \
-            .assert_element_exists('.//retrievalQueryResponse//QUPA_IN050000UK32//PdsSuccessfulRetrieval') \
+            .assert_element_exists('.//PdsSuccessfulRetrieval') \
             .assert_element_attribute('.//queryAck//queryResponseCode', 'code', 'OK') \
             .assert_element_attribute('.//patientRole//id', 'extension', '9691813343') \
             .assert_element_attribute('.//messageRef//id', 'root', message_id)

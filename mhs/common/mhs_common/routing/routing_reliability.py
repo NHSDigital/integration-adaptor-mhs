@@ -16,7 +16,7 @@ class RoutingAndReliability:
 
     def __init__(self, spine_route_lookup_url: str, spine_org_code: str, client_cert: str = None,
                  client_key: str = None, ca_certs: str = None, http_proxy_host: str = None,
-                 http_proxy_port: int = None):
+                 http_proxy_port: int = None, validate_cert=True):
         """Initialise a new RoutingAndReliability instance.
 
         :param spine_route_lookup_url: The URL to make requests to the Spine Route Lookup service on. e.g.
@@ -37,6 +37,8 @@ class RoutingAndReliability:
 
         self._proxy_host = http_proxy_host
         self._proxy_port = http_proxy_port
+
+        self.validate_cert = validate_cert
 
     @timing.time_function
     async def get_end_point(self, service_id: str, org_code: str = None) -> Dict:
@@ -64,6 +66,7 @@ class RoutingAndReliability:
             http_response = await common_https.CommonHttps.make_request(url=url, method="GET",
                                                                         headers=build_tracking_headers(),
                                                                         body=None,
+                                                                        validate_cert=self.validate_cert,
                                                                         client_cert=self._client_cert,
                                                                         client_key=self._client_key,
                                                                         ca_certs=self._ca_certs,
@@ -104,6 +107,7 @@ class RoutingAndReliability:
             http_response = await common_https.CommonHttps.make_request(url=url, method="GET",
                                                                         headers=build_tracking_headers(),
                                                                         body=None,
+                                                                        validate_cert=self.validate_cert,
                                                                         client_cert=self._client_cert,
                                                                         client_key=self._client_key,
                                                                         ca_certs=self._ca_certs,
