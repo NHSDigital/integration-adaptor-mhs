@@ -32,7 +32,7 @@ spec:
         - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
           value: mhs-adaptor-servicebus-queue-ar
         - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
-          value: "add from secrets"
+          value: "use secrets"
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_STATE_TABLE_NAME
@@ -52,7 +52,7 @@ spec:
         - name: MHS_SECRET_CA_CERTS
           value: "Here goes list of CA certs"
         - name: MHS_DB_ENDPOINT_URL
-          value: "add from secrets"
+          value: "use secrets"
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_INBOUND_USE_SSL

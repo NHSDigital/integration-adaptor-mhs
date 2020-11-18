@@ -38,7 +38,7 @@ spec:
         - name: MHS_SDS_SEARCH_BASE
           value: ou=services,o=nhs
         - name: MHS_SDS_URL
-          value: ldap://192.168.128.11
+          value: ldaps://ldap.nis1.national.ncrs.nhs.uk
         image: nhsdev/nia-mhs-route:1.0.0
         imagePullPolicy: ""
         name: route
