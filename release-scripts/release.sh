@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-export BUILD_TAG=1.0.0
+export BUILD_TAG=1.0.1
 
 cd ..
 
@@ -23,6 +23,6 @@ then
     docker push nhsdev/nia-mhs-inbound:${BUILD_TAG}
     docker push nhsdev/nia-mhs-outbound:${BUILD_TAG}
     docker push nhsdev/nia-mhs-route:${BUILD_TAG}
-    git tag -a ${BUILD_TAG} -m "Release ${BUILD_TAG}"
-    git push origin ${BUILD_TAG}
+    # git tag -a ${BUILD_TAG} -m "Release ${BUILD_TAG}"
+    # git push origin ${BUILD_TAG}
 fi
