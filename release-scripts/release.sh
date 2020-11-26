@@ -23,6 +23,6 @@ then
     docker push nhsdev/nia-mhs-inbound:${BUILD_TAG}
     docker push nhsdev/nia-mhs-outbound:${BUILD_TAG}
     docker push nhsdev/nia-mhs-route:${BUILD_TAG}
-    # git tag -a ${BUILD_TAG} -m "Release ${BUILD_TAG}"
-    # git push origin ${BUILD_TAG}
+    git tag -a ${BUILD_TAG} -m "Release ${BUILD_TAG}"
+    git push origin ${BUILD_TAG}
 fi
