@@ -18,7 +18,7 @@ variable jumpbox_user {
 
 variable "jumpbox_allowed_ips" {
   default = [
-    "165.225.207.40/32", # zscaler WAW
+    "165.225.207.63/32", # zscaler WAW
     "91.222.71.98/32",   # k gdn
     "195.89.171.5/32",   # k bfs1
     "62.254.63.50/32",   # k bfs2
@@ -33,3 +33,8 @@ variable "jumpbox_subnet_cidr" {
   default = "10.20.1.0/24"
 }
 
+# Secrets 
+
+variable "secret_mhs_partykey" {
+  type = string
+}

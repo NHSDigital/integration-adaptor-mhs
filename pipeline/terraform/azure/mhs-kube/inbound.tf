@@ -1,3 +1,25 @@
+resource "kubernetes_deployment" "inbound" {
+  metadata {
+    name = "inbound"
+    labels = {
+      io.kompose.service = "inbound"
+    }
+  }
+
+  spec {
+    replicas = 1
+    selector {
+
+    }
+    template {
+      metadata {}
+      spec {}
+    }
+  }
+}
+
+
+/*
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -98,3 +120,6 @@ spec:
       serviceAccountName: ""
       volumes: null
 status: {}
+
+
+*/

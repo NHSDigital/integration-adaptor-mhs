@@ -128,7 +128,10 @@ resource "azurerm_firewall_application_rule_collection" "osupdates" {
       "security.ubuntu.com",
       "ntp.ubuntu.com",
       "packages.microsoft.com",
-      "snapcraft.io"
+      "snapcraft.io",
+      "azure.archive.ubuntu.com",
+      "deb.debian.org",
+      "security.debian.org"
     ]
 
     protocol {

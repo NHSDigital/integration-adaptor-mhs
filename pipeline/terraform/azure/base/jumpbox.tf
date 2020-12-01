@@ -104,10 +104,10 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
 #   min_numeric = 1
 # }
 
-output "jumpbox_password" {
-  description = "Jumpbox VM admin password"
-  value       = random_password.adminpassword.result
-}
+# output "jumpbox_password" {
+#   description = "Jumpbox VM admin password"
+#   value       = random_password.adminpassword.result
+# }
 
 output "jumpbox_ip" {
   description = "Jumpbox VM IP"

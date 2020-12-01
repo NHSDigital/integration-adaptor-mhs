@@ -154,6 +154,8 @@ export-env-vars-and-run-mhs-docker.sh
 /pipeline/terraform/azure/export_tf_vars.sh
 /pipeline/terraform/azure/mhs/.kube/aksconfig
 /pipeline/terraform/azure/mhs/.ssh/id_rsa
+/pipeline/terraform/azure/mhs/mhs-kubernetes/secret-*
+/pipeline/terraform/azure/etc/secrets.tfvars
 
 
 **/export-env-vars.sh
