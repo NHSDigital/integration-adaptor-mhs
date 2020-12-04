@@ -4,7 +4,7 @@ FROM jenkins/jnlp-slave:3.29-1
 USER root
 
 # Fix local cache
-RUN apt-get update && apt-get clean
+RUN rm -rf /var/lib/apt/lists/* && apt update
 
 # Install Packer
 RUN wget -O packer.zip https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip && \
