@@ -57,4 +57,4 @@ RUN apt-get clean
 
 # Leave as root to allow for running docker builds
 
-ENTRYPOINT [\"jenkins-slave\"]
+ENTRYPOINT ["jenkins-slave"]
