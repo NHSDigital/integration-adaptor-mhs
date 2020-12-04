@@ -51,6 +51,10 @@ RUN apt-get update && \
 # Install curl and libSSL, so Tornado can use the CURL HTTP client.
 RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev
 
+# Cleanup
+
+RUN apt-get clean
+
 # Leave as root to allow for running docker builds
 
 ENTRYPOINT [\"jenkins-slave\"]
