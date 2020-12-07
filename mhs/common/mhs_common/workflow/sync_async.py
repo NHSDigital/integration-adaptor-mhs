@@ -2,6 +2,7 @@
 from typing import Tuple, Optional
 
 from mhs_common import workflow
+from mhs_common.request import request_body_schema
 from mhs_common.state import work_description as wd
 from mhs_common.workflow import common
 from mhs_common.workflow import common_synchronous
@@ -46,7 +47,7 @@ class SyncAsyncWorkflow(common_synchronous.CommonSynchronousWorkflow):
 
     async def handle_outbound_message(self, from_asid: Optional[str],
                                       message_id: str, correlation_id: str, interaction_details: dict,
-                                      payload: str,
+                                      request_body: request_body_schema.RequestBody,
                                       work_description: wd.WorkDescription
                                       ) -> Tuple[int, str]:
         raise NotImplementedError("This method is not implemented for the sync-async workflow, consider using"
@@ -54,7 +55,7 @@ class SyncAsyncWorkflow(common_synchronous.CommonSynchronousWorkflow):
 
     async def handle_sync_async_outbound_message(self, from_asid: Optional[str], message_id: str, correlation_id: str,
                                                  interaction_details: dict,
-                                                 payload: str,
+                                                 request_body: request_body_schema.RequestBody,
                                                  async_workflow: common.CommonWorkflow
                                                  ) -> Tuple[int, str, wd.WorkDescription]:
 
@@ -65,7 +66,7 @@ class SyncAsyncWorkflow(common_synchronous.CommonSynchronousWorkflow):
         await wdo.publish()
 
         status_code, response, _ = await async_workflow.handle_outbound_message(from_asid, message_id, correlation_id,
-                                                                                interaction_details, payload, wdo)
+                                                                                interaction_details, request_body, wdo)
         if not status_code == 202:
             logger.warning('No ACK received ')
             return status_code, response, wdo

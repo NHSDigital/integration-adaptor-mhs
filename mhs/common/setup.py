@@ -15,6 +15,7 @@ setup(
         'defusedxml~=0.6',
         'aioboto3~=8.0',
         'tornado~=6.0',
-        'isodate~=0.6'
+        'isodate~=0.6',
+        'marshmallow~=3.2',
     ]
 )

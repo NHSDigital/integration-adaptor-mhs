@@ -7,6 +7,7 @@ import utilities.integration_adaptors_logger as log
 
 import mhs_common.state.work_description as wd
 from mhs_common.messages import ebxml_envelope
+from mhs_common.request import request_body_schema
 from mhs_common.routing import routing_reliability
 
 MHS_END_POINT_KEY = 'nhsMHSEndPoint'
@@ -42,7 +43,7 @@ class CommonWorkflow(abc.ABC):
     @abc.abstractmethod
     async def handle_outbound_message(self, from_asid: Optional[str],
                                       message_id: str, correlation_id: str, interaction_details: dict,
-                                      payload: str,
+                                      request_body: request_body_schema.RequestBody,
                                       work_description_object: Optional[wd.WorkDescription]
                                       ) -> Tuple[int, str, Optional[wd.WorkDescription]]:
         """
@@ -55,7 +56,7 @@ class CommonWorkflow(abc.ABC):
         :param message_id: ID of the message to send
         :param correlation_id: correlation ID of the request
         :param interaction_details: interaction details used to construct the message to send outbound
-        :param payload: payload to send outbound
+        :param request_body: payload (message + attachments) to send outbound
         :return: the HTTP status, body to return as a response, and optionally the work description.
         The work description only needs to be returned if set_successful_message_response and/or
         set_failure_message_response are implemented for the workflow.

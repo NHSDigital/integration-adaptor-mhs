@@ -6,6 +6,7 @@ from isodate import isoerror
 import utilities.integration_adaptors_logger as log
 from comms import queue_adaptor
 from mhs_common import workflow
+from mhs_common.request import request_body_schema
 from mhs_common.routing import routing_reliability
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
@@ -39,7 +40,7 @@ class AsynchronousForwardReliableWorkflow(asynchronous_reliable.AsynchronousReli
     @timing.time_function
     async def handle_outbound_message(self, from_asid: Optional[str],
                                       message_id: str, correlation_id: str, interaction_details: dict,
-                                      payload: str,
+                                      request_body: request_body_schema.RequestBody,
                                       wdo: Optional[wd.WorkDescription]) \
             -> Tuple[int, str, Optional[wd.WorkDescription]]:
 
@@ -68,7 +69,7 @@ class AsynchronousForwardReliableWorkflow(asynchronous_reliable.AsynchronousReli
 
         error, http_headers, message = await self._serialize_outbound_message(message_id, correlation_id,
                                                                               interaction_details,
-                                                                              payload, wdo, to_party_key, cpa_id)
+                                                                              request_body, wdo, to_party_key, cpa_id)
         if error:
             return error[0], error[1], None
 

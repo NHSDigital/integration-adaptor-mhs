@@ -15,7 +15,7 @@ from mhs_common.handler import base_handler
 from mhs_common.messages import ebxml_envelope
 from utilities import integration_adaptors_logger as log, message_utilities, timing
 
-from outbound.request import request_body_schema
+from mhs_common.request import request_body_schema
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -38,7 +38,7 @@ class SynchronousHandler(base_handler.BaseHandler):
 
         logger.info('Outbound POST received. {Request}', fparams={'Request': str(self.request)})
 
-        body = self._parse_body()
+        request_body = self._parse_body()
 
         interaction_details = self._retrieve_interaction_details(interaction_id)
         wf = self._extract_default_workflow(interaction_details, interaction_id)
@@ -48,11 +48,11 @@ class SynchronousHandler(base_handler.BaseHandler):
         sync_async_interaction_config = self._extract_sync_async_from_interaction_details(interaction_details)
 
         if self._should_invoke_sync_async_workflow(sync_async_interaction_config, wait_for_response_header):
-            await self._invoke_sync_async(from_asid, message_id, correlation_id, interaction_details, body, wf)
+            await self._invoke_sync_async(from_asid, message_id, correlation_id, interaction_details, request_body, wf)
         else:
-            await self.invoke_default_workflow(from_asid, message_id, correlation_id, interaction_details, body, wf)
+            await self.invoke_default_workflow(from_asid, message_id, correlation_id, interaction_details, request_body, wf)
 
-    def _parse_body(self):
+    def _parse_body(self) -> request_body_schema.RequestBody:
         try:
             content_type = self.request.headers[HttpHeaders.CONTENT_TYPE]
         except KeyError as e:
@@ -81,7 +81,7 @@ class SynchronousHandler(base_handler.BaseHandler):
             logger.error('Invalid request. {ValidationErrors}', fparams={'ValidationErrors': validation_errors})
             raise tornado.web.HTTPError(400, f'Invalid request. Validation errors: {validation_errors}',
                                         reason=f'Invalid request. Validation errors: {validation_errors}') from e
-        return parsed_body.payload
+        return parsed_body
 
     def _extract_wait_for_response_header(self):
         wait_for_response_header = self.request.headers.get(HttpHeaders.WAIT_FOR_RESPONSE, None)
@@ -160,13 +160,13 @@ class SynchronousHandler(base_handler.BaseHandler):
         else:
             return False
 
-    async def _invoke_sync_async(self, from_asid, message_id, correlation_id, interaction_details, body, async_workflow):
+    async def _invoke_sync_async(self, from_asid, message_id, correlation_id, interaction_details, request_body, async_workflow):
         sync_async_workflow: workflow.SyncAsyncWorkflow = self.workflows[workflow.SYNC_ASYNC]
         status, response, wdo = await sync_async_workflow.handle_sync_async_outbound_message(from_asid,
                                                                                              message_id,
                                                                                              correlation_id,
                                                                                              interaction_details,
-                                                                                             body,
+                                                                                             request_body,
                                                                                              async_workflow)
         await self.write_response_with_store_updates(status, response, wdo, sync_async_workflow, message_id, correlation_id)
 
@@ -182,11 +182,11 @@ class SynchronousHandler(base_handler.BaseHandler):
             if wdo:
                 await wf.set_failure_message_response(wdo)
 
-    async def invoke_default_workflow(self, from_asid, message_id, correlation_id, interaction_details, body, wf):
+    async def invoke_default_workflow(self, from_asid, message_id, correlation_id, interaction_details, request_body, wf):
         status, response, work_description_response = await wf.handle_outbound_message(from_asid, message_id,
                                                                                        correlation_id,
                                                                                        interaction_details,
-                                                                                       body,
+                                                                                       request_body,
                                                                                        None)
 
         if status == 200:
