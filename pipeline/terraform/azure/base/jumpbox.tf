@@ -19,7 +19,7 @@ resource "azurerm_network_security_rule" "SSH" {
     protocol                    = "Tcp"
     source_port_range           = "*"
     destination_port_range      = "22"
-    source_address_prefixes     = var.jumpbox_allowed_ips
+    source_address_prefixes     = var.secret_jumpbox_allowed_ips
     destination_address_prefix  = "*"
     resource_group_name         = azurerm_resource_group.nia_base.name
     network_security_group_name = azurerm_network_security_group.jumpbox_sg.name
@@ -104,10 +104,10 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
 #   min_numeric = 1
 # }
 
-output "jumpbox_password" {
-  description = "Jumpbox VM admin password"
-  value       = random_password.adminpassword.result
-}
+# output "jumpbox_password" {
+#   description = "Jumpbox VM admin password"
+#   value       = random_password.adminpassword.result
+# }
 
 output "jumpbox_ip" {
   description = "Jumpbox VM IP"

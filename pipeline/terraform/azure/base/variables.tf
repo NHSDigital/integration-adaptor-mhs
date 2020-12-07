@@ -16,15 +16,6 @@ variable jumpbox_user {
   default = "mhs_user"
 }
 
-variable "jumpbox_allowed_ips" {
-  default = [
-    "165.225.207.40/32", # zscaler WAW
-    "91.222.71.98/32",   # k gdn
-    "195.89.171.5/32",   # k bfs1
-    "62.254.63.50/32",   # k bfs2
-    "62.254.63.52/32" ]  # k bfs3
-}
-
 variable "nia_vnet_cidr" {
   default = "10.20.0.0/16"
 }
@@ -33,3 +24,7 @@ variable "jumpbox_subnet_cidr" {
   default = "10.20.1.0/24"
 }
 
+variable "secret_jumpbox_allowed_ips" {
+  description = "List of IPs that should be allowed to jumpbox, this value is not stored in Azure Keyvault and should always be loaded from tfvars"
+  default = []
+}
