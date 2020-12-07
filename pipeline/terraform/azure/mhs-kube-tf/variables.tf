@@ -9,7 +9,7 @@ variable state_bucket_name {
 }
 
 variable "mhs_namespace" {
-  default = "mhs"
+  default = "default"
 }
 
 variable "persistence_adaptor" {

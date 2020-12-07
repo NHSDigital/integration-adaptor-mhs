@@ -1,7 +1,7 @@
 resource "kubernetes_secret" "mhs-partykey" {
   metadata {
     name = "mhs-partykey"
-    namespace = "default"
+    namespace = var.mhs_namespace
   }
   type = "Opaque"
   data = {
@@ -12,7 +12,7 @@ resource "kubernetes_secret" "mhs-partykey" {
 resource "kubernetes_secret" "mhs-queue" {
   metadata {
     name = "mhs-queue"
-    namespace = "default"
+    namespace = var.mhs_namespace
   }
   type = "Opaque"
   data = {
@@ -26,7 +26,7 @@ resource "kubernetes_secret" "mhs-queue" {
 resource "kubernetes_secret" "mhs-database" {
   metadata {
     name = "mhs-database"
-    namespace = "default"
+    namespace = var.mhs_namespace
   }
   type = "Opaque"
   data = {
@@ -37,7 +37,7 @@ resource "kubernetes_secret" "mhs-database" {
 resource "kubernetes_secret" "mhs-client-cert" {
   metadata {
     name = "mhs-client-cert"
-    namespace = "default"
+    namespace = var.mhs_namespace
   }
   type = "Opaque"
   data = {
@@ -49,7 +49,7 @@ resource "kubernetes_secret" "mhs-client-cert" {
 resource "kubernetes_secret" "mhs-ca-certs" {
   metadata {
     name = "mhs-ca-certs"
-    namespace = "default"
+    namespace = var.mhs_namespace
   }
   type = "Opaque"
   data = {
