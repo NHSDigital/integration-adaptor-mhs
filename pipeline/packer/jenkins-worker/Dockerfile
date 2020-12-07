@@ -51,6 +51,13 @@ RUN apt-get update && \
 # Install curl and libSSL, so Tornado can use the CURL HTTP client.
 RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev
 
+# Install awscli
+ENV AWS_CLI_VERSION="2.1.7"
+RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip -o awscliv2.zip && \
+        unzip awscliv2.zip && \
+        ./aws/install && \
+        rm -rf aws*
+
 # Cleanup
 
 RUN apt-get clean
