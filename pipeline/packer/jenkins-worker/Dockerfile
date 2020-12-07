@@ -3,6 +3,9 @@ FROM jenkins/jnlp-slave:3.29-1
 # Need to be root to install packages
 USER root
 
+# Fix local cache
+RUN rm -rf /var/lib/apt/lists/* && apt update
+
 # Install Packer
 RUN wget -O packer.zip https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip && \
         unzip packer.zip -d /usr/bin/ && \
@@ -41,13 +44,24 @@ RUN apt-get update && \
         apt-key fingerprint 0EBFCD88 && \
         add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
         apt-get update && \
-        apt-get install -qq -y --no-install-recommends docker-ce=18.06.3~ce~3-0~debian && \
+        apt-get install -qq -y --no-install-recommends docker-ce=5:19.03.6~3-0~debian-stretch && \
         curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
         chmod +x /usr/local/bin/docker-compose
 
 # Install curl and libSSL, so Tornado can use the CURL HTTP client.
 RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev
 
+# Install awscli
+ENV AWS_CLI_VERSION="1.16.312"
+RUN curl https://s3.amazonaws.com/aws-cli/awscli-bundle-${AWS_CLI_VERSION}.zip -o awscli-bundle.zip && \
+        unzip awscli-bundle.zip && \
+        ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
+        rm -rf aws*
+
+# Cleanup
+
+RUN apt-get clean
+
 # Leave as root to allow for running docker builds
 
-ENTRYPOINT [\"jenkins-slave\"]
+ENTRYPOINT ["jenkins-slave"]
