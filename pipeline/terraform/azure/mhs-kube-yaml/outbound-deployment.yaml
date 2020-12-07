@@ -26,7 +26,7 @@ spec:
       containers:
       - env:
         - name: MHS_FORWARD_RELIABLE_ENDPOINT_URL
-          value: https://192.168.128.11/reliablemessaging/forwardreliable
+          value: https://msg.int.spine2.ncrs.nhs.uk/reliablemessaging/reliablerequest
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_OUTBOUND_HTTP_PROXY
@@ -46,7 +46,10 @@ spec:
         - name: MHS_SPINE_ROUTE_LOOKUP_URL
           value: "route:8080"
         - name: MHS_DB_ENDPOINT_URL
-          value: "add from secrets"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-database
+              key: connectionString
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_STATE_TABLE_NAME
@@ -56,14 +59,25 @@ spec:
         - name: MHS_SECRET_SPINE_ROUTE_LOOKUP_CA_CERTS
           value: "Here goes spine CA certs"
         - name: MHS_SECRET_PARTY_KEY
-          value: party_key
+          valueFrom:
+            secretKeyRef:
+              name: mhs-partykey
+              key: partyKey
         - name: MHS_SECRET_CLIENT_CERT
-          value: "Here goes client cert"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-client-cert
+              key: tls.crt
         - name: MHS_SECRET_CLIENT_KEY	
-          value: "Here goes client cert key"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-client-cert
+              key: tls.key
         - name: MHS_SECRET_CA_CERTS
-          value: "Here goes list of CA certs"
-
+          valueFrom:
+            secretKeyRef:
+              name: mhs-ca-certs
+              key: ca-certs
         image: nhsdev/nia-mhs-outbound:1.0.0
         imagePullPolicy: ""
         name: outbound
@@ -71,6 +85,7 @@ spec:
         - containerPort: 80
         resources: {}
       restartPolicy: Always
+      dnsPolicy: ClusterFirst
       serviceAccountName: ""
       volumes: null
 status: {}

@@ -4,6 +4,7 @@ metadata:
   annotations:
     kompose.cmd: kompose convert
     kompose.version: 1.21.0 ()
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
   creationTimestamp: null
   labels:
     io.kompose.service: outbound
@@ -15,5 +16,6 @@ spec:
     targetPort: 80
   selector:
     io.kompose.service: outbound
+  type: LoadBalancer
 status:
   loadBalancer: {}

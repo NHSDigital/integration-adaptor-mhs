@@ -26,7 +26,7 @@ spec:
       containers:
       - env:
         - name: MHS_DISABLE_SDS_TLS
-          value: "True"
+          value: "False"
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_SDS_REDIS_CACHE_HOST
@@ -39,6 +39,21 @@ spec:
           value: ou=services,o=nhs
         - name: MHS_SDS_URL
           value: ldaps://ldap.nis1.national.ncrs.nhs.uk
+        - name: MHS_SECRET_CLIENT_CERT
+          valueFrom:
+            secretKeyRef:
+              name: mhs-client-cert
+              key: tls.crt
+        - name: MHS_SECRET_CLIENT_KEY	
+          valueFrom:
+            secretKeyRef:
+              name: mhs-client-cert
+              key: tls.key
+        - name: MHS_SECRET_CA_CERTS
+          valueFrom:
+            secretKeyRef:
+              name: mhs-ca-certs
+              key: ca-certs
         image: nhsdev/nia-mhs-route:1.0.0
         imagePullPolicy: ""
         name: route
@@ -46,6 +61,7 @@ spec:
         - containerPort: 80
         resources: {}
       restartPolicy: Always
+      dnsPolicy: ClusterFirst
       serviceAccountName: ""
       volumes: null
 status: {}
