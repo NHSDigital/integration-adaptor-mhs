@@ -7,6 +7,16 @@ variable location {
   default = "UK West"
 }
 
+variable state_bucket_storage_account {
+  description = "Name of storage account with TF state bucket"
+  default = "niafstate"
+}
+
+variable state_bucket_name {
+  description = "Name of bucket (container) with state file"
+  default = "nia-tf-state-container"
+}
+
 ## Resource group variables ##
 variable resource_group_name {
   default = "mhs-rg"
@@ -35,7 +45,7 @@ variable "admin_username" {
 
 variable "jumpbox_allowed_ips" {
   default = [
-    "165.225.207.40/32", # zscaler WAW
+    "165.225.207.72/32", # zscaler WAW
     "91.222.71.98/32",   # k gdn
     "195.89.171.5/32",   # k bfs1
     "62.254.63.50/32",   # k bfs2

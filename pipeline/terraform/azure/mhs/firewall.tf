@@ -42,6 +42,7 @@ resource "azurerm_firewall_application_rule_collection" "mhs_aks_rules" {
       "*.microsoftonline.com",
       "*.monitoring.azure.com",
       "*.azmk8s.io",
+      "*.blob.core.windows.net",
     ]
 
     protocol {
@@ -128,7 +129,10 @@ resource "azurerm_firewall_application_rule_collection" "osupdates" {
       "security.ubuntu.com",
       "ntp.ubuntu.com",
       "packages.microsoft.com",
-      "snapcraft.io"
+      "snapcraft.io",
+      "azure.archive.ubuntu.com",
+      "deb.debian.org",
+      "security.debian.org"
     ]
 
     protocol {

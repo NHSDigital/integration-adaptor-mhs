@@ -95,6 +95,11 @@ output "jumpbox_ip" {
   value       = azurerm_linux_virtual_machine.mhs_jumpbox.public_ip_address
 }
 
+output "jumpbox_private_ip" {
+  description = "Jumpbox private IP"
+  value = azurerm_linux_virtual_machine.mhs_jumpbox.private_ip_address
+}
+
 output "jumpbox_username" {
   description = "Jumpbox VM username"
   value       = var.jumpbox_user
