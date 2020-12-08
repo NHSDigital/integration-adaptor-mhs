@@ -7,6 +7,7 @@ from comms.http_headers import HttpHeaders
 from mhs_common import workflow
 from mhs_common.errors.soap_handler import handle_soap_error
 from mhs_common.messages import soap_envelope
+from mhs_common.request import request_body_schema
 from mhs_common.routing import routing_reliability
 from persistence import persistence_adaptor as pa
 from mhs_common.state import work_description as wd
@@ -42,7 +43,7 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
                                       message_id: str,
                                       correlation_id: str,
                                       interaction_details: dict,
-                                      payload: str,
+                                      request_body: request_body_schema.RequestBody,
                                       work_description_object: Optional[wd.WorkDescription]) \
             -> Tuple[int, str, Optional[wd.WorkDescription]]:
         logger.info('Entered sync workflow for outbound message')
@@ -67,11 +68,12 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
             return 500, 'Error obtaining outbound URL', None
 
         try:
-            message_id, http_headers, message = await self._prepare_outbound_message(message_id,
-                                                                                to_asid,
-                                                                                from_asid=from_asid,
-                                                                                interaction_details=interaction_details,
-                                                                                message=payload)
+            message_id, http_headers, message = \
+                await self._prepare_outbound_message(message_id,
+                                                     to_asid,
+                                                     from_asid=from_asid,
+                                                     interaction_details=interaction_details,
+                                                     request_body=request_body)
         except Exception:
             logger.exception('Failed to prepare outbound message')
             await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
@@ -120,7 +122,7 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
         return 500, f'Error(s) received from Spine: {exception}'
 
     async def _prepare_outbound_message(self, message_id: Optional[str], to_asid: str, from_asid: str,
-                                        message: str,
+                                        request_body: request_body_schema.RequestBody,
                                         interaction_details: dict):
         action = f'{interaction_details[soap_envelope.SERVICE]}/{interaction_details[soap_envelope.ACTION]}'
         message_details = {
@@ -129,7 +131,8 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
             soap_envelope.FROM_ASID: from_asid,
             soap_envelope.SERVICE: interaction_details[soap_envelope.SERVICE],
             soap_envelope.ACTION: action,
-            soap_envelope.MESSAGE: message
+            soap_envelope.MESSAGE: request_body.payload,
+            soap_envelope.ATTACHMENTS: request_body.attachments
         }
 
         envelope = soap_envelope.SoapEnvelope(message_details)
