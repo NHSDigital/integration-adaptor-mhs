@@ -1,10 +1,25 @@
 # Deployment of MHS Adaptor on Microsoft Azure
 
-## 0. General setup, [files](files), [etc](etc)
+## Terraform
 
-First the directiores, the `files` one is for storing the files that terraform uses, currently it consists of a SSH Public key which will be copied over to instances to allow SSH connections. The `etc` directory contains tfvars files with values for terraform variables. In order to use them run `terraform (plan | apply) --var-file ../etc/globals.tfvars --var-file ../etc/secrets.tfvars` in any of the terraform based components described below.
+This directory contains the [Terraform](https://www.terraform.io/) configurations used to deploy instances of the MHS
+application to **Azure**. For AWS see [mhs-environment/README](../mhs-environment/README.md).
 
-In order to run terraform for Azure Resource Manager, you need a set of credentials, ways to get them are described [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) We have used a scrpit that exported the required environment variables, using the Service Principal with Client Secret method, this script is not part of this code as it contains values specific to each Azure Account / Subscription ./ User. The values required are:
+This configuration will create a full test environment running an MHS application.
+
+## Known Issues
+
+None
+
+## Deploying MHS Manually
+
+To manually deploy the MHS you must ensure that Terraform can authenticate to Azure. See the 
+[authentication section of the Terraform Azure documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure)
+for details. If running this on your local machine, the simplest option is the "Service Principal with Client Secret" 
+method using environment variables. You must define these variables on your local machine using values from your
+Azure subscription. 
+
+For example, you might use a Bash script to define the environment variables as follows:
 
 ```bash
 export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
@@ -14,6 +29,27 @@ export ARM_CLIENT_SECRET="00000000-0000-0000-0000-000000000000"
 export TF_VAR_client_id=${ARM_CLIENT_ID}
 export TF_VAR_client_secret=${ARM_CLIENT_SECRET}
 ```
+
+Our scripts deploy container images from [Docker Hub](https://hub.docker.com/u/nhsdev):
+* nhsdev / nia-mhs-route
+* nhsdev / nia-mhs-outbound
+* nhsdev / nia-mhs-inbound
+
+Once you have configured Azure authentication, you can run the following commands to deploy the MHS:
+
+```
+TODO: COMMANDS HERE
+```
+
+## Your HSCN VNet Config
+
+TODO
+
+## Terraform structure and details
+
+## 0. General setup, [files](files), [etc](etc)
+
+First the directiores, the `files` one is for storing the files that terraform uses, currently it consists of a SSH Public key which will be copied over to instances to allow SSH connections. The `etc` directory contains tfvars files with values for terraform variables. In order to use them run `terraform (plan | apply) --var-file ../etc/globals.tfvars --var-file ../etc/secrets.tfvars` in any of the terraform based components described below.
 
 The values prefixed with `TF_VAR` are indicating variables for terraform. This script will later be extended with key for Terraform State Bucket.
 
