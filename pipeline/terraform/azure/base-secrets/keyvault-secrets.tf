@@ -49,23 +49,19 @@ output nia-secret-mhs-client-key_name {
 output nia-secret-mhs-partykey_value {
   value  = azurerm_key_vault_secret.nia-secret-mhs-partykey.value
   sensitive = true
-  #value = var.secret_mhs_partykey
 }
 
 output nia-secret-mhs-ca-chain_value {
   value  = azurerm_key_vault_secret.nia-secret-mhs-ca-chain.value
   sensitive = true
-  #value = var.secret_mhs_ca_chain
 }
 
 output nia-secret-mhs-client-certificate_value {
   value  = azurerm_key_vault_secret.nia-secret-mhs-client-certificate.value
   sensitive = true
-  #value = var.secret_mhs_client_certificate
 }
 
 output nia-secret-mhs-client-key_value {
   value  = azurerm_key_vault_secret.nia-secret-mhs-client-key.value
   sensitive = true
-  #value = var.secret_mhs_client_key
 }
