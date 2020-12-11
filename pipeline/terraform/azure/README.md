@@ -81,6 +81,7 @@ Once you have configured Azure authentication, you can run the following command
   * load the values from credentials script again: `. ./export_azure_credentials.sh`
 
 * The base component:
+  * As part of this component you will create a jumpbox instance, create a SSH key and put the public part in `files/admin_ssh_key.pub` and the private part in `~/.ssh/admin_ssh_key` This is required to perform the initial configuration of the jumpbox.
   * Change the directory to base component: `cd base`
   * Run terraform init: `terraform init`
   * Run terraform plan: `terraform plan --var_file=../etc/globals.tfvars --var_file=../etc/secrets.tfvars`
