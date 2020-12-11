@@ -129,10 +129,10 @@ Once you have configured Azure authentication, you can run the following command
 The connection to HSCN may be different for each use case. The process for us was as follows:
 
 * Request the connection
-* State clearly that you need a two-way routable connection. NATed connection will work only for synchronous workflow MHS requests. Any Async type requests will not work fully with NATed connection, as SPINE will not have a way to initiate connection to mhs-inbound. 
-* Setup the mhs component with correct CIDR for VNet, Next hop for routing.
+* State clearly that you need a two-way routable connection. NATed connection will work only for synchronous workflow MHS requests. Any Async type requests will not work fully with NATed connection, as SPINE will not have a way to initiate connection to mhs-inbound.
+* Setup the mhs component with correct CIDR for VNet, Next-hop for routing. There are variables for each setting.
 * Create the VNet and subnets, provide the VNet ID to NHS.
 * NHS has created a peering conection to our VNet. This may also be a VPN-like connection like ExpressRoute which may require some configuration on the MHS side. In our case the peering was ready to use.
 * Configure the DNS and check the IP Prefixes of hosts you wish to connect to over HSCN connection. The routing has to be in place for both the HSCN services and Azure services to work at the same time. Add these prefixes to `N3_prefixes` variable.
 * Apart from IP routing the DNS requests also have to be routed, Azure provided DNS will not resolve HSCN hosts, and HCSN DNS will not resolve Azure hosts. The [dns.yaml](mhs-kube-yaml/dns.yaml) does the routing - it forwards any `*.nhs.uk` DNS request to HSCN DNS servers, leaving other requsts to be resolved by Azure DNS.
-* Set the IP of MHS Inbound loadbabalancer to registered IP you've received from NHS.
+* Set the IP of MHS Inbound loadbabalancer to registered IP you've received from NHS. This is done in `mhs-kube-yaml/inboud-service.yaml`
