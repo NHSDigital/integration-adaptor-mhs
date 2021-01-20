@@ -14,6 +14,7 @@ from comms import proton_queue_adaptor
 from definitions import ROOT_DIR
 from mhs_common import workflow
 from mhs_common.messages import ebxml_request_envelope, ebxml_envelope
+from mhs_common.request.request_body_schema import RequestBody
 from mhs_common.state import work_description
 from mhs_common.state.work_description import MessageStatus
 from mhs_common.workflow.common import MessageData
@@ -47,6 +48,7 @@ INTERACTION_DETAILS = {
 }
 EBXML = "ebxml_data"
 PAYLOAD = 'payload'
+REQUEST_BODY = RequestBody(PAYLOAD, [])
 SERIALIZED_MESSAGE = 'serialized-message'
 ATTACHMENTS = [{
     ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
@@ -121,7 +123,8 @@ class TestForwardReliableWorkflow(unittest.TestCase):
             MESSAGE_ID, HTTP_HEADERS, SERIALIZED_MESSAGE)
         self.mock_transmission_adaptor.make_request.return_value = test_utilities.awaitable(response)
 
-        expected_interaction_details = {ebxml_envelope.MESSAGE_ID: MESSAGE_ID, ebxml_request_envelope.MESSAGE: PAYLOAD,
+        expected_interaction_details = {ebxml_envelope.MESSAGE_ID: MESSAGE_ID,
+                                        ebxml_request_envelope.MESSAGE: PAYLOAD,
                                         ebxml_envelope.FROM_PARTY_ID: FROM_PARTY_KEY,
                                         ebxml_envelope.CONVERSATION_ID: CORRELATION_ID,
                                         ebxml_envelope.TO_PARTY_ID: TO_PARTY_KEY,
@@ -132,7 +135,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value=mock_url) as mock_get_config:
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
             mock_get_config.assert_called_once_with('FORWARD_RELIABLE_ENDPOINT_URL')
 
         self.assertEqual(202, status)
@@ -171,7 +174,8 @@ class TestForwardReliableWorkflow(unittest.TestCase):
             MESSAGE_ID, HTTP_HEADERS, SERIALIZED_MESSAGE)
         self.mock_transmission_adaptor.make_request.return_value = test_utilities.awaitable(response)
 
-        expected_interaction_details = {ebxml_envelope.MESSAGE_ID: MESSAGE_ID, ebxml_request_envelope.MESSAGE: PAYLOAD,
+        expected_interaction_details = {ebxml_envelope.MESSAGE_ID: MESSAGE_ID,
+                                        ebxml_request_envelope.MESSAGE: PAYLOAD,
                                         ebxml_envelope.FROM_PARTY_ID: FROM_PARTY_KEY,
                                         ebxml_envelope.CONVERSATION_ID: CORRELATION_ID,
                                         ebxml_envelope.TO_PARTY_ID: TO_PARTY_KEY,
@@ -184,7 +188,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         wdo.update.return_value = test_utilities.awaitable(True)
         status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                          INTERACTION_DETAILS,
-                                                                         PAYLOAD, wdo)
+                                                                         REQUEST_BODY, wdo)
 
         self.assertEqual(202, status)
         wdo_mock.assert_not_called()
@@ -200,7 +204,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
 
         self.assertEqual(500, status)
         self.assertEqual('Error serialising outbound message', message)
@@ -220,7 +224,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
 
         self.assertEqual(400, status)
         self.assertIn('Request to send to Spine is too large', message)
@@ -235,7 +239,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
 
         status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                          INTERACTION_DETAILS,
-                                                                         PAYLOAD, None)
+                                                                         REQUEST_BODY, None)
 
         self.assertEqual(500, status)
         self.assertEqual('Error obtaining outbound URL', message)
@@ -258,7 +262,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
 
         self.assertEqual(500, status)
         self.assertEqual("Error making outbound request", message)
@@ -289,7 +293,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
         resp_json = json.loads(message)
 
         self.assertEqual(500, status)
@@ -325,7 +329,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
 
         self.assertEqual(500, status)
         self.assertEqual("Didn't get expected response from Spine", message)
@@ -381,7 +385,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
 
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
-                                                                             INTERACTION_DETAILS, PAYLOAD, None)
+                                                                             INTERACTION_DETAILS, REQUEST_BODY, None)
 
         self.mock_work_description.publish.assert_called_once()
         self.assertEqual(
@@ -417,7 +421,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
                                                                              INTERACTION_DETAILS,
-                                                                             PAYLOAD, None)
+                                                                             REQUEST_BODY, None)
 
         self.assertEqual(500, status)
         self.assertTrue('Error when converting retry interval' in message)
@@ -451,7 +455,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
                     with mock.patch('utilities.config.get_config',
                                     return_value='localhost/reliablemessaging/queryrequest'):
                         await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
-                                                                    INTERACTION_DETAILS, PAYLOAD, None)
+                                                                    INTERACTION_DETAILS, REQUEST_BODY, None)
 
                     self.assertEqual(self.mock_transmission_adaptor.make_request.call_count, 4)
                     self.assertEqual(mock_sleep.call_count, 3)
@@ -491,7 +495,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
                                                                    test_utilities.awaitable(success_response)]
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
-                                                        INTERACTION_DETAILS, PAYLOAD, None)
+                                                        INTERACTION_DETAILS, REQUEST_BODY, None)
 
         self.assertEqual(self.mock_transmission_adaptor.make_request.call_count, 2)
         mock_sleep.assert_called_once_with(MHS_RETRY_INTERVAL_VAL_IN_SECONDS)
@@ -513,7 +517,7 @@ class TestForwardReliableWorkflow(unittest.TestCase):
 
         with mock.patch('utilities.config.get_config', return_value='localhost/reliablemessaging/queryrequest'):
             status, message, _ = await self.workflow.handle_outbound_message(None, MESSAGE_ID, CORRELATION_ID,
-                                                                             INTERACTION_DETAILS, PAYLOAD, None)
+                                                                             INTERACTION_DETAILS, REQUEST_BODY, None)
 
         self.mock_transmission_adaptor.make_request.assert_called_once()
 

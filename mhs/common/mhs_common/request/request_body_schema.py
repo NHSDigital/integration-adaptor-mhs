@@ -32,6 +32,7 @@ class Attachment:
     is_base64: bool
     content_type: str
     payload: str
+    description: str
 
 
 class AttachmentSchema(marshmallow.Schema):
@@ -54,7 +55,7 @@ class AttachmentSchema(marshmallow.Schema):
 
     @marshmallow.post_load
     def make_attachment(self, data, **kwargs):
-        return Attachment(data['is_base64'], data['content_type'], data['payload'])
+        return Attachment(data['is_base64'], data['content_type'], data['payload'], data['description'])
 
 
 @dataclasses.dataclass

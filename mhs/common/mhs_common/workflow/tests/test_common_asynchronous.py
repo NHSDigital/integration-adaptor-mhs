@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 from unittest import mock
 
 import mhs_common.state.work_description as wd
+from mhs_common.request import request_body_schema
 from mhs_common.workflow import common_asynchronous
 from mhs_common.workflow.common import MessageData
 from utilities import test_utilities
@@ -24,7 +25,8 @@ EXPECTED_RELIABILITY_DETAILS = {
 
 class DummyCommonAsynchronousWorkflow(common_asynchronous.CommonAsynchronousWorkflow):
     async def handle_outbound_message(self, asid: str,  message_id: str, correlation_id: str, interaction_details: dict,
-                                      payload: str, work_description_object: Optional[wd.WorkDescription]
+                                      request_body: request_body_schema.RequestBody,
+                                      work_description_object: Optional[wd.WorkDescription]
                                       ) -> Tuple[int, str]:
         pass
 

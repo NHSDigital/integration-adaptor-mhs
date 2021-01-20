@@ -42,6 +42,13 @@ class ForwardReliableMessagingPatternTests(TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
 
+        attachments = [{
+            'content_type': 'text/plain',
+            'is_base64': False,
+            'description': 'Some description',
+            'payload': 'Some payload'
+        }]
+
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='COPC_IN000001UK01',
@@ -49,7 +56,7 @@ class ForwardReliableMessagingPatternTests(TestCase):
                           wait_for_response=False,
                           correlation_id=message_id,
                           ods_code='X26') \
-            .with_body(message) \
+            .with_body(message, attachments=attachments) \
             .execute_post_expecting_success()
 
         # Assert
@@ -67,6 +74,13 @@ class ForwardReliableMessagingPatternTests(TestCase):
         # account
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
 
+        attachments = [{
+            'content_type': 'text/plain',
+            'is_base64': False,
+            'description': 'Some description',
+            'payload': 'Some payload'
+        }]
+
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='COPC_IN000001UK01',
@@ -74,7 +88,7 @@ class ForwardReliableMessagingPatternTests(TestCase):
                           wait_for_response=False,
                           correlation_id=message_id,
                           ods_code='X26') \
-            .with_body(message) \
+            .with_body(message, attachments=attachments) \
             .execute_post_expecting_success()
 
         # Assert

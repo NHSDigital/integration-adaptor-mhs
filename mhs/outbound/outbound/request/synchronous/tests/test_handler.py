@@ -9,6 +9,7 @@ import tornado.testing
 import tornado.util
 import tornado.web
 
+from mhs_common.request.request_body_schema import RequestBody
 from utilities import mdc
 from mhs_common.workflow import synchronous
 from utilities import test_utilities
@@ -93,7 +94,7 @@ class TestSynchronousHandler(BaseHandlerTest):
 
         self.config_manager.get_interaction_details.assert_called_with(INTERACTION_NAME)
         self.workflow.handle_outbound_message.assert_called_with(None, MOCK_UUID, MOCK_UUID_2, INTERACTION_DETAILS,
-                                                                 REQUEST_BODY_PAYLOAD, None)
+                                                                 RequestBody(payload=REQUEST_BODY_PAYLOAD, attachments=[]), None)
 
         mock_message_id.set.assert_called_with(MOCK_UUID)
         mock_correlation_id.set.assert_called_with(MOCK_UUID_2)
@@ -145,7 +146,7 @@ class TestSynchronousHandler(BaseHandlerTest):
         mock_get_uuid.assert_called()
 
         self.workflow.handle_outbound_message.assert_called_with(None, message_id, MOCK_UUID, INTERACTION_DETAILS,
-                                                                 REQUEST_BODY_PAYLOAD, None)
+                                                                 RequestBody(payload=REQUEST_BODY_PAYLOAD, attachments=[]), None)
 
         mock_message_id.set.assert_called_with(message_id)
         mock_correlation_id.set.assert_called_with(MOCK_UUID)
@@ -170,7 +171,7 @@ class TestSynchronousHandler(BaseHandlerTest):
         mock_get_uuid.assert_called_once()
 
         self.workflow.handle_outbound_message.assert_called_with(None, MOCK_UUID, CORRELATION_ID, INTERACTION_DETAILS,
-                                                                 REQUEST_BODY_PAYLOAD, None)
+                                                                 RequestBody(payload=REQUEST_BODY_PAYLOAD, attachments=[]), None)
 
     @patch.object(message_utilities, "get_uuid")
     @patch.object(mdc, "correlation_id")
