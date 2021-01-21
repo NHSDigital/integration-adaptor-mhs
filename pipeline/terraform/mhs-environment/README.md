@@ -1,6 +1,6 @@
 # Terraform
 This directory contains the [Terraform](https://www.terraform.io/) configurations used to deploy instances of the MHS
-application to AWS.
+application to **AWS**. For Azure see [azure/README](../azure/README.md).
 
 This configuration will create a full test environment running an MHS application.
 
