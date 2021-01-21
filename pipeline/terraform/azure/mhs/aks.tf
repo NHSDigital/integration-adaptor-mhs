@@ -4,7 +4,7 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
   resource_group_name = azurerm_resource_group.mhs_adaptor.name
   location            = azurerm_resource_group.mhs_adaptor.location
   dns_prefix          = var.dns_prefix
-  private_cluster_enabled = true
+  private_cluster_enabled = false
 
   linux_profile {
     admin_username = var.admin_username
@@ -21,7 +21,7 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
     }
 
     kube_dashboard {
-      enabled = true
+      enabled = false
     }
   }
   

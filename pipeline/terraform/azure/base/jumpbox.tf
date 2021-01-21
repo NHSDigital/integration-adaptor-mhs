@@ -19,7 +19,7 @@ resource "azurerm_network_security_rule" "SSH" {
     protocol                    = "Tcp"
     source_port_range           = "*"
     destination_port_range      = "22"
-    source_address_prefixes     = var.jumpbox_allowed_ips
+    source_address_prefixes     = var.secret_jumpbox_allowed_ips
     destination_address_prefix  = "*"
     resource_group_name         = azurerm_resource_group.nia_base.name
     network_security_group_name = azurerm_network_security_group.jumpbox_sg.name
@@ -52,7 +52,6 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
   size                            = "Standard_DS1_v2"
   computer_name                   = "jumpboxvm"
   admin_username                  = var.jumpbox_user
-  #admin_password                  = random_password.adminpassword.result
   disable_password_authentication = true
 
   admin_ssh_key {
@@ -79,7 +78,6 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
       type     = "ssh"
       user     = var.jumpbox_user
       private_key = file("~/.ssh/azure_mhs_jumpbox")
-      #password = random_password.adminpassword.result
     }
 
     inline = [
@@ -91,22 +89,6 @@ resource "azurerm_linux_virtual_machine" "nia_jumpbox" {
       "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
     ]
   }
-}
-
-# resource "random_password" "adminpassword" {
-#   keepers = {
-#     resource_group = azurerm_resource_group.nia_base.name
-#   }
-
-#   length      = 10
-#   min_lower   = 1
-#   min_upper   = 1
-#   min_numeric = 1
-# }
-
-output "jumpbox_password" {
-  description = "Jumpbox VM admin password"
-  value       = random_password.adminpassword.result
 }
 
 output "jumpbox_ip" {

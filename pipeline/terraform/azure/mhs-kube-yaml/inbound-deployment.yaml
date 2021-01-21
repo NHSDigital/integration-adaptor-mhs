@@ -26,33 +26,56 @@ spec:
       containers:
       - env:
         - name: MHS_INBOUND_QUEUE_BROKERS
-          value: amqps://mhs-adaptor-service-bus.servicebus.windows.net:5671/?sasl=plain
+          valueFrom:
+            secretKeyRef:
+              name: mhs-queue
+              key: broker
         - name: MHS_INBOUND_QUEUE_NAME
-          value: mhs-adaptor-service-bus-queue
+          valueFrom:
+            secretKeyRef:
+              name: mhs-queue
+              key: queue
         - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
-          value: mhs-adaptor-servicebus-queue-ar
+          valueFrom:
+            secretKeyRef:
+              name: mhs-queue
+              key: username
         - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
-          value: "add from secrets"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-queue
+              key: password
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_STATE_TABLE_NAME
           value: mhs_state
         - name: MHS_SYNC_ASYNC_STATE_TABLE_NAME
           value: sync_async_state
-        - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
-          value: guest
-        - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
-          value: guest
         - name: MHS_SECRET_PARTY_KEY
-          value: party_key
+          valueFrom:
+            secretKeyRef:
+              name: mhs-partykey
+              key: partyKey
         - name: MHS_SECRET_CLIENT_CERT
-          value: "Here goes client cert"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-client-cert
+              key: tls.crt
         - name: MHS_SECRET_CLIENT_KEY	
-          value: "Here goes client cert key"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-client-cert
+              key: tls.key
         - name: MHS_SECRET_CA_CERTS
-          value: "Here goes list of CA certs"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-ca-certs
+              key: ca-certs
         - name: MHS_DB_ENDPOINT_URL
-          value: "add from secrets"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-database
+              key: connectionString
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_INBOUND_USE_SSL
@@ -71,6 +94,7 @@ spec:
         - containerPort: 80
         resources: {}
       restartPolicy: Always
+      dnsPolicy: ClusterFirst
       serviceAccountName: ""
       volumes: null
 status: {}

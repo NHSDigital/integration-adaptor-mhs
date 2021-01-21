@@ -6,7 +6,7 @@ terraform {
     resource_group_name  = "nia-rg-tfstate"
     storage_account_name = "niafstate"
     container_name       = "nia-tf-state-container"
-    key                  = "base.tfstate"
+    key                  = "base-secrets.tfstate"
   }
 }
 
