@@ -38,7 +38,18 @@ mhs_request() {
     -H "from-asid: $FROM_ASID" \
     -H "wait-for-response: $WAIT_FOR_RESPONSE" \
     -H "Correlation-Id: $(uuidgen)" \
-    ${EXTRA_CURL_OPTS} \
+    -d "$REQUEST_BODY" \
+    "$MHS_OUTBOUND_URL"
+}
+
+mhs_request_ods() {
+  curl -i -k -v -X POST \
+    -H "Content-Type: application/json" \
+    -H "Interaction-Id: $INTERACTION_ID" \
+    -H "from-asid: $FROM_ASID" \
+    -H "wait-for-response: $WAIT_FOR_RESPONSE" \
+    -H "Correlation-Id: $(uuidgen)" \
+    -H "ods-code: $FROM_ODS_CODE" \
     -d "$REQUEST_BODY" \
     "$MHS_OUTBOUND_URL"
 }
