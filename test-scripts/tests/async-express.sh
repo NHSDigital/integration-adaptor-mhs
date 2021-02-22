@@ -4,7 +4,7 @@ set -ex
 
 source common.sh
 
-UUID=$(uuidgen)
+UUID=$(random_uuid)
 export UUID
 INTERACTION_ID=QUPC_IN160101UK05
 WAIT_FOR_RESPONSE="${1:-false}"

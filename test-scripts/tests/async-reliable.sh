@@ -4,11 +4,11 @@ set -ex
 
 source common.sh
 
-UUID1=$(uuidgen)
+UUID1=$(random_uuid)
 export UUID1
-UUID2=$(uuidgen)
+UUID2=$(random_uuid)
 export UUID2
-UUID3=$(uuidgen)
+UUID3=$(random_uuid)
 export UUID3
 INTERACTION_ID=REPC_IN150016UK05
 WAIT_FOR_RESPONSE="${1:-false}"

@@ -14,6 +14,11 @@ fi
 CREATION_TIME=$(date +%Y%m%d%H%M%S)
 export CREATION_TIME
 
+random_uuid() {
+  UUID=$(uuidgen)
+  echo "${UUID^^}"
+}
+
 json_escape () {
     printf '%s' "$1" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
 }
