@@ -10,5 +10,5 @@ INTERACTION_ID=COPC_IN000001UK01
 WAIT_FOR_RESPONSE="${1:-false}"
 
 REQUEST_BODY="$(request_body_from_xml_file forward-reliable.xml)"
-
+EXTRA_CURL_OPTS="  --header 'ods-code: $FROM_ODS' \\"
 mhs_request

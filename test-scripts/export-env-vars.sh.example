@@ -4,6 +4,9 @@ export MHS_OUTBOUND_URL="http://localhost:80/"
 
 export FROM_ASID="227319907548"
 
+# test scripts only, send a forward reliable message to yourself
+export FROM_ODS="X26"
+
 export MHS_SECRET_PARTY_KEY=""
 
 # Your endpoint certificate here
