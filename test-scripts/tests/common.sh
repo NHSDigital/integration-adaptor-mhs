@@ -11,7 +11,7 @@ else
   exit 1
 fi
 
-CREATION_TIME=$(date +%Y%d%m%H%M%S000)
+CREATION_TIME=$(date +%Y%m%d%H%M%S)
 export CREATION_TIME
 
 json_escape () {
@@ -24,12 +24,14 @@ request_body_from_xml_file() {
   echo "{\"payload\":$PAYLOAD}"
 }
 
+WAIT_FOR_RESPONSE="false"
+
 mhs_request() {
   curl -i -k -v -X POST \
     -H "Content-Type: application/json" \
     -H "Interaction-Id: $INTERACTION_ID" \
     -H "from-asid: $FROM_ASID" \
-    -H "wait-for-response: false" \
+    -H "wait-for-response: $WAIT_FOR_RESPONSE" \
     -H "Correlation-Id: $(uuidgen)" \
     ${EXTRA_CURL_OPTS} \
     -d "$REQUEST_BODY" \
