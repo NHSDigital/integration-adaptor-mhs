@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+export MHS_OUTBOUND_URL="http://localhost:80/"
+
 export FROM_ASID="227319907548"
 
 export MHS_SECRET_PARTY_KEY=""
