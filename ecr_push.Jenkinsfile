@@ -11,7 +11,6 @@ pipeline {
 
     parameters {
         string (name: "Docker_Hub_Version", defaultValue: "1.0.2", description: "Tagged version in Docker Hub")
-        string (name: "ECR_Tag", defaultValue: "1.0.0", description: "Tagged to use when pushing to ECR")
       }
 
     stages {
