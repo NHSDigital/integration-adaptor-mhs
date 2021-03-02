@@ -27,24 +27,24 @@ spec:
       - env:
         - name: MHS_INBOUND_QUEUE_BROKERS
           valueFrom:
-           secretKeyRef:
-             name: mhs-queue
-             key: broker
+            secretKeyRef:
+              name: mhs-queue
+              key: broker
         - name: MHS_INBOUND_QUEUE_NAME
           valueFrom:
-           secretKeyRef:
-             name: mhs-queue
-             key: queue
+            secretKeyRef:
+              name: mhs-queue
+              key: queue
         - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
           valueFrom:
-           secretKeyRef:
-             name: mhs-queue
-             key: username
+            secretKeyRef:
+              name: mhs-queue
+              key: username
         - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
           valueFrom:
-           secretKeyRef:
-             name: mhs-queue
-             key: password
+            secretKeyRef:
+              name: mhs-queue
+              key: password
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_STATE_TABLE_NAME
