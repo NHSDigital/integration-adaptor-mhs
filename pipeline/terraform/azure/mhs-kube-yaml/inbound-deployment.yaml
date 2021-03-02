@@ -26,25 +26,29 @@ spec:
       containers:
       - env:
         - name: MHS_INBOUND_QUEUE_BROKERS
-          valueFrom:
-            secretKeyRef:
-              name: mhs-queue
-              key: broker
+          value: "amqp://rabbitmq:5672"
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: mhs-queue
+          #    key: broker
         - name: MHS_INBOUND_QUEUE_NAME
-          valueFrom:
-            secretKeyRef:
-              name: mhs-queue
-              key: queue
+          value: "mhs-inbound"
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: mhs-queue
+          #    key: queue
         - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: mhs-queue
-              key: username
+          value: "guest"
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: mhs-queue
+          #    key: username
         - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mhs-queue
-              key: password
+          value: "guest"
+          #valueFrom:
+          #  secretKeyRef:
+          #    name: mhs-queue
+          #    key: password
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_STATE_TABLE_NAME
@@ -79,14 +83,14 @@ spec:
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_INBOUND_USE_SSL
-          value: "false"
+          value: "true"
         - name: MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS
           value: "0"
         - name: SERVICE_PORTS
           value: 443,80
         - name: TCP_PORTS
           value: "443"
-        image: nhsdev/nia-mhs-inbound:1.0.0
+        image: nhsdev/nia-mhs-inbound:1.0.2
         imagePullPolicy: ""
         name: inbound
         ports:
@@ -98,3 +102,15 @@ spec:
       serviceAccountName: ""
       volumes: null
 status: {}
+
+
+  #  - MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672
+  #     - MHS_INBOUND_QUEUE_NAME=inbound
+  #     - MHS_SECRET_INBOUND_QUEUE_USERNAME=guest
+  #     - MHS_SECRET_INBOUND_QUEUE_PASSWORD=guest
+
+    # rabbitmq:
+    # image: nhsdev/nia-rabbitmq-local:1.0.1
+    # ports:
+    #   - "15672:15672"
+    #   - "5672:5672"

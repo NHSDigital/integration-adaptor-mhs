@@ -4,7 +4,7 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
   resource_group_name = azurerm_resource_group.mhs_adaptor.name
   location            = azurerm_resource_group.mhs_adaptor.location
   dns_prefix          = var.dns_prefix
-  private_cluster_enabled = false
+  private_cluster_enabled = true
 
   linux_profile {
     admin_username = var.admin_username
@@ -34,10 +34,10 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
   }
 
   network_profile {
-    network_plugin = "azure"
-    network_policy = "azure"
-    service_cidr = var.mhs_aks_internal_cidr
-    dns_service_ip = var.mhs_aks_internal_dns
+    network_plugin     = "azure"
+    network_policy     = "azure"
+    service_cidr       = var.mhs_aks_internal_cidr
+    dns_service_ip     = var.mhs_aks_internal_dns
     docker_bridge_cidr = var.mhs_aks_docker_bridge_cidr
     outbound_type      = "userDefinedRouting"
   }
@@ -61,6 +61,12 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
 # https://github.com/Azure/AKS/issues/1557
 # resource "azurerm_role_assignment" "vmcontributor" {
 #   role_definition_name = "Virtual Machine Contributor"
+#   scope                = azurerm_resource_group.mhs_adaptor.name
+#   principal_id         = azurerm_kubernetes_cluster.mhs_adaptor_aks.identity[0].principal_id
+# }
+
+# resource "azurerm_role_assignment" "networkcontributor" {
+#   role_definition_name = "Network Contributor"
 #   scope                = azurerm_resource_group.mhs_adaptor.name
 #   principal_id         = azurerm_kubernetes_cluster.mhs_adaptor_aks.identity[0].principal_id
 # }
@@ -90,6 +96,10 @@ output "kube_config" {
 
 output "host" {
   value = azurerm_kubernetes_cluster.mhs_adaptor_aks.kube_config.0.host
+}
+
+output "identity" {
+  value = azurerm_kubernetes_cluster.mhs_adaptor_aks.identity
 }
 
 output "configure" {

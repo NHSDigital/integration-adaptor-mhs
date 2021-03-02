@@ -54,7 +54,7 @@ spec:
             secretKeyRef:
               name: mhs-ca-certs
               key: ca-certs
-        image: nhsdev/nia-mhs-route:1.0.0
+        image: nhsdev/nia-mhs-route:1.0.2
         imagePullPolicy: ""
         name: route
         ports:
