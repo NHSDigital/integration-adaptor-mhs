@@ -40,8 +40,6 @@ variable "secret_jumpbox_allowed_ips" {
   default = []
 }
 
-
-
 variable console_object_id {
   type = string
 }

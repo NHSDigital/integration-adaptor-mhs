@@ -58,19 +58,6 @@ resource "azurerm_kubernetes_cluster" "mhs_adaptor_aks" {
   ]
 }
 
-# https://github.com/Azure/AKS/issues/1557
-# resource "azurerm_role_assignment" "vmcontributor" {
-#   role_definition_name = "Virtual Machine Contributor"
-#   scope                = azurerm_resource_group.mhs_adaptor.name
-#   principal_id         = azurerm_kubernetes_cluster.mhs_adaptor_aks.identity[0].principal_id
-# }
-
-# resource "azurerm_role_assignment" "networkcontributor" {
-#   role_definition_name = "Network Contributor"
-#   scope                = azurerm_resource_group.mhs_adaptor.name
-#   principal_id         = azurerm_kubernetes_cluster.mhs_adaptor_aks.identity[0].principal_id
-# }
-
 ## Outputs ##
 
 # Example attributes available for output

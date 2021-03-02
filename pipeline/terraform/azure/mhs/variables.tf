@@ -88,6 +88,11 @@ variable "mhs_aks_docker_bridge_cidr" {
   default = "10.22.0.1/16"
 }
 
+variable use_servicebus {
+  type = bool
+  default = false
+}
+
 # variable "dns_servers" {
 #   default = ["10.20.0.3", "10.20.0.4"]
 # }

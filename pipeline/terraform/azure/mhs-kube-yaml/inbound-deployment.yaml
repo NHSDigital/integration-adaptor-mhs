@@ -102,15 +102,3 @@ spec:
       serviceAccountName: ""
       volumes: null
 status: {}
-
-
-  #  - MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672
-  #     - MHS_INBOUND_QUEUE_NAME=inbound
-  #     - MHS_SECRET_INBOUND_QUEUE_USERNAME=guest
-  #     - MHS_SECRET_INBOUND_QUEUE_PASSWORD=guest
-
-    # rabbitmq:
-    # image: nhsdev/nia-rabbitmq-local:1.0.1
-    # ports:
-    #   - "15672:15672"
-    #   - "5672:5672"
