@@ -16,7 +16,7 @@ resource "kubernetes_secret" "mhs-queue" {
   }
   type = "Opaque"
   data = {
-    broker =  "amqps://${data.terraform_remote_state.mhs.outputs.inbound_service_bus_host}:${data.terraform_remote_state.mhs.outputs.inbound_service_bus_port}/?sasl=plain"
+    broker =  "${data.terraform_remote_state.mhs.outputs.service_bus_protocol}://${data.terraform_remote_state.mhs.outputs.inbound_service_bus_host}:${data.terraform_remote_state.mhs.outputs.inbound_service_bus_port}"
     queue = data.terraform_remote_state.mhs.outputs.inbound_service_bus_queue_name
     username = data.terraform_remote_state.mhs.outputs.inbound_service_bus_queue_username
     password = data.terraform_remote_state.mhs.outputs.inbound_servicebus_ar_primary_key

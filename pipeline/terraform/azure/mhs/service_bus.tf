@@ -33,7 +33,11 @@ output "inbound_service_bus_host" {
 }
 
 output "inbound_service_bus_port" {
-  value = "5671"
+  value = var.use_servicebus ? "5671" : "5672"
+}
+
+output "service_bus_protocol" {
+  value = var.use_servicebus ? "amqps" : "amqp"
 }
 
 output "inbound_service_bus_queue_name" {
@@ -43,11 +47,6 @@ output "inbound_service_bus_queue_name" {
 output "inbound_service_bus_queue_username" {
    value = var.use_servicebus ? azurerm_servicebus_namespace_authorization_rule.mhs_servicebus_ar[0].name : "guest"
 }
-
-# output "inbound_service_bus_connection_string" {
-#   description = "Primary connection string for Service Bus Namespace"
-#   value = var.use_servicebus ? azurerm_servicebus_namespace_authorization_rule.mhs_servicebus_ar[0].primary_connection_string : null
-# }
 
 output "inbound_servicebus_ar_primary_key" {
   value = var.use_servicebus ? azurerm_servicebus_namespace_authorization_rule.mhs_servicebus_ar[0].primary_key : "guest"

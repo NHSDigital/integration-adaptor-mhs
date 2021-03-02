@@ -26,29 +26,25 @@ spec:
       containers:
       - env:
         - name: MHS_INBOUND_QUEUE_BROKERS
-          value: "amqp://rabbitmq:5672"
-          #valueFrom:
-          #  secretKeyRef:
-          #    name: mhs-queue
-          #    key: broker
+          valueFrom:
+           secretKeyRef:
+             name: mhs-queue
+             key: broker
         - name: MHS_INBOUND_QUEUE_NAME
-          value: "mhs-inbound"
-          #valueFrom:
-          #  secretKeyRef:
-          #    name: mhs-queue
-          #    key: queue
+          valueFrom:
+           secretKeyRef:
+             name: mhs-queue
+             key: queue
         - name: MHS_SECRET_INBOUND_QUEUE_USERNAME
-          value: "guest"
-          #valueFrom:
-          #  secretKeyRef:
-          #    name: mhs-queue
-          #    key: username
+          valueFrom:
+           secretKeyRef:
+             name: mhs-queue
+             key: username
         - name: MHS_SECRET_INBOUND_QUEUE_PASSWORD
-          value: "guest"
-          #valueFrom:
-          #  secretKeyRef:
-          #    name: mhs-queue
-          #    key: password
+          valueFrom:
+           secretKeyRef:
+             name: mhs-queue
+             key: password
         - name: MHS_LOG_LEVEL
           value: DEBUG
         - name: MHS_STATE_TABLE_NAME
