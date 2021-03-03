@@ -30,7 +30,20 @@ variable "secret_mhs_client_key" {
   default = "default_client_key"
 }
 
+variable secret_mhs_spine_route_ca_certs {
+  type = string
+  default = "default_route_ca_certs"
+}
+
 variable "secret_jumpbox_allowed_ips" {
   description = "List of IPs that should be allowed to jumpbox, this value is not stored in Azure Keyvault and should always be loaded from tfvars"
   default = []
+}
+
+variable console_object_id {
+  type = string
+}
+
+variable console_tenant_id {
+  type = string
 }

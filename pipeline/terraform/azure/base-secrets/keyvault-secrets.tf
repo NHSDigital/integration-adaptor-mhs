@@ -26,6 +26,13 @@ resource "azurerm_key_vault_secret" "nia-secret-mhs-client-key" {
   depends_on = [ azurerm_key_vault_access_policy.terraform ]
 }
 
+resource "azurerm_key_vault_secret" "nia-secret-mhs-route-spine-ca-certs" {
+  name = "nia-secret-mhs-route-spine-ca-certs"
+  value = var.secret_mhs_spine_route_ca_certs
+  key_vault_id = azurerm_key_vault.nia-base-key-vault.id
+  depends_on = [ azurerm_key_vault_access_policy.terraform ]
+}
+
 output key_vault_id {
   value       = azurerm_key_vault.nia-base-key-vault.id
 }
@@ -44,6 +51,15 @@ output nia-secret-mhs-client-certificate_name {
 
 output nia-secret-mhs-client-key_name {
   value  = azurerm_key_vault_secret.nia-secret-mhs-client-key.name
+}
+
+output nia-secret-mhs-route-spine-ca-certs_name {
+  value = azurerm_key_vault_secret.nia-secret-mhs-route-spine-ca-certs.name
+}
+
+output nia-secret-mhs-route-spine-ca-certs_value {
+  value = azurerm_key_vault_secret.nia-secret-mhs-route-spine-ca-certs.value
+  sensitive = true
 }
 
 output nia-secret-mhs-partykey_value {
