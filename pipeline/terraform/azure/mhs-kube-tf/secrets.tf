@@ -16,10 +16,10 @@ resource "kubernetes_secret" "mhs-queue" {
   }
   type = "Opaque"
   data = {
-    broker =  "amqps://${data.terraform_remote_state.mhs.outputs.inbound_service_bus_host}:${data.terraform_remote_state.mhs.outputs.inbound_service_bus_port}/?sasl=plain"
+    broker =  "${data.terraform_remote_state.mhs.outputs.service_bus_protocol}://${data.terraform_remote_state.mhs.outputs.inbound_service_bus_host}:${data.terraform_remote_state.mhs.outputs.inbound_service_bus_port}"
     queue = data.terraform_remote_state.mhs.outputs.inbound_service_bus_queue_name
     username = data.terraform_remote_state.mhs.outputs.inbound_service_bus_queue_username
-    password = data.terraform_remote_state.mhs.outputs.inbound_service_bus_primary_key
+    password = data.terraform_remote_state.mhs.outputs.inbound_servicebus_ar_primary_key
   }
 }
 
@@ -41,8 +41,8 @@ resource "kubernetes_secret" "mhs-client-cert" {
   }
   type = "Opaque"
   data = {
-    tlscrt = data.terraform_remote_state.base-secrets.outputs.nia-secret-mhs-client-certificate_value
-    tlskey = data.terraform_remote_state.base-secrets.outputs.nia-secret-mhs-client-key_value
+    "tls.crt" = data.terraform_remote_state.base-secrets.outputs.nia-secret-mhs-client-certificate_value
+    "tls.key" = data.terraform_remote_state.base-secrets.outputs.nia-secret-mhs-client-key_value
   }
 }
 
@@ -54,5 +54,6 @@ resource "kubernetes_secret" "mhs-ca-certs" {
   type = "Opaque"
   data = {
     ca-certs =  data.terraform_remote_state.base-secrets.outputs.nia-secret-mhs-ca-chain_value
+    route-ca-certs = data.terraform_remote_state.base-secrets.outputs.nia-secret-mhs-route-spine-ca-certs_value
   }
 }

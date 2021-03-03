@@ -79,14 +79,14 @@ spec:
         - name: MHS_PERSISTENCE_ADAPTOR
           value: mongodb
         - name: MHS_INBOUND_USE_SSL
-          value: "false"
+          value: "true"
         - name: MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS
           value: "0"
         - name: SERVICE_PORTS
           value: 443,80
         - name: TCP_PORTS
           value: "443"
-        image: nhsdev/nia-mhs-inbound:1.0.0
+        image: nhsdev/nia-mhs-inbound:1.0.2
         imagePullPolicy: ""
         name: inbound
         ports:

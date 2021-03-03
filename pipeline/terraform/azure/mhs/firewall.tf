@@ -18,6 +18,20 @@ resource "azurerm_firewall" "mhs_firewall" {
   }
 }
 
+resource "azurerm_firewall_application_rule_collection" "aks_fqdn_tags" {
+  name = "mhs_aks_fqdn_tags"
+  azure_firewall_name = azurerm_firewall.mhs_firewall.name
+  resource_group_name = azurerm_resource_group.mhs_adaptor.name
+  priority = 100
+  action = "Allow"
+
+  rule {
+    name = "AzureFQDNs"
+    fqdn_tags = ["AzureKubernetesService"]
+    source_addresses = ["*"]
+  }
+}
+
 resource "azurerm_firewall_application_rule_collection" "mhs_aks_rules" {
   name = "mhs_aks_fw_rules"
   azure_firewall_name = azurerm_firewall.mhs_firewall.name
@@ -43,6 +57,7 @@ resource "azurerm_firewall_application_rule_collection" "mhs_aks_rules" {
       "*.monitoring.azure.com",
       "*.azmk8s.io",
       "*.blob.core.windows.net",
+      "*.core.windows.net",
     ]
 
     protocol {
@@ -132,7 +147,10 @@ resource "azurerm_firewall_application_rule_collection" "osupdates" {
       "snapcraft.io",
       "azure.archive.ubuntu.com",
       "deb.debian.org",
-      "security.debian.org"
+      "security.debian.org",
+      "pypi.python.org",
+      "pypi.org",
+      "files.pythonhosted.org"
     ]
 
     protocol {

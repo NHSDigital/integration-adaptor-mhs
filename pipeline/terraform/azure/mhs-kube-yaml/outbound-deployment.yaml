@@ -29,8 +29,8 @@ spec:
           value: https://msg.int.spine2.ncrs.nhs.uk/reliablemessaging/reliablerequest
         - name: MHS_LOG_LEVEL
           value: DEBUG
-        - name: MHS_OUTBOUND_HTTP_PROXY
-          value: "NotSet"
+        # - name: MHS_OUTBOUND_HTTP_PROXY
+        #   value: ""
         - name: MHS_OUTBOUND_VALIDATE_CERTIFICATE
           value: "False"
         - name: MHS_RESYNC_INITIAL_DELAY
@@ -57,7 +57,10 @@ spec:
         - name: MHS_SYNC_ASYNC_STATE_TABLE_NAME
           value: sync_async_state
         - name: MHS_SECRET_SPINE_ROUTE_LOOKUP_CA_CERTS
-          value: "Here goes spine CA certs"
+          valueFrom:
+            secretKeyRef:
+              name: mhs-ca-certs
+              key: route-ca-certs
         - name: MHS_SECRET_PARTY_KEY
           valueFrom:
             secretKeyRef:
@@ -78,7 +81,7 @@ spec:
             secretKeyRef:
               name: mhs-ca-certs
               key: ca-certs
-        image: nhsdev/nia-mhs-outbound:1.0.0
+        image: nhsdev/nia-mhs-outbound:1.0.2
         imagePullPolicy: ""
         name: outbound
         ports:

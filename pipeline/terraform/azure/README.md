@@ -69,7 +69,7 @@ Once you have configured Azure authentication, you can run the following command
 * The state bucket:
   * Change the directory to state component: `cd state`
   * Run terraform init, this will download all required terraform modules and providers for this compoment: `terraform init`
-  * Run terraform plan, to see if the syntax does not have errors, and all variables are set correctly: `terraform plan --var_file=../etc/globals.tfvars`
+  * Run terraform plan, to see if the syntax does not have errors, and all variables are set correctly: `terraform plan -var-file=../etc/global.tfvars`
   * Run terraform apply: `terraform apply -auto-approve --var_file=../etc/globals.tf`
   * The output from this component will contain a key to Storage Account which will be needed for Terraform applies. The key will be written under `tf_state_account_key` copy it and add to your script that exports the credentials for Azure under `ARM_ACCESS_KEY`:
 
@@ -84,8 +84,8 @@ Once you have configured Azure authentication, you can run the following command
   * As part of this component you will create a jumpbox instance, create a SSH key and put the public part in `files/admin_ssh_key.pub` and the private part in `~/.ssh/admin_ssh_key` This is required to perform the initial configuration of the jumpbox.
   * Change the directory to base component: `cd base`
   * Run terraform init: `terraform init`
-  * Run terraform plan: `terraform plan --var_file=../etc/globals.tfvars --var_file=../etc/secrets.tfvars`
-  * Run terraform apply: `terraform apply -auto-approve --var_file=../etc/globals.tfvars --var_file=../etc/secrets.tfvars`
+  * Run terraform plan: `terraform plan --var-file=../etc/global.tfvars --var-file=../etc/secrets.tfvars`
+  * Run terraform apply: `terraform apply -auto-approve --var_file=../etc/global.tfvars --var_file=../etc/secrets.tfvars`
   * The output from this component will have public IP address of jumpbox instance within Azure, which you could later use for testing purposes.
   * Go back to to top directory: `cd ..`
 

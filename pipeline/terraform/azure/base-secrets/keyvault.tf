@@ -47,8 +47,33 @@ resource "azurerm_key_vault_access_policy" "terraform" {
     ]
 }
 
-# resource "azurerm_key_vault_access_policy" "console" {
+resource "azurerm_key_vault_access_policy" "console" {
+  key_vault_id = azurerm_key_vault.nia-base-key-vault.id
+  tenant_id = var.console_tenant_id
+  object_id = var.console_object_id
 
-# }
+      key_permissions = [
+      "get",
+      "create",
+      "list",
+      "update",
+      "delete",
+    ]
+
+    secret_permissions = [
+      "get",
+      "set",
+      "list",
+      "delete",
+    ]
+
+    storage_permissions = [
+      "get",
+      "set",
+      "list",
+      "update",
+      "delete",
+    ]
+}
 
 data "azurerm_client_config" "current" {}

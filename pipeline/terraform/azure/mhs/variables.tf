@@ -32,7 +32,7 @@ variable jumpbox_user {
 }
 
 variable "agent_count" {
-  default = 3
+  default = 1
 }
 
 variable "dns_prefix" {
@@ -86,6 +86,11 @@ variable "mhs_aks_internal_dns" {
 
 variable "mhs_aks_docker_bridge_cidr" {
   default = "10.22.0.1/16"
+}
+
+variable use_servicebus {
+  type = bool
+  default = false
 }
 
 # variable "dns_servers" {
