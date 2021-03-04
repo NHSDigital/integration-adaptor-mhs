@@ -5,7 +5,7 @@ export MHS_OUTBOUND_URL="http://localhost:80/"
 export FROM_ASID=""
 
 # test scripts only, send a forward reliable message to yourself
-export FROM_ODS=""
+export FROM_ODS_CODE=""
 
 export MHS_SECRET_PARTY_KEY=""
 
