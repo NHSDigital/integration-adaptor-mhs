@@ -28,7 +28,7 @@ argument enables sync-async (wait-for-response) e.g. `./async-reliable.sh true`
 ## forward-reliable.sh
 
 `./forward-reliable.sh` sends the message `forward-reliable.xml`. Set the 
-`export-env-vars.sh` variable `FROM_ODS` to your ODS code to also receive an 
+`export-env-vars.sh` variable `FROM_ODS_CODE` to your ODS code to also receive an 
 inbound forward reliable message. This configuration sends the forward reliable 
 message to yourself.
 
