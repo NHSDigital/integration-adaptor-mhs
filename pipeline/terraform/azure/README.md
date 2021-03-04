@@ -11,7 +11,7 @@ This configuration will create a full test environment running an MHS applicatio
 
 * There may be problems with running terraform apply and kubectl  when the AKS cluster is set as private. In this case the configuration can only be applied from an instance within the same network as the cluster. Yamls and kubectl binary can be copied and apply correctly. Applying terraform the same way require some additional work like allowing more hostnames in firewall, and allowing access to Azure Storage Account from the instance
 
-* The adaptors deployed using these scripts do not read secrets directly from the Azure Key Vault. Secrets are read from a tfvars and written to the key vault. They are also written into the Terraform state output. The output is then used to create secrets in AKS. 
+* The adaptors deployed using these scripts do not read secrets directly from the Azure Key Vault. First, the Terraform scripts read values from a tfvars file and create secrets in Azure Key Vault. The scripts also write the values into the Terraform state output. Finally, the mhs-kube-tf component defines AKS secrets using these outputs.
 
 ## Terraform structure and details
 
