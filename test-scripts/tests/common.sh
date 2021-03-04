@@ -16,7 +16,7 @@ export CREATION_TIME
 
 random_uuid() {
   UUID=$(uuidgen)
-  echo "${UUID^^}"
+  echo "$UUID" | tr a-z A-Z
 }
 
 json_escape () {

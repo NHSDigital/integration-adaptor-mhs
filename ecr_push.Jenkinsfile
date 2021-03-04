@@ -18,6 +18,7 @@ pipeline {
             steps {
                 sh "docker pull nhsdev/nia-mhs-inbound:${params.Docker_Hub_Version}"
                 sh "docker pull nhsdev/nia-mhs-outbound:${params.Docker_Hub_Version}"
+                sh "docker pull nhsdev/nia-mhs-outbound:${params.Docker_Hub_Version}"
                 sh "docker pull nhsdev/nia-mhs-route:${params.Docker_Hub_Version}"
             }
         }
