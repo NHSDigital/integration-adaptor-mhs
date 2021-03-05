@@ -4,8 +4,10 @@ set -ex
 
 source common.sh
 
-UUID=$(random_uuid)
-export UUID
+CONVERSATION_ID=$(random_uuid)
+export CONVERSATION_ID
+MESSAGE_ID=$(random_uuid)
+export MESSAGE_ID
 
 REQUEST_BODY="$(request_body_from_file inbound-unsolicited.txt)"
 

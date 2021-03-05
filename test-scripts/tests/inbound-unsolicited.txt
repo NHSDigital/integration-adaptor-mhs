@@ -14,11 +14,11 @@ Content-Transfer-Encoding: 8bit
 			<eb:PartyId eb:type="urn:nhs:names:partyType:ocs+serviceInstance">${MHS_SECRET_PARTY_KEY}</eb:PartyId>
 		</eb:To>
 		<eb:CPAId>S1001A1630</eb:CPAId>
-		<eb:ConversationId>10F5A436-1913-43F0-9F18-95EA0E43E61A</eb:ConversationId>
+		<eb:ConversationId>${CONVERSATION_ID}</eb:ConversationId>
 		<eb:Service>urn:nhs:names:services:psis</eb:Service>
 		<eb:Action>MCCI_IN010000UK13</eb:Action>
 		<eb:MessageData>
-			<eb:MessageId>C614484E-4B10-499A-9ACD-5D645CFACF61</eb:MessageId>
+			<eb:MessageId>${MESSAGE_ID}</eb:MessageId>
 			<eb:Timestamp>2019-05-04T20:55:16Z</eb:Timestamp>
 		</eb:MessageData>
         <eb:DuplicateElimination/>
@@ -28,7 +28,7 @@ Content-Transfer-Encoding: 8bit
 </SOAP:Header>
 <SOAP:Body>
 	<eb:Manifest SOAP:mustUnderstand="1" eb:version="2.0">
-		<eb:Reference xlink:href="cid:C614484E-4B10-499A-9ACD-5D645CFACF61@spine.nhs.uk">
+		<eb:Reference xlink:href="cid:${MESSAGE_ID}@spine.nhs.uk">
 			<eb:Schema eb:location="http://www.nhsia.nhs.uk/schemas/HL7-Message.xsd" eb:version="1.0"/>
 			<eb:Description xml:lang="en">HL7 payload</eb:Description>
 			<hl7ebxml:Payload style="HL7" encoding="XML" version="3.0"/>
@@ -40,7 +40,7 @@ Content-Transfer-Encoding: 8bit
 </SOAP:Body>
 </SOAP:Envelope>
 ----=_MIME-Boundary
-Content-Id: <C614484E-4B10-499A-9ACD-5D645CFACF61@spine.nhs.uk>
+Content-Id: <${MESSAGE_ID}@spine.nhs.uk>
 Content-Type: text/xml; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
