@@ -32,6 +32,14 @@ argument enables sync-async (wait-for-response) e.g. `./async-reliable.sh true`
 inbound forward reliable message. This configuration sends the forward reliable 
 message to yourself.
 
+## inbound-unsolicited.sh
+
+`inbound-unsolicited.sh` sends the message `inbound-unsolicited.txt` to the adaptor's
+inbound endpoint.
+
+Note: this script creates the following files in the current working directory:
+ca.crt, client.crt, client.key
+
 ## rabbit_to_xml.sh
 
 The `rabbit_to_xml.sh` helper script decodes asynchronous replies published to 

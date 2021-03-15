@@ -23,8 +23,12 @@ json_escape () {
     printf '%s' "$1" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
 }
 
+request_body_from_file() {
+  envsubst < "$1"
+}
+
 request_body_from_xml_file() {
-  EHR_EXTRACT="$(envsubst < "$1")"
+  EHR_EXTRACT="$(request_body_from_file "$1")"
   PAYLOAD=$(json_escape "$EHR_EXTRACT")
   echo "{\"payload\":$PAYLOAD}"
 }
@@ -52,4 +56,16 @@ mhs_request_ods() {
     -H "ods-code: $FROM_ODS_CODE" \
     -d "$REQUEST_BODY" \
     "$MHS_OUTBOUND_URL"
+}
+
+mhs_request_inbound() {
+  echo "${MHS_SECRET_CLIENT_CERT}" > client.crt
+  echo "${MHS_SECRET_CLIENT_KEY}" > client.key
+  echo "${MHS_SECRET_CA_CERTS}" > ca.crt
+  curl -i -k -v -X POST \
+    --cert client.crt --key client.key --cacert ca.crt \
+    -H "Content-Type: multipart/related; boundary=\"--=_MIME-Boundary\"; type=\"text/xml\"; start=\"<ebXMLHeader@spine.nhs.uk>\"" \
+    -H "SOAPAction: urn:nhs:names:services:gp2gp/COPC_IN000001UK01" \
+    -d "$REQUEST_BODY" \
+    "$MHS_INBOUND_URL"
 }

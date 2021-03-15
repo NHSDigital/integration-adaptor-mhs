@@ -119,6 +119,7 @@ venv.bak/
 
 # Certs
 **/*.cert
+**/*.crt
 **/*.key
 **/*.pem
 **/certs/party_key.txt
