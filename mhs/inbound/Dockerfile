@@ -1,4 +1,5 @@
-FROM nhsdev/nia-mhs-inbound-base:latest
+ARG BASE_IMAGE_TAG=latest
+FROM nhsdev/nia-mhs-inbound-base:$BASE_IMAGE_TAG
 
 RUN mkdir -p /usr/src/app/mhs/inbound
 
