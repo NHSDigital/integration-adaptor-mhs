@@ -32,6 +32,7 @@ ACK_SOAP_ACTOR = "ack_soap_actor"
 SYNC_REPLY = "sync_reply"
 
 ATTACHMENTS = 'attachments'
+EXTERNAL_ATTACHMENTS = 'external_attachments'
 ATTACHMENT_CONTENT_ID = 'content_id'
 ATTACHMENT_CONTENT_TYPE = 'content_type'
 ATTACHMENT_BASE64 = 'is_base64'
@@ -109,6 +110,8 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         attachment is Base64-encoded or not.
         :param message_dictionary: message dictionary that has the attachments
         """
+        message_dictionary.setdefault(EXTERNAL_ATTACHMENTS, [])
+
         attachment: dict
         for attachment in message_dictionary.setdefault(ATTACHMENTS, []):
             attachment[ATTACHMENT_CONTENT_ID] = f'{message_utilities.get_uuid()}@spine.nhs.uk'
