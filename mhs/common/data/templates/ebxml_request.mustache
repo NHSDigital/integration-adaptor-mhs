@@ -44,6 +44,19 @@ Content-Transfer-Encoding: 8bit
             <eb:Description xml:lang="en">{{description}}</eb:Description>
         </eb:Reference>
     {{/attachments}}
+    {{#external_attachments}}
+        <eb:Reference eb:id="{{reference_id}}" xlink:href="mid:{{href_id}}">
+            <eb:Description xml:lang="en">
+                Filename="{{filename}}"
+                ContentType={{content_type}}
+                Compressed={{compressed}}
+                LargeAttachment={{large_attachment}}
+                OriginalBase64={{original_base64}}
+                Length={{length}}{{#domain_data}}
+                DomainData={{domain_data}}{{/domain_data}}
+            </eb:Description>
+        </eb:Reference>
+    {{/external_attachments}}
 	</eb:Manifest>
 </SOAP:Body>
 </SOAP:Envelope>

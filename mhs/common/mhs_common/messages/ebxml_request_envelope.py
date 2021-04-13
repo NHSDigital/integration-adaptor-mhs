@@ -77,6 +77,16 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
                         'is_base64': True,
                         'description': 'Another attachment description'
                     }
+                ],
+                'external_attachments': [ # Optional, defaults to empty list if not set
+                    {
+                        'filename': 'some_file.txt',
+                        'content_type': 'text/plain',
+                        'compressed': False,
+                        'large_attachment': False,
+                        'original_base64': True,
+                        'length': 123
+                    }
                 ]
             }
         """
