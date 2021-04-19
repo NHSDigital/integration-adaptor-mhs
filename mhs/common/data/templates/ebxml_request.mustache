@@ -33,18 +33,15 @@ Content-Transfer-Encoding: 8bit
     {{/sync_reply}}
 </SOAP:Header>
 <SOAP:Body>
-	<eb:Manifest SOAP:mustUnderstand="1" eb:version="2.0">
-		<eb:Reference xlink:href="cid:{{message_id}}@spine.nhs.uk">
-			<eb:Schema eb:location="http://www.nhsia.nhs.uk/schemas/HL7-Message.xsd" eb:version="1.0"/>
-			<eb:Description xml:lang="en">HL7 payload</eb:Description>
-			<hl7ebxml:Payload style="HL7" encoding="XML" version="3.0"/>
-		</eb:Reference>
-    {{#attachments}}
+    <eb:Manifest SOAP:mustUnderstand="1" eb:version="2.0">
+        <eb:Reference xlink:href="cid:{{message_id}}@spine.nhs.uk">
+            <eb:Schema eb:location="http://www.nhsia.nhs.uk/schemas/HL7-Message.xsd" eb:version="1.0"/>
+            <eb:Description xml:lang="en">HL7 payload</eb:Description>
+            <hl7ebxml:Payload style="HL7" encoding="XML" version="3.0"/>
+        </eb:Reference>{{#attachments}}
         <eb:Reference xlink:href="cid:{{content_id}}">
             <eb:Description xml:lang="en">{{description}}</eb:Description>
-        </eb:Reference>
-    {{/attachments}}
-    {{#external_attachments}}
+        </eb:Reference>{{/attachments}}{{#external_attachments}}
         <eb:Reference eb:id="{{reference_id}}" xlink:href="mid:{{href_id}}">
             <eb:Description xml:lang="en">
                 Filename="{{filename}}"
@@ -55,8 +52,7 @@ Content-Transfer-Encoding: 8bit
                 Length={{length}}{{#domain_data}}
                 DomainData={{domain_data}}{{/domain_data}}
             </eb:Description>
-        </eb:Reference>
-    {{/external_attachments}}
+        </eb:Reference>{{/external_attachments}}
 	</eb:Manifest>
 </SOAP:Body>
 </SOAP:Envelope>
