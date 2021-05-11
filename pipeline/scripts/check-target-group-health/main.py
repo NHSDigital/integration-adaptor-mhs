@@ -29,12 +29,18 @@ def _parse_arguments():
 def _check_services_healthchecks():
     print('Checking all services healthchecks')
 
-    base_url = 'https://mhs-{service}.build.nhsredteam.internal.nhs.uk/healthcheck'
+    protocols = ['http', 'https']
+    base_url = '{protocol}://mhs-{service}.build.nhsredteam.internal.nhs.uk/healthcheck'
 
-    for service in ['outbound', 'inbound', 'route']:
-        url = base_url.format(service=service)
-        response = requests.get(url, verify=False, timeout=5)
-        print('{service}: {status_code}'.format(service=service, status_code=str(response.status_code)))
+    for protocol, service in [(service, protocol) for service in ['outbound', 'inbound', 'route'] for protocol in protocols]:
+        url = base_url.format(protocol=protocol, service=service)
+        print('Checking: ' + url)
+        try:
+            response = requests.get(url, verify=False, timeout=5)
+            print('{service}: {status_code}'.format(service=service, status_code=str(response.status_code)))
+        except Exception as ex:
+            print(ex)
+        
 
 
 if __name__ == '__main__':
