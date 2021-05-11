@@ -32,7 +32,7 @@ def _check_services_healthchecks():
     protocols = ['http', 'https']
     base_url = '{protocol}://mhs-{service}.build.nhsredteam.internal.nhs.uk/healthcheck'
 
-    for protocol, service in [(service, protocol) for service in ['outbound', 'inbound', 'route'] for protocol in protocols]:
+    for protocol, service in [(protocol, service) for service in ['outbound', 'inbound', 'route'] for protocol in protocols]:
         url = base_url.format(protocol=protocol, service=service)
         print('Checking: ' + url)
         try:
