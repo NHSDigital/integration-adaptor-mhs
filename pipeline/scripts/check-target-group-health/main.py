@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import requests
 from typing import List
 
 import boto3
@@ -25,7 +26,20 @@ def _parse_arguments():
     return parser.parse_args()
 
 
+def _check_services_healthchecks():
+    print('Checking all services healthchecks')
+
+    base_url = 'https://mhs-%s.build.nhsredteam.internal.nhs.uk/healthcheck'
+
+    for service in ['outbound', 'inbound', 'route']:
+        url = base_url.format(service)
+        response = requests.get(url, verify=False, timeout=5)
+        print('%s: %s'.format(service, str(response.status_code)))
+
+
 if __name__ == '__main__':
     args = _parse_arguments()
 
     main(args.target_group_arns)
+
+    _check_services_healthchecks()
