@@ -58,7 +58,7 @@ def _send_outbound_post():
                 'Correlation-Id': 'test',
                 'wait-for-response': 'false',
                 'from-asid': 'test',
-                'Content-Type': 'appliation/json',
+                'Content-Type': 'application/json',
                 'ods-code': 'test'
             }
             response = requests.post(url, data='test', headers=headers, verify=False, timeout=15)
