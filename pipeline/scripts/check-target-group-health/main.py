@@ -34,7 +34,7 @@ def _check_services_healthchecks():
     for service in ['outbound', 'inbound', 'route']:
         url = base_url.format(service=service)
         response = requests.get(url, verify=False, timeout=5)
-        print('{service}: {status_code}}'.format(service=service, status_code=str(response.status_code)))
+        print('{service}: {status_code}'.format(service=service, status_code=str(response.status_code)))
 
 
 if __name__ == '__main__':
