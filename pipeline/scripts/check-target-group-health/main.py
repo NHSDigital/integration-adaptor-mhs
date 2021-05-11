@@ -29,12 +29,12 @@ def _parse_arguments():
 def _check_services_healthchecks():
     print('Checking all services healthchecks')
 
-    base_url = 'https://mhs-%s.build.nhsredteam.internal.nhs.uk/healthcheck'
+    base_url = 'https://mhs-{service}.build.nhsredteam.internal.nhs.uk/healthcheck'
 
     for service in ['outbound', 'inbound', 'route']:
-        url = base_url.format(service)
+        url = base_url.format(service=service)
         response = requests.get(url, verify=False, timeout=5)
-        print('%s: %s'.format(service, str(response.status_code)))
+        print('{service}: {status_code}}'.format(service=service, status_code=str(response.status_code)))
 
 
 if __name__ == '__main__':
