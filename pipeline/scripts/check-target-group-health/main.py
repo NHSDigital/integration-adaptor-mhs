@@ -40,7 +40,22 @@ def _check_services_healthchecks():
             print('{service}: {status_code}'.format(service=service, status_code=str(response.status_code)))
         except Exception as ex:
             print(ex)
-        
+
+
+def _send_outbound_post():
+    print('Checking outbound post request')
+
+    urls = [
+        'https://mhs-outbound.build.nhsredteam.internal.nhs.uk/',
+        'https://mhs-outbound.build.nhsredteam.internal.nhs.uk',
+    ]
+    for url in urls:
+        print('Checking: ' + url)
+        try:
+            response = requests.post(url, verify=False, timeout=15)
+            print('{status_code}'.format(status_code=str(response.status_code)))
+        except Exception as ex:
+            print(ex)
 
 
 if __name__ == '__main__':
@@ -49,3 +64,5 @@ if __name__ == '__main__':
     main(args.target_group_arns)
 
     _check_services_healthchecks()
+
+    _send_outbound_post()
