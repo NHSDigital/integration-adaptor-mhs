@@ -52,7 +52,16 @@ def _send_outbound_post():
     for url in urls:
         print('Checking: ' + url)
         try:
-            response = requests.post(url, verify=False, timeout=15)
+            headers = {
+                'Interaction-Id': 'test',
+                'Message-Id': 'test',
+                'Correlation-Id': 'test',
+                'wait-for-response': 'false',
+                'from-asid': 'test',
+                'Content-Type': 'appliation/json',
+                'ods-code': 'test'
+            }
+            response = requests.post(url, data='test', headers=headers, verify=False, timeout=15)
             print('{status_code}'.format(status_code=str(response.status_code)))
         except Exception as ex:
             print(ex)
