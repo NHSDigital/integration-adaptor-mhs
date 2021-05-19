@@ -20,9 +20,6 @@ pipeline {
 
     stages {
         stage('Build & test Common') {
-            when {
-                expression { false == true }
-            }
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
@@ -31,9 +28,6 @@ pipeline {
             }
         }
         stage('Build & test MHS Common') {
-            when {
-                expression { false == true }
-            }
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
@@ -42,9 +36,6 @@ pipeline {
             }
         }
         stage('Build MHS') {
-            when {
-                expression { false == true }
-            }
             parallel {
                 stage('Inbound') {
                     stages {
@@ -141,9 +132,6 @@ pipeline {
             //parallel {
             stages {
                 stage('Run Component Tests') {
-                    when {
-                        expression { false == true }
-                    }
                     options {
                         lock('local-docker-compose-environment')
                     }
