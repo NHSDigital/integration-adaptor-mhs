@@ -119,6 +119,7 @@ venv.bak/
 
 # Certs
 **/*.cert
+**/*.crt
 **/*.key
 **/*.pem
 **/certs/party_key.txt
@@ -149,6 +150,16 @@ export-env-vars-and-run-mhs-docker.sh
 
 # mock ldap data
 /mhs/spineroutelookup/mock_ldap_data/*.json
+
+# Azure env variables
+/pipeline/terraform/azure/export_tf_vars.sh
+/pipeline/terraform/azure/mhs/.kube/aksconfig
+/pipeline/terraform/azure/mhs/.aksconfig
+/pipeline/terraform/azure/mhs/.ssh/id_rsa
+/pipeline/terraform/azure/mhs/mhs-kube-yaml/secret-*
+/pipeline/terraform/azure/etc/secrets.tfvars
+/pipeline/terraform/azure/mhs-kube-tf/.terraform*
+
 
 **/export-env-vars.sh
 out/

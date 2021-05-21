@@ -179,7 +179,6 @@ pipeline {
                                 docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
-                            sh label: 'Docker compose logs', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} logs'
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
                         }
                     }
@@ -220,6 +219,7 @@ pipeline {
                                             -var ecr_address=${DOCKER_REGISTRY} \
                                             -var mhs_outbound_validate_certificate=${MHS_OUTBOUND_VALIDATE_CERTIFICATE} \
                                             -var mhs_log_level=DEBUG \
+                                            -var mhs_outbound_spineroutelookup_verify_certificate="False" \
                                             -var mhs_outbound_http_proxy=${MHS_OUTBOUND_HTTP_PROXY} \
                                             -var mhs_state_table_read_capacity=5 \
                                             -var mhs_state_table_write_capacity=5 \
@@ -325,7 +325,8 @@ void executeUnitTestsWithCoverage() {
     sh label: 'Running unit tests', script: 'pipenv run unittests-cov'
     sh label: 'Displaying code coverage report', script: 'pipenv run coverage-report'
     sh label: 'Exporting code coverage report', script: 'pipenv run coverage-report-xml'
-    sh label: 'Running SonarQube analysis', script: "sonar-scanner -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}"
+//     SonarQube disabled as atm it's not set up on AWS
+//     sh label: 'Running SonarQube analysis', script: "sonar-scanner -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}"
 }
 
 void buildModules(String action) {

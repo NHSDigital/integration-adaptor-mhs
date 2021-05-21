@@ -32,6 +32,7 @@ ACK_SOAP_ACTOR = "ack_soap_actor"
 SYNC_REPLY = "sync_reply"
 
 ATTACHMENTS = 'attachments'
+EXTERNAL_ATTACHMENTS = 'external_attachments'
 ATTACHMENT_CONTENT_ID = 'content_id'
 ATTACHMENT_CONTENT_TYPE = 'content_type'
 ATTACHMENT_BASE64 = 'is_base64'
@@ -77,6 +78,18 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
                         'is_base64': True,
                         'description': 'Another attachment description'
                     }
+                ],
+                'external_attachments': [ # Optional, defaults to empty list if not set
+                    {
+                        'reference_id' : '6a7b4c68-8be8-46ba-8fbc-9b8313569380',
+                        'href_id': '4dd554f1-2827-4b98-adf3-7cefab763fff',
+                        'filename': 'some_file.txt',
+                        'content_type': 'text/plain',
+                        'compressed': False,
+                        'large_attachment': False,
+                        'original_base64': True,
+                        'length': 123
+                    }
                 ]
             }
         """
@@ -99,6 +112,8 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         attachment is Base64-encoded or not.
         :param message_dictionary: message dictionary that has the attachments
         """
+        message_dictionary.setdefault(EXTERNAL_ATTACHMENTS, [])
+
         attachment: dict
         for attachment in message_dictionary.setdefault(ATTACHMENTS, []):
             attachment[ATTACHMENT_CONTENT_ID] = f'{message_utilities.get_uuid()}@spine.nhs.uk'

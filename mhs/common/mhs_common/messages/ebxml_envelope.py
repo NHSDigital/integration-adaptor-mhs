@@ -24,6 +24,8 @@ RECEIVED_MESSAGE_ID = "received_message_id"  # RefToMessageId - id of original m
 ERROR_CODE = "error_code"
 SEVERITY = "severity"
 DESCRIPTION = "description"
+ATTACHMENTS = "attachments"
+EXTERNAL_ATTACHMENTS = "external_attachments"
 
 EBXML_NAMESPACE = "eb"
 SOAP_NAMESPACE = "SOAP"

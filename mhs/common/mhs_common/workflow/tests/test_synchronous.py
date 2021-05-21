@@ -5,6 +5,7 @@ from unittest import mock
 from tornado import httpclient
 
 from mhs_common.messages import soap_envelope
+from mhs_common.request.request_body_schema import RequestBody
 from mhs_common.workflow import synchronous as sync
 from mhs_common import workflow
 from mhs_common.state import work_description
@@ -44,7 +45,8 @@ class TestSynchronousWorkflow(unittest.TestCase):
             await self.wf.handle_outbound_message(from_asid="202020", message_id="123",
                                                   correlation_id="qwe",
                                                   interaction_details={},
-                                                  payload="nice message", work_description_object=None)
+                                                  request_body=RequestBody("nice message", [], []),
+                                                  work_description_object=None)
         except Exception:
             # Don't care for exceptions, just want to check the store is set correctly first
             pass
@@ -68,7 +70,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
                                                                                        message_id="123",
                                                                                        correlation_id="qwe",
                                                                                        interaction_details={},
-                                                                                       payload="nice message",
+                                                                                       request_body=RequestBody("nice message", [], []),
                                                                                        work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
@@ -92,7 +94,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
                                                                                        message_id="123",
                                                                                        correlation_id="qwe",
                                                                                        interaction_details={},
-                                                                                       payload="nice message",
+                                                                                       request_body=RequestBody("nice message", [], []),
                                                                                        work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
@@ -118,7 +120,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details=test_interaction_details,
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
@@ -144,7 +146,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details={'action': ''},
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_MESSAGE_TRANSMISSION_FAILED)
@@ -175,7 +177,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details={'action': ''},
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_SYNC_MESSAGE_RESPONSE_RECEIVED)
@@ -200,7 +202,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details={'action': ''},
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_SYNC_MESSAGE_RESPONSE_RECEIVED)
@@ -221,7 +223,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details={'action': 'test-interaction'},
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         wdo.set_outbound_status.assert_called_with(work_description.MessageStatus.OUTBOUND_SYNC_MESSAGE_RESPONSE_RECEIVED)
@@ -244,7 +246,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details={'action': 'test-interaction'},
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         log_mock.audit.assert_called_with(
@@ -270,7 +272,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
             message_id="123",
             correlation_id="qwe",
             interaction_details={'action': 'test-interaction'},
-            payload="nice message",
+            request_body=RequestBody("nice message", [], []),
             work_description_object=None)
 
         # audit log should be called at start
@@ -288,7 +290,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
                                                                                        message_id="123",
                                                                                        correlation_id="qwe",
                                                                                        interaction_details={},
-                                                                                       payload="nice message",
+                                                                                       request_body=RequestBody("nice message", [], []),
                                                                                        work_description_object=None)
 
         self.assertEqual(error, 400)
@@ -301,7 +303,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @async_test
     async def test_prepare_message(self):
-        id, headers, message = await self.wf._prepare_outbound_message("message_id", "to_asid", "from_asid", "mesasge",
+        id, headers, message = await self.wf._prepare_outbound_message("message_id", "to_asid", "from_asid", RequestBody("message", [], []),
                                                                        {'service': 'service', 'action': 'action'})
         self.assertEqual(id, "message_id")
         self.assertEqual(headers, {'Content-Type': 'text/xml',
@@ -314,7 +316,7 @@ class TestSynchronousWorkflow(unittest.TestCase):
     async def test_prepare_message_correct_constructor_call(self, envelope_patch):
         envelope = mock.MagicMock()
         envelope_patch.return_value = envelope
-        await self.wf._prepare_outbound_message("message_id", "to_asid", "from_asid", "Message123",
+        await self.wf._prepare_outbound_message("message_id", "to_asid", "from_asid", RequestBody("Message123", [], []),
                                                 {'service': 'service', 'action': 'action'})
         message_details = {
             soap_envelope.MESSAGE_ID: "message_id",
@@ -322,7 +324,8 @@ class TestSynchronousWorkflow(unittest.TestCase):
             soap_envelope.FROM_ASID: 'from_asid',
             soap_envelope.SERVICE: 'service',
             soap_envelope.ACTION: 'service/action',
-            soap_envelope.MESSAGE: 'Message123'
+            soap_envelope.MESSAGE: 'Message123',
+            soap_envelope.ATTACHMENTS: []
         }
 
         envelope_patch.assert_called_with(message_details)

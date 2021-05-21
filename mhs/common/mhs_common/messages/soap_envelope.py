@@ -24,6 +24,7 @@ ACTION = "action"
 MESSAGE_ID = 'message_id'
 TIMESTAMP = 'timestamp'
 MESSAGE = 'hl7_message'
+ATTACHMENTS = 'attachments'
 
 REQUIRED_SOAP_ELEMENTS = [FROM_ASID, TO_ASID, MESSAGE_ID, SERVICE, ACTION, MESSAGE]
 

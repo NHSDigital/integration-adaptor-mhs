@@ -87,6 +87,6 @@ def handle_ebxml_error(code: int, headers: Dict, body: AnyStr) -> Tuple[int, Opt
         all_fields = {**error_fields, **ERROR_RESPONSE_DEFAULTS}
         error_data_response['errors'].append(all_fields)
         logger.error('ebXML error returned: {}'.format(' '.join(f'{{{i}}}' for i in all_fields.keys())),
-                     all_fields)
+                     fparams=all_fields)
 
     return 500, json.dumps(error_data_response)

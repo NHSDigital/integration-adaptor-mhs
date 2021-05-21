@@ -74,3 +74,19 @@ resource "aws_vpc_endpoint" "cloudwatch_endpoint" {
     EnvironmentId = var.environment_id
   }
 }
+
+# Secrets Manager VPC Endpoint
+resource "aws_vpc_endpoint" "secrets_endpoint" {
+  vpc_endpoint_type = "Interface"
+  private_dns_enabled = true
+  vpc_id = aws_vpc.mhs_vpc.id
+  service_name = "com.amazonaws.${var.region}.secretsmanager"
+  subnet_ids = aws_subnet.mhs_subnet.*.id
+  security_group_ids = [
+    aws_security_group.secrets_security_group.id
+  ]
+  tags = {
+    Name = "${var.environment_id}-secrets-endpoint"
+    EnvironmentId = var.environment_id
+  }
+}

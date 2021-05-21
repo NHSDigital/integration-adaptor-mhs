@@ -42,6 +42,24 @@ class ForwardReliableMessagingPatternTests(TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
 
+        attachments = [{
+            'content_type': 'text/plain',
+            'is_base64': False,
+            'description': 'Some description',
+            'payload': 'Some payload'
+        }]
+
+        external_attachments = [{
+            'reference_id': 'B6D2FFAF-1EE1-4023-B639-442E1CC931DB',
+            'href_id': '4AB8A3EA-A6A6-45C3-B1EA-FF588F054A2B',
+            'filename': 'blood_test.xml',
+            'content_type': 'text/plain',
+            'compressed': False,
+            'large_attachment': False,
+            'original_base64': False,
+            'length': 123456
+        }]
+
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='COPC_IN000001UK01',
@@ -49,7 +67,7 @@ class ForwardReliableMessagingPatternTests(TestCase):
                           wait_for_response=False,
                           correlation_id=message_id,
                           ods_code='X26') \
-            .with_body(message) \
+            .with_body(message, attachments=attachments, external_attachments=external_attachments) \
             .execute_post_expecting_success()
 
         # Assert
@@ -67,6 +85,13 @@ class ForwardReliableMessagingPatternTests(TestCase):
         # account
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
 
+        attachments = [{
+            'content_type': 'text/plain',
+            'is_base64': False,
+            'description': 'Some description',
+            'payload': 'Some payload'
+        }]
+
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='COPC_IN000001UK01',
@@ -74,7 +99,7 @@ class ForwardReliableMessagingPatternTests(TestCase):
                           wait_for_response=False,
                           correlation_id=message_id,
                           ods_code='X26') \
-            .with_body(message) \
+            .with_body(message, attachments=attachments) \
             .execute_post_expecting_success()
 
         # Assert

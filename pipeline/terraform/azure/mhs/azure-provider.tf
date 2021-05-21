@@ -1,0 +1,16 @@
+## Azure resource provider ##
+terraform {
+  required_version = ">= 0.12"
+
+  backend "azurerm" {
+    resource_group_name  = "nia-rg-tfstate"
+    storage_account_name = "niafstate"
+    container_name       = "nia-tf-state-container"
+    key                  = "mhs.tfstate"
+  }
+}
+
+provider "azurerm" {
+  version = "~>2.5"
+  features {}
+}

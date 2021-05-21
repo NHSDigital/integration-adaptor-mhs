@@ -51,15 +51,19 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
             await wdo.publish()
         return wdo
 
-    async def _serialize_outbound_message(self, message_id, correlation_id, interaction_details, payload, wdo,
+    async def _serialize_outbound_message(self, message_id, correlation_id, interaction_details, request_body, wdo,
                                           to_party_key, cpa_id):
         try:
             interaction_details[ebxml_envelope.MESSAGE_ID] = message_id
-            interaction_details[ebxml_request_envelope.MESSAGE] = payload
+            interaction_details[ebxml_request_envelope.MESSAGE] = request_body.payload
             interaction_details[ebxml_envelope.FROM_PARTY_ID] = self.party_key
             interaction_details[ebxml_envelope.CONVERSATION_ID] = correlation_id
             interaction_details[ebxml_envelope.TO_PARTY_ID] = to_party_key
             interaction_details[ebxml_envelope.CPA_ID] = cpa_id
+            interaction_details[ebxml_envelope.ATTACHMENTS] = \
+                list(map(lambda it: it.__dict__, request_body.attachments))
+            interaction_details[ebxml_envelope.EXTERNAL_ATTACHMENTS] = \
+                list(map(lambda it: it.__dict__, request_body.external_attachments))
             _, http_headers, message = ebxml_request_envelope.EbxmlRequestEnvelope(interaction_details).serialize()
         except Exception:
             logger.exception('Failed to serialise outbound message.')

@@ -1,8 +1,9 @@
 import copy
 import unittest
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple
 from unittest import mock
 
+from mhs_common.request import request_body_schema
 from mhs_common.workflow.common import MessageData
 from utilities import test_utilities
 from utilities.test_utilities import async_test
@@ -33,7 +34,8 @@ MHS_ASID_VALUE = "1123"
 
 class DummyCommonWorkflow(common.CommonWorkflow):
     async def handle_outbound_message(self, asid: str, message_id: str, correlation_id: str, interaction_details: dict,
-                                      payload: str, work_description_object: Optional[wd.WorkDescription]
+                                      request_body: request_body_schema.RequestBody,
+                                      work_description_object: Optional[wd.WorkDescription]
                                       ) -> Tuple[int, str]:
         pass
 

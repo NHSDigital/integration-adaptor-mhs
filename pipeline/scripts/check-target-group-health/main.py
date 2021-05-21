@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import requests
 from typing import List
 
 import boto3
@@ -25,7 +26,52 @@ def _parse_arguments():
     return parser.parse_args()
 
 
+def _check_services_healthchecks():
+    print('Checking all services healthchecks')
+
+    protocols = ['http', 'https']
+    base_url = '{protocol}://mhs-{service}.build.nhsredteam.internal.nhs.uk/healthcheck'
+
+    for protocol, service in [(protocol, service) for service in ['outbound', 'inbound', 'route'] for protocol in protocols]:
+        url = base_url.format(protocol=protocol, service=service)
+        print('Checking: ' + url)
+        try:
+            response = requests.get(url, verify=False, timeout=5)
+            print('{service}: {status_code}'.format(service=service, status_code=str(response.status_code)))
+        except Exception as ex:
+            print(ex)
+
+
+def _send_outbound_post():
+    print('Checking outbound post request')
+
+    urls = [
+        'https://mhs-outbound.build.nhsredteam.internal.nhs.uk/',
+        'https://mhs-outbound.build.nhsredteam.internal.nhs.uk',
+    ]
+    for url in urls:
+        print('Checking: ' + url)
+        try:
+            headers = {
+                'Interaction-Id': 'test',
+                'Message-Id': 'test',
+                'Correlation-Id': 'test',
+                'wait-for-response': 'false',
+                'from-asid': 'test',
+                'Content-Type': 'application/json',
+                'ods-code': 'test'
+            }
+            response = requests.post(url, data='test', headers=headers, verify=False, timeout=15)
+            print('{status_code}'.format(status_code=str(response.status_code)))
+        except Exception as ex:
+            print(ex)
+
+
 if __name__ == '__main__':
     args = _parse_arguments()
 
     main(args.target_group_arns)
+
+    _check_services_healthchecks()
+
+    _send_outbound_post()

@@ -55,18 +55,22 @@ class MhsHttpRequestBuilder(object):
 
         return self
 
-    def with_body(self, body, attachments=None) -> MhsHttpRequestBuilder:
+    def with_body(self, body, attachments=None, external_attachments=None) -> MhsHttpRequestBuilder:
         """
         Allows the setting of the payload for the HTTP request
         :param body: the payload to send
         :param attachments: any attachments to send
+        :param external_attachments: any external attachment references to send
         :return: self
         """
+        data = {"payload": body}
+
         if attachments:
-            self.body = json.dumps({"payload": body,
-                                    "attachments": attachments})
-        else:
-            self.body = json.dumps({"payload": body})
+            data["attachments"] = attachments
+        if external_attachments:
+            data["external_attachments"] = external_attachments
+
+        self.body = json.dumps(data)
 
         return self
 

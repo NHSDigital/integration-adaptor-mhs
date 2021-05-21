@@ -1,7 +1,9 @@
 #!/bin/bash 
 
-export FROM_ASID=""
+# VARIABLES FOR CONFIGURING MHS ADAPTOR COMPONENTS / CONTAINERS
+# Also used by some test scripts
 
+# Your MHS party key. Also used by test scripts
 export MHS_SECRET_PARTY_KEY=""
 
 # Your endpoint certificate here
@@ -10,5 +12,16 @@ export MHS_SECRET_CLIENT_CERT=""
 # Your endpoint private key here
 export MHS_SECRET_CLIENT_KEY=""
 
-# Endpoint issuing subCA certificate and Root CA certificate here
+# MHS issuing subCA certificate and Root CA certificate here
 export MHS_SECRET_CA_CERTS=""
+
+# VARIABLES FOR CONFIGURING SMOKE TEST SCRIPTS
+
+export MHS_OUTBOUND_URL="http://localhost:80/"
+export MHS_INBOUND_URL="https://localhost/"
+
+# Your ASID, required for some message payloads
+export FROM_ASID=""
+
+# Your ODS code, used to send a forward-reliable message to yourself
+export FROM_ODS_CODE=""
