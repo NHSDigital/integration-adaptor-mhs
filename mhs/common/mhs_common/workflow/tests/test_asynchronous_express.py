@@ -47,7 +47,7 @@ INTERACTION_DETAILS = {
 EBXML = "ebxml_data"
 PAYLOAD = 'payload'
 ATTACHMENTS = ['attachment1', 'attachment2']
-REQUEST_BODY = RequestBody(PAYLOAD, [])
+REQUEST_BODY = RequestBody(PAYLOAD, [], [])
 
 INBOUND_MESSAGE_DATA = MessageData(EBXML, PAYLOAD, ATTACHMENTS)
 

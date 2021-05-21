@@ -48,7 +48,7 @@ INTERACTION_DETAILS = {
 }
 EBXML = "ebxml_data"
 PAYLOAD = 'payload'
-REQUEST_BODY = RequestBody(PAYLOAD, [])
+REQUEST_BODY = RequestBody(PAYLOAD, [], [])
 SERIALIZED_MESSAGE = 'serialized-message'
 ATTACHMENTS = [{
     ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
