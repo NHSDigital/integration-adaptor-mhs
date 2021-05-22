@@ -81,6 +81,17 @@ resource "aws_security_group_rule" "mhs_outbound_security_group_cloudwatch_egres
   description = "HTTPS connections to Cloudwatch endpoint"
 }
 
+# Egress rule to allow reading secrets from Secrets Manager
+resource "aws_security_group_rule" "mhs_outbound_security_group_secrets_egress_rule" {
+  security_group_id = aws_security_group.mhs_outbound_security_group.id
+  type = "egress"
+  from_port = 443
+  to_port = 443
+  protocol = "tcp"
+  source_security_group_id = aws_security_group.secrets_security_group.id
+  description = "HTTPS connections to Secrets endpoint"
+}
+
 ###################
 # MHS route security group
 ###################
@@ -153,6 +164,17 @@ resource "aws_security_group_rule" "mhs_route_security_group_cloudwatch_egress_r
   protocol = "tcp"
   source_security_group_id = aws_security_group.cloudwatch_security_group.id
   description = "HTTPS connections to Cloudwatch endpoint"
+}
+
+# Egress rule to allow reading secrets from Secrets Manager
+resource "aws_security_group_rule" "mhs_route_security_group_secrets_egress_rule" {
+  security_group_id = aws_security_group.mhs_route_security_group.id
+  type = "egress"
+  from_port = 443
+  to_port = 443
+  protocol = "tcp"
+  source_security_group_id = aws_security_group.secrets_security_group.id
+  description = "HTTPS connections to Secrets endpoint"
 }
 
 ###################
@@ -231,6 +253,17 @@ resource "aws_security_group_rule" "mhs_inbound_security_group_cloudwatch_egress
   description = "HTTPS connections to Cloudwatch endpoint"
 }
 
+# Egress rule to allow reading secrets from Secrets Manager
+resource "aws_security_group_rule" "mhs_inbound_security_group_secrets_egress_rule" {
+  security_group_id = aws_security_group.mhs_inbound_security_group.id
+  type = "egress"
+  from_port = 443
+  to_port = 443
+  protocol = "tcp"
+  source_security_group_id = aws_security_group.secrets_security_group.id
+  description = "HTTPS connections to Secrets endpoint"
+}
+
 ###################
 # VPC endpoint security groups
 ###################
@@ -284,6 +317,32 @@ resource "aws_security_group" "cloudwatch_security_group" {
     EnvironmentId = var.environment_id
   }
 }
+
+# Security group for the Secrets Manager VPC endpoint
+resource "aws_security_group" "secrets_security_group" {
+  name = "Secrets Manager Endpoint Security Group"
+  description = "The security group used to control traffic for the Secrets Manager VPC endpoint."
+  vpc_id = aws_vpc.mhs_vpc.id
+
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    # Only allow incoming requests from MHS security groups
+    security_groups = [
+      aws_security_group.mhs_outbound_security_group.id,
+      aws_security_group.mhs_route_security_group.id,
+      aws_security_group.mhs_inbound_security_group.id
+    ]
+    description = "Allow inbound HTTPS requests from MHS tasks"
+  }
+
+  tags = {
+    Name = "${var.environment_id}-secrets-endpoint-sg"
+    EnvironmentId = var.environment_id
+  }
+}
+
 
 ###################
 # SDS cache security group
