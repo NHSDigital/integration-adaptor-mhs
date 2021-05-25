@@ -39,6 +39,8 @@ def get_test_message_dictionary():
         ebxml_envelope.CONVERSATION_ID: "79F49A34-9798-404C-AEC4-FD38DD81C138",
         ebxml_envelope.SERVICE: "urn:nhs:names:services:pdsquery",
         ebxml_envelope.ACTION: "QUPA_IN000006UK02",
+        ebxml_envelope.ATTACHMENTS: [],
+        ebxml_envelope.EXTERNAL_ATTACHMENTS: [],
         ebxml_request_envelope.DUPLICATE_ELIMINATION: True,
         ebxml_request_envelope.ACK_REQUESTED: True,
         ebxml_request_envelope.ACK_SOAP_ACTOR: "urn:oasis:names:tc:ebxml-msg:actor:toPartyMSH",
@@ -99,6 +101,7 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
             ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
         }]
+        message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS] = []
         envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
 
         message_id, http_headers, message = envelope.serialize()
@@ -169,7 +172,11 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
         mock_get_uuid.return_value = test_ebxml_envelope.MOCK_UUID
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
 
-        for required_tag in get_test_message_dictionary().keys():
+        keys = set(get_test_message_dictionary().keys())
+        keys.remove(ebxml_envelope.ATTACHMENTS)
+        keys.remove(ebxml_envelope.EXTERNAL_ATTACHMENTS)
+
+        for required_tag in keys:
             with self.subTest(required_tag=required_tag):
                 test_message_dict = get_test_message_dictionary()
                 del test_message_dict[required_tag]

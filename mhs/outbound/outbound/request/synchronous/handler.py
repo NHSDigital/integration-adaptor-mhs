@@ -24,7 +24,6 @@ class SynchronousHandler(base_handler.BaseHandler):
 
     @timing.time_request
     async def post(self):
-       
         message_id = self._extract_message_id()
         correlation_id = self._extract_correlation_id()
 

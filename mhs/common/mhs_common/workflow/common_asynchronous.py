@@ -60,7 +60,10 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
             interaction_details[ebxml_envelope.CONVERSATION_ID] = correlation_id
             interaction_details[ebxml_envelope.TO_PARTY_ID] = to_party_key
             interaction_details[ebxml_envelope.CPA_ID] = cpa_id
-            interaction_details[ebxml_envelope.ATTACHMENTS] = list(map(lambda it: it.__dict__, request_body.attachments))
+            interaction_details[ebxml_envelope.ATTACHMENTS] = \
+                list(map(lambda it: it.__dict__, request_body.attachments))
+            interaction_details[ebxml_envelope.EXTERNAL_ATTACHMENTS] = \
+                list(map(lambda it: it.__dict__, request_body.external_attachments))
             _, http_headers, message = ebxml_request_envelope.EbxmlRequestEnvelope(interaction_details).serialize()
         except Exception:
             logger.exception('Failed to serialise outbound message.')

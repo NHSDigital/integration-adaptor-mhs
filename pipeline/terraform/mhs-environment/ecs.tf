@@ -357,6 +357,7 @@ resource "aws_ecs_service" "mhs_outbound_service" {
   launch_type = "FARGATE"
   scheduling_strategy = "REPLICA"
   task_definition = aws_ecs_task_definition.mhs_outbound_task.arn
+  platform_version = "1.3.0"
 
   network_configuration {
     assign_public_ip = false
@@ -425,6 +426,7 @@ resource "aws_ecs_service" "mhs_inbound_service" {
   launch_type = "FARGATE"
   scheduling_strategy = "REPLICA"
   task_definition = aws_ecs_task_definition.mhs_inbound_task.arn
+  platform_version = "1.3.0"
 
   network_configuration {
     assign_public_ip = false
@@ -494,7 +496,8 @@ resource "aws_ecs_service" "mhs_route_service" {
   launch_type = "FARGATE"
   scheduling_strategy = "REPLICA"
   task_definition = aws_ecs_task_definition.mhs_route_task.arn
-
+  platform_version = "1.3.0"
+  
   network_configuration {
     assign_public_ip = false
     security_groups = [
