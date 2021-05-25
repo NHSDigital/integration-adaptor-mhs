@@ -145,10 +145,13 @@ class DbAdaptorsTests(unittest.TestCase):
             def get_dynamodb_config_side_effect(*args, **kwargs):
                 if len(args) == 0:
                     raise RuntimeError()
+
                 if args[0] == 'DB_ENDPOINT_URL':
                     return DYNAMODB_ENDPOINT_URL
+                elif args[0] == 'CLOUD_REGION':
+                    return args[1]
                 else:
-                    return None
+                    raise RuntimeError()
 
             factory_config.get_config.return_value = adaptor_type
             mongo_config.get_config.return_value = MONGODB_ENDPOINT_URL
