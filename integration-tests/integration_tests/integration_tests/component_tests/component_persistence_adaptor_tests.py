@@ -142,8 +142,10 @@ class DbAdaptorsTests(unittest.TestCase):
              patch('persistence.mongo_persistence_adaptor.config') as mongo_config,\
              patch('persistence.dynamo_persistence_adaptor.config') as dynamo_config:
 
-            def get_dynamodb_config_side_effect(value):
-                if value == 'DB_ENDPOINT_URL':
+            def get_dynamodb_config_side_effect(*args, **kwargs):
+                if len(args) == 0:
+                    raise RuntimeError()
+                if args[0] == 'DB_ENDPOINT_URL':
                     return DYNAMODB_ENDPOINT_URL
                 else:
                     return None
