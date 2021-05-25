@@ -139,9 +139,17 @@ class DbAdaptorsTests(unittest.TestCase):
     @staticmethod
     def get_adaptor(adaptor_type, max_retries=0, retry_delay=0):
         with patch('persistence.persistence_adaptor_factory.config') as factory_config,\
-                patch('persistence.mongo_persistence_adaptor.config') as mongo_config,\
-                patch('persistence.dynamo_persistence_adaptor.config') as dynamo_config:
+             patch('persistence.mongo_persistence_adaptor.config') as mongo_config,\
+             patch('persistence.dynamo_persistence_adaptor.config') as dynamo_config:
+
+            def get_dynamodb_config_side_effect(value):
+                if value == 'DB_ENDPOINT_URL':
+                    return DYNAMODB_ENDPOINT_URL
+                else:
+                    return None
+
             factory_config.get_config.return_value = adaptor_type
             mongo_config.get_config.return_value = MONGODB_ENDPOINT_URL
-            dynamo_config.get_config.return_value = DYNAMODB_ENDPOINT_URL
+            dynamo_config.get_config.side_effect = get_dynamodb_config_side_effect
+
             return get_persistence_adaptor(table_name=TEST_TABLE_NAME, max_retries=max_retries, retry_delay=retry_delay)
