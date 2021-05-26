@@ -1,4 +1,5 @@
-FROM nhsdev/nia-sds-base:latest
+ARG BASE_IMAGE_TAG=latest
+FROM nhsdev/nia-sds-base:$BASE_IMAGE_TAG
 
 RUN mkdir -p /usr/src/app/mhs/spineroutelookup
 
