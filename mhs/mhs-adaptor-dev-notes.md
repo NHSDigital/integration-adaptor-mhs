@@ -49,7 +49,8 @@ generates HTML docs. An invocation of this command can be seen
 [here](https://htmlpreview.github.io/?https://github.com/nhsconnect/integration-adaptors/blob/develop/mhs/outbound/openapi-docs.html).
 
 ### Environment Variables
-MHS takes a number of environment variables when it is run. These are:
+MHS takes a number of environment variables when it is run. Some of the variables are environment specific (OpenTest, PTL and if necessary the Fakespine).  You can find more information on environment config values in the [OpenTest](https://digital.nhs.uk/services/spine/open-access-test-environment-for-spine-opentest) and [Path To Live](https://digital.nhs.uk/services/path-to-live-environments) portal pages.
+The list of environment variables are:
 * `MHS_LOG_LEVEL` This is required to be set to one of: `INFO`, `WARNING`, `ERROR` or `CRITICAL`, where `INFO` displays
 the most logs and `CRITICAL` displays the least. Note: Setting this value to one of the more detailed 'standard' Python
 log levels (such as `DEBUG` or `NOTSET`) may result in the libraries used by this application logging details that
@@ -106,6 +107,18 @@ e.g. Setting this to ~400 bytes less than the maximum request body size should b
 (calculating this value accurately is pretty much impossible as one of the HTTP headers is the Content-Length header
 which varies depending on the request body size).
 * `MHS_LAZY_LDAP` use lazy connection from spine route lookup component to SPINE LDAP service
+* `MHS_DB_ENDPOINT_URL` The URL for the adaptors DB
+* `MHS_CLOUD_REGION` Cloud region that the adaptor has/will be been deployed to
+* `MHS_PERSISTENCE_ADAPTOR` Used to determine the type of persistence adaptor to implement (dynamodb/mongodb)  
+* `MHS_LOG_FORMAT` #[%(asctime)sZ] | %(levelname)s | %(process)d | %(interaction_id)s | %(message_id)s | %(correlation_id)s | (inbound_message_id)s | %(name)s | %(message)s"
+* `MHS_INBOUND_USE_SSL` Boolean for the use of SSL. Only for testing purpose to facilitate local development debugging
+* `MHS_INBOUND_SERVER_PORT` Define a specific port when connecting to the Inbound service. Defaults to '443'
+* `MHS_INBOUND_HEALTHCHECK_SERVER_PORT` Define a specific port when connecting to the Inbound Healthcheck service. Defaults to '8082'
+* `MHS_OUTBOUND_SERVER_PORT` Define a specific port when connecting to the Outbound service. Defaults to '80'
+* `MHS_SPINE_ROUTE_LOOKUP_SERVER_PORT`Define a specific port when connecting to the Spint Route Lookup service. Defaults to '80'
+* `MHS_LDAP_CONNECTION_RETRIES` Retry attempt value when attempting LDAP connection 
+* `MHS_LDAP_CONNECTION_TIMEOUT_IN_SECONDS` Timeout value when attempting LDAP connection
+
 
 Note that if you are using Opentest, you should use the credentials you were given when you got access to set `MHS_SECRET_PARTY_KEY`, `MHS_SECRET_CLIENT_CERT`, `MHS_SECRET_CLIENT_KEY` and `MHS_SECRET_CA_CERTS`.
 
