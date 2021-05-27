@@ -15,4 +15,4 @@ RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 443 80
 
-ENTRYPOINT pipenv run start-inbound
+ENTRYPOINT pipenv run start

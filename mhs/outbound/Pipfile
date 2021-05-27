@@ -31,4 +31,4 @@ coverage-report = 'coverage report'
 coverage-report-xml = 'coverage xml'
 coverage-report-html = 'coverage html'
 generate-openapi-docs = 'python generate_openapi.py'
-start-outbound = "python main.py"
+start = "python main.py"

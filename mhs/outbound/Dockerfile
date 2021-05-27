@@ -18,4 +18,4 @@ RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 80
 
-ENTRYPOINT pipenv run start-outbound
+ENTRYPOINT pipenv run start
