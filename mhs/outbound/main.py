@@ -12,7 +12,7 @@ import outbound.request.synchronous.handler as client_request_handler
 import utilities.integration_adaptors_logger as log
 from handlers import healthcheck_handler
 from mhs_common import workflow
-from mhs_common.routing import routing_reliability
+from mhs_common.routing import routing_reliability, sds_client
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor
 from mhs_common.workflow import sync_async_resynchroniser as resync
@@ -92,6 +92,14 @@ def initialise_routing():
                                                      validate_cert=validate_cert)
 
 
+def initialise_sds_client():
+    sds_url = config.get_config('SDS_API_URL')
+    sds_api_key = config.get_config('SDS_API_KEY')
+    spine_org_code = config.get_config('SPINE_ORG_CODE')
+
+    return sds_client.SdsClient(sds_url, sds_api_key, spine_org_code)
+
+
 def start_tornado_server(data_dir: pathlib.Path, workflows: Dict[str, workflow.CommonWorkflow]) -> None:
     """
     Start Tornado server
@@ -134,7 +142,9 @@ def main():
 
     configure_http_client()
 
-    routing = initialise_routing()
+    # TODO strategy pattern here to chose the approach based on MHS yaml config
+    routing = initialise_routing() # the old SpineRouteLookup
+    # routing = initialise_sds_client() # the new SDS one
 
     certificates = certs.Certs.create_certs_files(data_dir / '..',
                                                   private_key=secrets.get_secret_config('CLIENT_KEY'),
