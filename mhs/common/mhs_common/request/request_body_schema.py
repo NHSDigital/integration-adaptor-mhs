@@ -64,8 +64,8 @@ class ExternalAttachment:
     Dataclass representing an external attachment in the request body that MHS accepts.
     `ExternalAttachmentSchema` deserialises to this class.
     """
-    reference_id: str
-    href_id: str
+    document_id: str
+    message_id: str
     filename: str
     content_type: str
     compressed: bool
@@ -77,10 +77,10 @@ class ExternalAttachment:
 
 class ExternalAttachmentSchema(marshmallow.Schema):
     """Schema for an external attachment in the request body that MHS accepts"""
-    reference_id = marshmallow.fields.Str(required=True,
-                                          description='The reference id that points to the attachment.')
-    href_id = marshmallow.fields.Str(required=True,
-                                     description='Actual attachment id.')
+    document_id = marshmallow.fields.Str(required=True,
+                                         description='The document id of the attachment.')
+    message_id = marshmallow.fields.Str(required=True,
+                                        description='Attachment message id.')
     filename = marshmallow.fields.Str(required=True,
                                       description='File name of the attachment.')
     content_type = marshmallow.fields.Str(required=True, description='Content type of the attachment',
@@ -108,7 +108,7 @@ class ExternalAttachmentSchema(marshmallow.Schema):
     @marshmallow.post_load
     def make_external_attachment(self, data, **kwargs):
         return ExternalAttachment(
-            data['reference_id'], data['href_id'], data['filename'], data['content_type'], data['compressed'],
+            data['document_id'], data['message_id'], data['filename'], data['content_type'], data['compressed'],
             data['large_attachment'], data['original_base64'], data['length'], data.get('domain_data'))
 
 
