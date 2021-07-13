@@ -77,7 +77,7 @@ class ExternalAttachment:
 
 class ExternalAttachmentSchema(marshmallow.Schema):
     """Schema for an external attachment in the request body that MHS accepts"""
-    document_id = marshmallow.fields.Str(required=True,
+    document_id = marshmallow.fields.Str(required=False,
                                          description='The document id of the attachment.')
     message_id = marshmallow.fields.Str(required=True,
                                         description='Attachment message id.')
