@@ -2,6 +2,7 @@ import json
 from typing import Dict
 
 from comms import common_https
+from comms.http_headers import HttpHeaders
 from mhs_common.routing.exceptions import SDSException
 from utilities.mdc import build_tracking_headers
 from utilities import integration_adaptors_logger as log, timing
@@ -18,13 +19,8 @@ class SdsClient:
 
     @timing.time_function
     async def get_end_point(self, service_id: str, org_code: str = None) -> Dict:
-        url = f"{self.base_url}/Endpoint?organization=https://fhir.nhs.uk/Id/ods-organization-code|{org_code}&identifier=https://fhir.nhs.uk/Id/nhsServiceInteractionId|{service_id}"
+        resource = await self._get_endpoint_resource(service_id, org_code)
 
-        http_response = await common_https.CommonHttps.make_request(url=url, method="GET", headers=self._build_headers(), body=None)
-
-        sds_api_result = json.loads(http_response.body.decode())
-
-        resource = self._get_endpoint_resource(sds_api_result, org_code, service_id)
         identifier = resource['identifier']
 
         def get_identifier_value(system):
@@ -45,13 +41,8 @@ class SdsClient:
 
     @timing.time_function
     async def get_reliability(self, service_id: str, org_code: str = None) -> Dict:
-        url = f"{self.base_url}/Device?organization=https://fhir.nhs.uk/Id/ods-organization-code|{org_code}&identifier=https://fhir.nhs.uk/Id/nhsServiceInteractionId|{service_id}"
+        resource = await self._get_endpoint_resource(service_id, org_code)
 
-        http_response = await common_https.CommonHttps.make_request(url=url, method="GET", headers=self._build_headers(), body=None)
-
-        sds_api_result = json.loads(http_response.body.decode())
-
-        resource = self._get_endpoint_resource(sds_api_result, org_code, service_id)
         extensions = list(filter(lambda kv: kv['url'] == 'https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ReliabilityConfiguration', resource['extension']))[0]['extension']
 
         def get_extension(system, value_key):
@@ -70,16 +61,28 @@ class SdsClient:
     def _build_headers(self):
         tracking_headers = build_tracking_headers()
         headers = {
-            # TODO X-Correlation-ID need to be UUID but it isn't here
-            # 'X-Correlation-ID': tracking_headers[HttpHeaders.CORRELATION_ID],
+            'X-Correlation-ID': tracking_headers[HttpHeaders.CORRELATION_ID],
             'apikey': self.api_key
         }
 
         return headers
 
-    @staticmethod
-    def _get_endpoint_resource(sds_api_result, org_code, service_id):
+    async def _get_endpoint_resource(self, service_id: str, org_code: str = None) -> Dict:
+        if not org_code:
+            logger.info("No org code provided when obtaining endpoint details. Using {spine_org_code}",
+                        fparams={"spine_org_code": org_code})
+            org_code = self.spine_org_code
+
+        url = f"{self.base_url}/Endpoint?organization=https://fhir.nhs.uk/Id/ods-organization-code|{org_code}&identifier=https://fhir.nhs.uk/Id/nhsServiceInteractionId|{service_id}"
+
+        http_response = await common_https.CommonHttps.make_request(url=url, method="GET", headers=self._build_headers(), body=None)
+        sds_api_result = json.loads(http_response.body.decode())
+
+        if sds_api_result['resourceType'] != 'Bundle':
+            raise SDSException('Unexpected SDS API response: ', str(http_response))
+
         resources = list(map(lambda kv: kv['resource'], sds_api_result['entry']))
+
         if len(resources) == 0:
             raise SDSException('No response from accredited system lookup')
         if len(resources) > 1:

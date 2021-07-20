@@ -64,7 +64,7 @@ def initialise_workflows(transmission: outbound_transmission.OutboundTransmissio
                                      )
 
 
-def initialise_routing():
+def initialise_spine_route_lookup():
     spine_route_lookup_url = config.get_config('SPINE_ROUTE_LOOKUP_URL')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
     validate_cert = str2bool(config.get_config('SPINE_ROUTE_LOOKUP_VALIDATE_CERT', default=str(True)))
@@ -92,7 +92,7 @@ def initialise_routing():
                                                      validate_cert=validate_cert)
 
 
-def initialise_sds_client():
+def initialise_sds_api_client():
     sds_url = config.get_config('SDS_API_URL')
     sds_api_key = config.get_config('SDS_API_KEY')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
@@ -142,9 +142,13 @@ def main():
 
     configure_http_client()
 
-    # TODO strategy pattern here to chose the approach based on MHS yaml config
-    routing = initialise_routing() # the old SpineRouteLookup
-    # routing = initialise_sds_client() # the new SDS one
+    routing_lookup_method = config.get_config('OUTBOUND_ROUTING_LOOKUP_METHOD', default='SPINE_ROUTE_LOOKUP')
+    if routing_lookup_method == 'SPINE_ROUTE_LOOKUP':
+        routing = initialise_spine_route_lookup()
+    elif routing_lookup_method == 'SDS_API':
+        routing = initialise_sds_api_client()
+    else:
+        raise KeyError
 
     certificates = certs.Certs.create_certs_files(data_dir / '..',
                                                   private_key=secrets.get_secret_config('CLIENT_KEY'),
