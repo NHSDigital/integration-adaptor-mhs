@@ -13,7 +13,7 @@ from mhs_common.errors.soap_handler import handle_soap_error
 from mhs_common.messages.ebxml_error_envelope import EbxmlErrorEnvelope
 from mhs_common.messages.soap_fault_envelope import SOAPFault
 from mhs_common.request import request_body_schema
-from mhs_common.routing import routing_reliability
+from mhs_common.routing import route_lookup_client
 from persistence import persistence_adaptor
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
@@ -29,7 +29,7 @@ class AsynchronousExpressWorkflow(common_asynchronous.CommonAsynchronousWorkflow
                  transmission: transmission_adaptor.TransmissionAdaptor = None,
                  queue_adaptor: queue_adaptor.QueueAdaptor = None,
                  max_request_size: int = None,
-                 routing: routing_reliability.RoutingAndReliability = None):
+                 routing: route_lookup_client.RouteLookupClient = None):
         super().__init__(party_key, persistence_store, transmission, queue_adaptor, max_request_size, routing)
 
         self.workflow_specific_interaction_details = dict(duplicate_elimination=False,

@@ -8,7 +8,7 @@ import utilities.integration_adaptors_logger as log
 import mhs_common.state.work_description as wd
 from mhs_common.messages import ebxml_envelope
 from mhs_common.request import request_body_schema
-from mhs_common.routing import routing_reliability
+from mhs_common.routing import route_lookup_client
 
 MHS_END_POINT_KEY = 'nhsMHSEndPoint'
 MHS_TO_PARTY_KEY_KEY = 'nhsMHSPartyKey'
@@ -36,7 +36,7 @@ class CommonWorkflow(abc.ABC):
 
     workflow_name: str
 
-    def __init__(self, routing: routing_reliability.RoutingAndReliability = None):
+    def __init__(self, routing: route_lookup_client.RouteLookupClient = None):
         self.routing_reliability = routing
         self.workflow_specific_interaction_details = dict()
 

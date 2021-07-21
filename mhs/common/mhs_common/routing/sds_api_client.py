@@ -4,13 +4,14 @@ from typing import Dict
 from comms import common_https
 from comms.http_headers import HttpHeaders
 from mhs_common.routing.exceptions import SDSException
+from mhs_common.routing.route_lookup_client import RouteLookupClient
 from utilities.mdc import build_tracking_headers
 from utilities import integration_adaptors_logger as log, timing
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
 
-class SdsClient:
+class SdsApiClient(RouteLookupClient):
 
     def __init__(self, base_url, api_key, spine_org_code) -> None:
         self.base_url = base_url
@@ -78,10 +79,10 @@ class SdsClient:
         http_response = await common_https.CommonHttps.make_request(url=url, method="GET", headers=self._build_headers(), body=None)
         sds_api_result = json.loads(http_response.body.decode())
 
-        if sds_api_result['resourceType'] != 'Bundle':
+        if 'resourceType' not in sds_api_result or sds_api_result['resourceType'] != 'Bundle':
             raise SDSException('Unexpected SDS API response: ', str(http_response))
 
-        resources = list(map(lambda kv: kv['resource'], sds_api_result['entry']))
+        resources = list(map(lambda kv: kv['resource'], sds_api_result['entry'])) if 'entry' in sds_api_result else []
 
         if len(resources) == 0:
             raise SDSException('No response from accredited system lookup')

@@ -2,6 +2,7 @@ import json
 from typing import Dict
 
 from comms import common_https
+from mhs_common.routing.route_lookup_client import RouteLookupClient
 from utilities.mdc import build_tracking_headers
 from utilities import integration_adaptors_logger as log, timing
 
@@ -11,7 +12,7 @@ RELIABILITY_PATH = "reliability"
 logger = log.IntegrationAdaptorsLogger(__name__)
 
 
-class RoutingAndReliability:
+class SpineRouteLookupClient(RouteLookupClient):
     """A tool that allows the routing and reliability information for a remote MHS to be retrieved."""
 
     def __init__(self, spine_route_lookup_url: str, spine_org_code: str, client_cert: str = None,

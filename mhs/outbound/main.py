@@ -12,7 +12,7 @@ import outbound.request.synchronous.handler as client_request_handler
 import utilities.integration_adaptors_logger as log
 from handlers import healthcheck_handler
 from mhs_common import workflow
-from mhs_common.routing import routing_reliability, sds_client
+from mhs_common.routing import route_lookup_client, spine_route_lookup_client, sds_api_client
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor
 from mhs_common.workflow import sync_async_resynchroniser as resync
@@ -35,7 +35,7 @@ def initialise_workflows(transmission: outbound_transmission.OutboundTransmissio
                          work_description_store: persistence_adaptor.PersistenceAdaptor,
                          sync_async_store: persistence_adaptor.PersistenceAdaptor,
                          max_request_size: int,
-                         routing: routing_reliability.RoutingAndReliability) \
+                         routing: route_lookup_client.RouteLookupClient) \
         -> Dict[str, workflow.CommonWorkflow]:
     """Initialise the workflows
     :param transmission: The transmission object to be used to make requests to the spine endpoints
@@ -83,13 +83,13 @@ def initialise_spine_route_lookup():
     if route_proxy_host is not None:
         route_proxy_port = int(config.get_config('SPINE_ROUTE_LOOKUP_HTTP_PROXY_PORT', default="3128"))
 
-    return routing_reliability.RoutingAndReliability(spine_route_lookup_url, spine_org_code,
-                                                     client_cert=certificates.local_cert_path,
-                                                     client_key=certificates.private_key_path,
-                                                     ca_certs=certificates.ca_certs_path,
-                                                     http_proxy_host=route_proxy_host,
-                                                     http_proxy_port=route_proxy_port,
-                                                     validate_cert=validate_cert)
+    return spine_route_lookup_client.SpineRouteLookupClient(spine_route_lookup_url, spine_org_code,
+                                                      client_cert=certificates.local_cert_path,
+                                                      client_key=certificates.private_key_path,
+                                                      ca_certs=certificates.ca_certs_path,
+                                                      http_proxy_host=route_proxy_host,
+                                                      http_proxy_port=route_proxy_port,
+                                                      validate_cert=validate_cert)
 
 
 def initialise_sds_api_client():
@@ -97,7 +97,7 @@ def initialise_sds_api_client():
     sds_api_key = config.get_config('SDS_API_KEY')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
 
-    return sds_client.SdsClient(sds_url, sds_api_key, spine_org_code)
+    return sds_api_client.SdsApiClient(sds_url, sds_api_key, spine_org_code)
 
 
 def start_tornado_server(data_dir: pathlib.Path, workflows: Dict[str, workflow.CommonWorkflow]) -> None:
