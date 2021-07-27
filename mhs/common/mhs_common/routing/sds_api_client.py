@@ -1,4 +1,5 @@
 import json
+import urllib.parse
 from typing import Dict
 
 from comms import common_https
@@ -19,43 +20,33 @@ class SdsApiClient(RouteLookupClient):
         self.spine_org_code = spine_org_code
 
     @timing.time_function
-    async def get_end_point(self, service_id: str, org_code: str = None) -> Dict:
-        resource = await self._get_endpoint_resource(service_id, org_code)
-
-        identifier = resource['identifier']
-
-        def get_identifier_value(system):
-            return list(filter(lambda kv: kv['system'] == system, identifier))[0]['value']
+    async def get_end_point(self, interaction_id: str, ods_code: str = None) -> Dict:
+        endpoint_resource = await self._get_endpoint_resource(interaction_id, ods_code)
 
         result = {
-            "nhsMhsFQDN": get_identifier_value("https://fhir.nhs.uk/Id/nhsMhsFQDN"),
+            "nhsMhsFQDN": self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsFQDN"),
             "nhsMHSEndPoint": [
-                resource['address']
+                endpoint_resource['address']
             ],
-            "nhsMHSPartyKey": get_identifier_value("https://fhir.nhs.uk/Id/nhsMhsPartyKey"),
-            "nhsMhsCPAId": get_identifier_value("https://fhir.nhs.uk/Id/nhsMhsCPAId"),
+            "nhsMHSPartyKey": self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsPartyKey"),
+            "nhsMhsCPAId": self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsCPAId"),
             "uniqueIdentifier": [
-                get_identifier_value("https://fhir.nhs.uk/Id/nhsMHSId")
+                self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMHSId")
             ]
         }
         return result
 
     @timing.time_function
-    async def get_reliability(self, service_id: str, org_code: str = None) -> Dict:
-        resource = await self._get_endpoint_resource(service_id, org_code)
-
-        extensions = list(filter(lambda kv: kv['url'] == 'https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ReliabilityConfiguration', resource['extension']))[0]['extension']
-
-        def get_extension(system, value_key):
-            return list(filter(lambda kv: kv['url'] == system, extensions))[0][value_key]
+    async def get_reliability(self, interaction_id: str, ods_code: str = None) -> Dict:
+        endpoint_resource = await self._get_endpoint_resource(interaction_id, ods_code)
 
         result = {
-            "nhsMHSSyncReplyMode": get_extension('nhsMHSSyncReplyMode', 'valueString'),
-            "nhsMHSRetryInterval": get_extension('nhsMHSRetryInterval', 'valueString'),
-            "nhsMHSRetries": get_extension('nhsMHSRetries', 'valueInteger'),
-            "nhsMHSPersistDuration": get_extension('nhsMHSPersistDuration', 'valueString'),
-            "nhsMHSDuplicateElimination": get_extension('nhsMHSDuplicateElimination', 'valueString'),
-            "nhsMHSAckRequested": get_extension('nhsMHSAckRequested', 'valueString')
+            "nhsMHSSyncReplyMode": self._get_extension(endpoint_resource, 'nhsMHSSyncReplyMode', 'valueString'),
+            "nhsMHSRetryInterval": self._get_extension(endpoint_resource, 'nhsMHSRetryInterval', 'valueString'),
+            "nhsMHSRetries": self._get_extension(endpoint_resource, 'nhsMHSRetries', 'valueInteger'),
+            "nhsMHSPersistDuration": self._get_extension(endpoint_resource, 'nhsMHSPersistDuration', 'valueString'),
+            "nhsMHSDuplicateElimination": self._get_extension(endpoint_resource, 'nhsMHSDuplicateElimination', 'valueString'),
+            "nhsMHSAckRequested": self._get_extension(endpoint_resource, 'nhsMHSAckRequested', 'valueString')
         }
         return result
 
@@ -68,15 +59,69 @@ class SdsApiClient(RouteLookupClient):
 
         return headers
 
-    async def _get_endpoint_resource(self, service_id: str, org_code: str = None) -> Dict:
-        if not org_code:
+    @staticmethod
+    def _build_organization_query_param(organization):
+        return urllib.parse.quote(f'https://fhir.nhs.uk/Id/ods-organization-code|{organization}')
+
+    @staticmethod
+    def _build_interaction_query_param(interaction):
+        return urllib.parse.quote(f'https://fhir.nhs.uk/Id/nhsServiceInteractionId|{interaction}')
+
+    @staticmethod
+    def _build_partykey_query_param(partykey):
+        return urllib.parse.quote(f'https://fhir.nhs.uk/Id/nhsMhsPartyKey|{partykey}')
+
+    def _build_endpoint_url(self, organization, interaction, partykey):
+        organization = self._build_organization_query_param(organization)
+        interaction = self._build_interaction_query_param(interaction)
+        partykey = self._build_partykey_query_param(partykey)
+        return f"{self.base_url}/Endpoint?organization={organization}&identifier={interaction}&identifier={partykey}"
+
+    def _build_device_url(self, organization, interaction):
+        organization = self._build_organization_query_param(organization)
+        interaction = self._build_interaction_query_param(interaction)
+        return f"{self.base_url}/Device?organization={organization}&identifier={interaction}"
+
+    @staticmethod
+    def _get_identifier_value(resource, system):
+        return list(filter(lambda kv: kv['system'] == system, resource['identifier']))[0]['value']
+
+    @staticmethod
+    def _get_extension(endpoint, system, value_key):
+        def _get_extensions(resource):
+            return list(filter(lambda kv: kv['url'] == 'https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ReliabilityConfiguration', resource['extension']))[0]['extension']
+        return list(filter(lambda kv: kv['url'] == system, _get_extensions(endpoint)))[0][value_key]
+
+    async def _get_endpoint_resource(self, interaction_id: str, ods_code: str = None) -> Dict:
+        if not ods_code:
             logger.info("No org code provided when obtaining endpoint details. Using {spine_org_code}",
-                        fparams={"spine_org_code": org_code})
-            org_code = self.spine_org_code
+                        fparams={"spine_org_code": ods_code})
+            ods_code = self.spine_org_code
 
-        url = f"{self.base_url}/Endpoint?organization=https://fhir.nhs.uk/Id/ods-organization-code|{org_code}&identifier=https://fhir.nhs.uk/Id/nhsServiceInteractionId|{service_id}"
+        device_resource = await self._get_sds_device_resource(interaction_id, ods_code)
+        party_key = self._get_identifier_value(device_resource, 'https://fhir.nhs.uk/Id/nhsMhsPartyKey')
+        owner = device_resource['owner']['identifier']['value']
 
-        http_response = await common_https.CommonHttps.make_request(url=url, method="GET", headers=self._build_headers(), body=None)
+        return await self._get_sds_endpoint_resource(interaction_id, party_key, owner)
+
+    async def _get_sds_device_resource(self, interaction_id: str, ods_code: str) -> Dict:
+        device_url = self._build_device_url(ods_code, interaction_id)
+        http_response = await common_https.CommonHttps.make_request(url=device_url, method="GET", headers=self._build_headers(), body=None)
+        device_result = json.loads(http_response.body.decode())
+        resources = list(map(lambda kv: kv['resource'], device_result['entry'])) if 'entry' in device_result else []
+
+        if len(resources) == 0:
+            raise SDSException('Empty response for /Device')
+        if len(resources) > 1:
+            logger.warning("More than one resource returned for /Device call:: {ods_code} & "
+                           "{interaction_id}", fparams={"ods_code": ods_code, "interaction_id": interaction_id})
+
+        return resources[0]
+
+    async def _get_sds_endpoint_resource(self, interaction_id: str, party_key: str, ods_code) -> Dict:
+        endpoint_url = self._build_endpoint_url(ods_code, interaction_id, party_key)
+
+        http_response = await common_https.CommonHttps.make_request(url=endpoint_url, method="GET", headers=self._build_headers(), body=None)
         sds_api_result = json.loads(http_response.body.decode())
 
         if 'resourceType' not in sds_api_result or sds_api_result['resourceType'] != 'Bundle':
@@ -85,9 +130,9 @@ class SdsApiClient(RouteLookupClient):
         resources = list(map(lambda kv: kv['resource'], sds_api_result['entry'])) if 'entry' in sds_api_result else []
 
         if len(resources) == 0:
-            raise SDSException('No response from accredited system lookup')
+            raise SDSException('Empty response from accredited system lookup')
         if len(resources) > 1:
             logger.warning("More than one accredited system details returned on inputs: {ods_code} & "
-                           "{interaction_id}", fparams={"ods_code": org_code, "interaction_id": service_id})
+                           "{interaction_id}", fparams={"ods_code": ods_code, "interaction_id": interaction_id})
 
         return resources[0]
