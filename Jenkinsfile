@@ -144,8 +144,7 @@ pipeline {
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
                                     . ./component-test-source.sh
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down sds-api-mock'''
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                             }
                         }
                         stage('Component Tests') {
@@ -199,8 +198,7 @@ pipeline {
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
                                     . ./component-test-source.sh
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down route redis'''
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                             }
                         }
                         stage('Component Tests') {
