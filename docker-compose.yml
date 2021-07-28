@@ -27,6 +27,7 @@ services:
       - MHS_INBOUND_USE_SSL=True
       - TCP_PORTS=443
       - SERVICE_PORTS=443,80
+
   outbound:
     image: local/mhs-outbound:${BUILD_TAG}
     ports:
@@ -52,6 +53,7 @@ services:
       # This is for disabling hostname validation so OpenTest ip address will work
       - MHS_OUTBOUND_VALIDATE_CERTIFICATE=${MHS_OUTBOUND_VALIDATE_CERTIFICATE:-False}
       - SERVICE_PORTS=80
+
   route:
     image: local/mhs-route:${BUILD_TAG}
     ports:
@@ -63,20 +65,24 @@ services:
       - MHS_DISABLE_SDS_TLS=True
       - MHS_SDS_REDIS_CACHE_HOST=redis
       - MHS_SDS_REDIS_DISABLE_TLS=True
+
   dynamodb:
     image: nhsdev/nia-dynamodb-local:1.0.3
     ports:
       - "8000:8000"
+
   mongodb:
     image: mongo
     ports:
       - "27017:27017"
+
   rabbitmq:
     image: nhsdev/nia-rabbitmq-local:1.0.1
     ports:
       - "15672:15672"
       - "5672:5672"
     hostname: "localhost"
+
   redis:
     image: redis
     ports:
@@ -105,6 +111,3 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - TIMEOUT=connect 0, client 0, server 0
-
-
-
