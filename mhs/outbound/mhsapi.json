@@ -112,13 +112,13 @@
             "ExternalAttachment": {
                 "type": "object",
                 "properties": {
-                    "reference_id": {
+                    "document_id": {
                         "type": "string",
-                        "description": "The reference id that points to the attachment."
+                        "description": "The document id of the attachment."
                     },
-                    "href_id": {
+                    "message_id": {
                         "type": "string",
-                        "description": "Actual attachment id."
+                        "description": "Attachment message id."
                     },
                     "filename": {
                         "type": "string",
@@ -167,8 +167,8 @@
                     }
                 },
                 "required": [
-                    "reference_id",
-                    "href_id",
+                    "document_id",
+                    "message_id",
                     "filename",
                     "content_type",
                     "compressed",

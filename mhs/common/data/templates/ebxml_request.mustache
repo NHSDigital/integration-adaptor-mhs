@@ -42,7 +42,7 @@ Content-Transfer-Encoding: 8bit
         <eb:Reference xlink:href="cid:{{content_id}}">
             <eb:Description xml:lang="en">{{description}}</eb:Description>
         </eb:Reference>{{/attachments}}{{#external_attachments}}
-        <eb:Reference eb:id="{{reference_id}}" xlink:href="mid:{{href_id}}">
+        <eb:Reference{{#document_id}} eb:id="{{document_id}}"{{/document_id}} xlink:href="mid:{{message_id}}">
             <eb:Description xml:lang="en">
                 Filename="{{filename}}"
                 ContentType={{content_type}}
