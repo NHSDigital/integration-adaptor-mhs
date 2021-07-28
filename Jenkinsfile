@@ -139,6 +139,7 @@ pipeline {
                         stage('Deploy component locally') {
                             steps {
                                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
+                                sh label: 'Set routing lookup mode to SpineRouteLookup', script: 'export ROUTING_LOOKUP_METHOD=ROUTING_LOOKUP_METHOD'
                                 sh label: 'Start containers', script: '''
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
@@ -192,7 +193,7 @@ pipeline {
                         stage('Deploy component locally') {
                             steps {
                                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
-                                sh label: 'Set SDS API lookup mode', script: 'export ROUTING_LOOKUP_METHOD=SDS_API'
+                                sh label: 'Set routing lookup mode to SDS API', script: 'export ROUTING_LOOKUP_METHOD=SDS_API'
                                 sh label: 'Start containers', script: '''
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
