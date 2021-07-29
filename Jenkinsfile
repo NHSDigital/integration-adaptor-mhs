@@ -131,7 +131,7 @@ pipeline {
             // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
             //parallel {
             stages {
-                stage('Run Component Tests (Spine Route Lookup)') {
+                stage('Run Component Tests') {
                     options {
                         lock('local-docker-compose-environment')
                     }
@@ -139,7 +139,6 @@ pipeline {
                         stage('Deploy component locally') {
                             steps {
                                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
-                                sh label: 'Set routing lookup mode to SpineRouteLookup', script: 'export ROUTING_LOOKUP_METHOD=ROUTING_LOOKUP_METHOD'
                                 sh label: 'Start containers', script: '''
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
@@ -184,59 +183,6 @@ pipeline {
                         }
                     }
                 }
-
-                stage('Run Component Tests (SDS API)') {
-                    options {
-                        lock('local-docker-compose-environment')
-                    }
-                    stages {
-                        stage('Deploy component locally') {
-                            steps {
-                                sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
-                                sh label: 'Set routing lookup mode to SDS API', script: 'export ROUTING_LOOKUP_METHOD=SDS_API'
-                                sh label: 'Start containers', script: '''
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
-                                    . ./component-test-source.sh
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
-                            }
-                        }
-                        stage('Component Tests') {
-                            steps {
-                                sh label: 'Run component tests', script: '''
-                                    docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .
-                                    docker run --rm --network "${BUILD_TAG_LOWER}_default" \
-                                        --env "MHS_ADDRESS=http://outbound" \
-                                        --env "AWS_ACCESS_KEY_ID=test" \
-                                        --env "AWS_SECRET_ACCESS_KEY=test" \
-                                        --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
-                                        --env "FAKE_SPINE_ADDRESS=http://fakespine" \
-                                        --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
-                                        --env "MHS_INBOUND_QUEUE_NAME=inbound" \
-                                        --env "SCR_ADDRESS=http://scradaptor" \
-                                        local/mhs-componenttest:$BUILD_TAG
-                                '''
-                            }
-                        }
-                    }
-                    post {
-                        always {
-                            sh label: 'Docker status', script: 'docker ps --all'
-                            sh label: 'Dump container logs to files', script: '''
-                                mkdir logs
-                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound.log
-                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound.log
-                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine.log
-                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq.log
-                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb.log
-                             '''
-                            archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
-                            sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
-                        }
-                    }
-                }
-
 
                 stage('Run Integration Tests') {
                     options {
