@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  outbound:
+    environment:
+      - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD="SDS_API"
+      - MHS_SDS_API_URL="http://sds-mock:8110"
+      - MHS_SDS_API_KEY="none"
+  
+  fakespine:
+    deploy:
+      replicas: 0
+
+  route:
+    deploy:
+      replicas: 0
+
+  redis:
+    deploy:
+      replicas: 0
+
+  sds-api-mock:
+    build: ./dockers/sds-api-mock
+    ports:
+      - "8110:8080"
+    command:
+      - -global-response-templating

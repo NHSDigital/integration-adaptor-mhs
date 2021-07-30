@@ -106,6 +106,7 @@ class SdsApiClient(RouteLookupClient):
 
     async def _get_sds_device_resource(self, interaction_id: str, ods_code: str) -> Dict:
         device_url = self._build_device_url(ods_code, interaction_id)
+        
         http_response = await common_https.CommonHttps.make_request(url=device_url, method="GET", headers=self._build_headers(), body=None)
         device_result = json.loads(http_response.body.decode())
         resources = list(map(lambda kv: kv['resource'], device_result['entry'])) if 'entry' in device_result else []

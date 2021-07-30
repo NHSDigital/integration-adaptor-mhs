@@ -52,6 +52,9 @@ services:
       # This is for disabling hostname validation so OpenTest ip address will work
       - MHS_OUTBOUND_VALIDATE_CERTIFICATE=${MHS_OUTBOUND_VALIDATE_CERTIFICATE:-False}
       - SERVICE_PORTS=80
+      - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD
+      - MHS_SDS_API_URL
+      - MHS_SDS_API_KEY
   route:
     image: local/mhs-route:${BUILD_TAG}
     ports:

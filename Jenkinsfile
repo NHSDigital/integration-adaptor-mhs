@@ -131,23 +131,76 @@ pipeline {
             // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
             //parallel {
             stages {
-                stage('Run Component Tests') {
+                // stage('Run Component Tests (SpineRouteLookup)') {
+                //     options {
+                //         lock('local-docker-compose-environment')
+                //     }
+                //     stages {
+                //         stage('Deploy component locally (SpineRouteLookup)') {
+                //             steps {
+                //                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
+                //                 sh label: 'Start containers', script: '''
+                //                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
+                //                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
+                //                     . ./component-test-source.sh
+                //                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
+                //                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
+                //             }
+                //         }
+                //         stage('Component Tests (SpineRouteLookup)') {
+                //             steps {
+                //                 sh label: 'Run component tests', script: '''
+                //                     docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .
+                //                     docker run --rm --network "${BUILD_TAG_LOWER}_default" \
+                //                         --env "MHS_ADDRESS=http://outbound" \
+                //                         --env "AWS_ACCESS_KEY_ID=test" \
+                //                         --env "AWS_SECRET_ACCESS_KEY=test" \
+                //                         --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
+                //                         --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+                //                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
+                //                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
+                //                         --env "SCR_ADDRESS=http://scradaptor" \
+                //                         local/mhs-componenttest:$BUILD_TAG
+                //                 '''
+                //             }
+                //         }
+                //     }
+                //     post {
+                //         always {
+                //             sh label: 'Docker status', script: 'docker ps --all'
+                //             sh label: 'Dump container logs to files', script: '''
+                //                 mkdir logs
+                //                 docker logs ${BUILD_TAG_LOWER}_route_1 > logs/route.log
+                //                 docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound.log
+                //                 docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound.log
+                //                 docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine.log
+                //                 docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq.log
+                //                 docker logs ${BUILD_TAG_LOWER}_redis_1 > logs/redis.log
+                //                 docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb.log
+                //             '''
+                //             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
+                //             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
+                //         }
+                //     }
+                // }
+
+                stage('Run Component Tests (SDS API)') {
                     options {
                         lock('local-docker-compose-environment')
                     }
                     stages {
-                        stage('Deploy component locally') {
+                        stage('Deploy component locally (SDS API)') {
                             steps {
                                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
                                 sh label: 'Start containers', script: '''
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml down -v
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p custom_network down -v
                                     . ./component-test-source.sh
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml build
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                             }
                         }
-                        stage('Component Tests') {
+                        stage('Component Tests (SDS API)') {
                             steps {
                                 sh label: 'Run component tests', script: '''
                                     docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .
@@ -170,26 +223,25 @@ pipeline {
                             sh label: 'Docker status', script: 'docker ps --all'
                             sh label: 'Dump container logs to files', script: '''
                                 mkdir logs
-                                docker logs ${BUILD_TAG_LOWER}_route_1 > logs/route.log
-                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound.log
-                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound.log
-                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine.log
-                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq.log
-                                docker logs ${BUILD_TAG_LOWER}_redis_1 > logs/redis.log
-                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb.log
+                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound_sds.log
+                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound_sds.log
+                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine_sds.log
+                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_sds.log
+                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_sds.log
+                                docker logs ${BUILD_TAG_LOWER}_sds-api-mock_1 > logs/sds-api-mock.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
-                            sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
+                            sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${BUILD_TAG_LOWER} down -v'
                         }
                     }
                 }
 
-                stage('Run Integration Tests (SpineRouteLookup') {
+                stage('Run Integration Tests (SpineRouteLookup)') {
                     options {
                         lock('exemplar-test-environment')
                     }
                     stages {
-                        stage('Deploy MHS') {
+                        stage('Deploy MHS (SpineRouteLookup)') {
                             steps {
                                 dir('pipeline/terraform/mhs-environment') {
                                     sh label: 'Initialising Terraform', script: """
@@ -284,7 +336,7 @@ pipeline {
                             }
                         }
 
-                        stage('Integration Tests') {
+                        stage('Integration Tests (SpineRouteLookup)') {
                             steps {
                                 dir('integration-tests/integration_tests') {
                                     sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'
@@ -313,7 +365,7 @@ pipeline {
                         lock('exemplar-test-environment')
                     }
                     stages {
-                        stage('Deploy MHS') {
+                        stage('Deploy MHS (SDS API)') {
                             steps {
                                 dir('pipeline/terraform/mhs-environment') {
                                     sh label: 'Initialising Terraform', script: """
@@ -408,7 +460,7 @@ pipeline {
                             }
                         }
 
-                        stage('Integration Tests') {
+                        stage('Integration Tests (SDS API)') {
                             steps {
                                 dir('integration-tests/integration_tests') {
                                     sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'

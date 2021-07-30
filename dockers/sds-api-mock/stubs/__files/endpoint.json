@@ -32,7 +32,7 @@
                         ]
                     }
                 ],
-                "address": "http://fakespine",
+                "address": "https://fakespine:443",
                 "managingOrganization": {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
@@ -46,15 +46,15 @@
                     },
                     {
                         "system": "https://fhir.nhs.uk/Id/nhsMhsPartyKey",
-                        "value": "GP0001-822104"
+                        "value": "party-key-default"
                     },
                     {
                         "system": "https://fhir.nhs.uk/Id/nhsMhsCPAId",
-                        "value": "792940c0ff660d314965"
+                        "value": "cpa-id-default"
                     },
                     {
                         "system": "https://fhir.nhs.uk/Id/nhsMHSId",
-                        "value": "792940c0ff660d314965"
+                        "value": "123456"
                     }
                 ],
                 "extension": [
@@ -63,15 +63,15 @@
                         "extension": [
                             {
                                 "url": "nhsMHSSyncReplyMode",
-                                "valueString": "None"
+                                "valueString": "MSHSignalsOnly"
                             },
                             {
                                 "url": "nhsMHSDuplicateElimination",
-                                "valueString": "never"
+                                "valueString": "always"
                             },
                             {
                                 "url": "nhsMHSAckRequested",
-                                "valueString": "never"
+                                "valueString": "MSHSignalsOnly"
                             }
                         ]
                     },
