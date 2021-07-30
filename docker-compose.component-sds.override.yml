@@ -6,10 +6,6 @@ services:
       - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD="SDS_API"
       - MHS_SDS_API_URL="http://sds-mock:8110"
       - MHS_SDS_API_KEY="none"
-  
-  fakespine:
-    deploy:
-      replicas: 0
 
   route:
     deploy:
