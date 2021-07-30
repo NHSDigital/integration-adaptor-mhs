@@ -246,7 +246,7 @@ pipeline {
                                             -var mhs_forward_reliable_endpoint_url=${MHS_FORWARD_RELIABLE_ENDPOINT_URL} \
                                             -var mhs_outbound_routing_lookup_method="SPINE_ROUTE_LOOKUP" \
                                             -var mhs_sds_api_url="" \
-                                            -var mhs_sds_api_key_arn="" \
+                                            -var mhs_sds_api_key_arn=${MHS_SDS_API_KEY_ARN} \
                                         """
                                     script {
                                         env.MHS_ADDRESS = sh (
