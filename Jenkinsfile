@@ -169,14 +169,14 @@ pipeline {
                         always {
                             sh label: 'Docker status', script: 'docker ps --all'
                             sh label: 'Dump container logs to files', script: '''
-                                mkdir logs
-                                docker logs ${BUILD_TAG_LOWER}_route_1 > logs/route.log
-                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound.log
-                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound.log
-                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine.log
-                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq.log
-                                docker logs ${BUILD_TAG_LOWER}_redis_1 > logs/redis.log
-                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb.log
+                                mkdir -p logs
+                                docker logs ${BUILD_TAG_LOWER}_route_1 > logs/route_1.log
+                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound_1.log
+                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound_1.log
+                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine_1.log
+                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_1.log
+                                docker logs ${BUILD_TAG_LOWER}_redis_1 > logs/redis_1.log
+                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_1.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
@@ -223,13 +223,13 @@ pipeline {
                         always {
                             sh label: 'Docker status', script: 'docker ps --all'
                             sh label: 'Dump container logs to files', script: '''
-                                mkdir logs
-                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound_sds.log
-                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound_sds.log
-                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine_sds.log
-                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_sds.log
-                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_sds.log
-                                docker logs ${BUILD_TAG_LOWER}_sds-api-mock_1 > logs/sds-api-mock.log
+                                mkdir -p logs
+                                docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound_2.log
+                                docker logs ${BUILD_TAG_LOWER}_inbound_1 > logs/inbound_2.log
+                                docker logs ${BUILD_TAG_LOWER}_fakespine_1 > logs/fakespine_2.log
+                                docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_2.log
+                                docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_2.log
+                                docker logs ${BUILD_TAG_LOWER}_sds-api-mock_1 > logs/sdsapimock_2.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${BUILD_TAG_LOWER} down -v'
