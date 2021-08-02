@@ -65,6 +65,8 @@ def initialise_workflows(transmission: outbound_transmission.OutboundTransmissio
 
 
 def initialise_spine_route_lookup():
+    logger.info("Initializing LDAP lookup using SpineRoutLookup")
+
     spine_route_lookup_url = config.get_config('SPINE_ROUTE_LOOKUP_URL')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
     validate_cert = str2bool(config.get_config('SPINE_ROUTE_LOOKUP_VALIDATE_CERT', default=str(True)))
@@ -93,6 +95,8 @@ def initialise_spine_route_lookup():
 
 
 def initialise_sds_api_client():
+    logger.info("Initializing LDAP lookup using SDS API")
+
     sds_url = config.get_config('SDS_API_URL')
     sds_api_key = config.get_config('SDS_API_KEY')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
