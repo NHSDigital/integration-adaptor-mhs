@@ -199,6 +199,10 @@ pipeline {
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml build
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${BUILD_TAG_LOWER} up -d
 
+                                    sleep 10
+
+                                    docker ps
+
                                     echo 'SDS API mock mappings:'
                                     curl http://localhost:8080/__admin/mappings
                                     echo 'SDS API mock test call:'
