@@ -14,10 +14,3 @@ services:
   redis:
     deploy:
       replicas: 0
-
-  # sds-api-mock:
-  #   build: ./dockers/sds-api-mock
-  #   ports:
-  #     - "8080:8080"
-  #   command:
-  #     - -global-response-templating
