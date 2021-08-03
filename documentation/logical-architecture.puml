@@ -11,15 +11,15 @@ System_Boundary(c1, "MHS Adapter") {
 }
 Container(sds, "Spine Directory Service", "", "")
 Container(spinemhs, "NHS Digital Spine MHS", "", "")
+Container(sdsapi, "SDS API", "", "")
 
-Rel(gp, outbound, "Uses", "HTTPS")
-Rel(outbound, route, "Uses", "HTTPS")
-Rel(outbound, state, "", "")
-Rel(route, sds, "Uses", "HTTPS")
-Rel(outbound, spinemhs, "Uses", "HTTPS")
-Rel(spinemhs, inbound, "Enqueues", "Async response or unsolicited inbound")
-Rel(outbound, responsedb, "", "")
-Rel(inbound, responsedb, "", "")
-Rel(inbound, state, "", "")
-Rel(inbound, gp, "Enqueues", "Async response or unsolicited inbound")
-@enduml
+Rel_Down(gp, outbound, "Uses", "HTTPS")
+Rel_R(outbound, route, "Uses", "HTTPS")
+Rel_Down(outbound, state, "", "")
+Rel_R(route, sds, "Uses", "HTTPS")
+Rel_L(outbound, spinemhs, "Uses", "HTTPS")
+Rel_R(spinemhs, inbound, "Enqueues", "Async response or unsolicited inbound")
+Rel_Down(outbound, responsedb, "", "")
+Rel_Down(inbound, responsedb, "", "")
+Rel_Down(inbound, state, "", "")
+Rel_Up(
