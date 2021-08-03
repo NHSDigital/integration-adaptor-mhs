@@ -336,7 +336,7 @@ pipeline {
                                 }
                             }
                         }
-
+                    }
                 //         stage('Integration Tests (SpineRouteLookup)') {
                 //             steps {
                 //                 dir('integration-tests/integration_tests') {
