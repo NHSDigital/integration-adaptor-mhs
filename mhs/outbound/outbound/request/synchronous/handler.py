@@ -9,6 +9,8 @@ import tornado.locks
 import tornado.web
 
 from lxml import etree
+
+from comms import common_https
 from comms.http_headers import HttpHeaders
 from utilities import mdc
 from mhs_common.handler import base_handler
@@ -229,3 +231,24 @@ class SynchronousHandler(base_handler.BaseHandler):
         interaction_details[ebxml_envelope.ACTION] = interaction_id
 
         return interaction_details
+
+
+class SdsApiTestHandler(tornado.web.RequestHandler):
+    @timing.time_request
+    async def get(self):
+        try:
+            http_response = await common_https.CommonHttps.make_request(
+                url='https://sandbox.api.service.nhs.uk/spine-directory/FHIR/R4/Device?1organization=https://fhir.nhs.uk/Id/ods-organization-code|YES&identifier=https://fhir.nhs.uk/Id/nhsServiceInteractionId|urn:nhs:names:services:psis:REPC_IN150016UK05',
+                method="GET", headers={}, body=None)
+        except Exception as ex:
+            self.write('Exception: ' + str(ex))
+            if ex.response:
+                if ex.response.code:
+                    self.write('\n')
+                    self.write("Code: " + str(ex.response.code))
+                if ex.response.body:
+                    self.write('\n')
+                    self.write("Body: " + str(ex.response.body))
+            return
+
+        self.write(str(http_response))
