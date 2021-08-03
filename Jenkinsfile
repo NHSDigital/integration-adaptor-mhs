@@ -127,10 +127,10 @@ pipeline {
             }
         }
 
-        stage('Test') {
+//         stage('Test') {
             // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
             //parallel {
-            stages {
+//             stages {
                 // stage('Run Component Tests (SpineRouteLookup)') {
                 //     options {
                 //         lock('local-docker-compose-environment')
@@ -485,8 +485,8 @@ pipeline {
 //                         }
 //                     }
 //                 }
-            } // parallel
-        }
+//             } // parallel
+//         }
     }
     post {
         always {
