@@ -41,7 +41,7 @@ resource "aws_security_group_rule" "mhs_outbound_security_group_internet_egress_
   from_port = 443
   to_port = 443
   protocol = "tcp"
-  cidr_blocks = "0.0.0.0/0"
+  cidr_blocks = ["0.0.0.0/0"]
   description = "Allow HTTPS outbound connections to Internet (For SDS API)"
 }
 
