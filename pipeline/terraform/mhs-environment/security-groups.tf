@@ -35,7 +35,7 @@ resource "aws_security_group_rule" "mhs_outbound_security_group_ingress_rule" {
 }
 
 # Egress rule to allow Outbound HTTPS to Internet (for SDS API)
-resource "aws_security_group_rule" "mhs_outbound_security_group_secrets_egress_rule" {
+resource "aws_security_group_rule" "mhs_outbound_security_group_internet_egress_rule" {
   security_group_id = aws_security_group.mhs_outbound_security_group.id
   type = "egress"
   from_port = 443
