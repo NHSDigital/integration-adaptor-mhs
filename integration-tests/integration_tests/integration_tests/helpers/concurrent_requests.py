@@ -1,4 +1,5 @@
 import unittest
+import uuid
 from threading import Thread
 from collections import namedtuple
 from typing import List
@@ -44,7 +45,7 @@ def has_errors(responses: List[OutboundResponse]) -> bool:
 
 class OutboundRequestThread(Thread):
 
-    def __init__(self, message_body, message_id, interaction_id, correlation_id='1', wait_for_response=True):
+    def __init__(self, message_body, message_id, interaction_id, correlation_id=str(uuid.uuid4()), wait_for_response=True):
         Thread.__init__(self)
         self.message_body = message_body
         self.message_id = message_id

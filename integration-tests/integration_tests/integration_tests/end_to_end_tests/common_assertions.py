@@ -7,7 +7,7 @@ class CommonAssertions(object):
     def __init__(self, workflow):
         self.workflow = workflow
 
-    def spline_reply_published_to_message_queue(self, amq_assertor: AMQMessageAssertor, message_id):
+    def spline_reply_published_to_message_queue(self, amq_assertor: AMQMessageAssertor, message_id, correlation_id):
         """
         Verifies that the message queue contains an inbound response with the specified message id
         @param amq_assertor: the assertor instance
@@ -15,7 +15,7 @@ class CommonAssertions(object):
         """
         amq_assertor \
             .assert_property('message-id', message_id) \
-            .assert_property('correlation-id', '1') \
+            .assert_property('correlation-id', correlation_id) \
             .assert_json_content_type()
 
     def message_status_recorded_as_successfully_processed(self, state_table_assertor: MhsTableStateAssertor, message_id):
