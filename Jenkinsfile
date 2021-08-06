@@ -485,7 +485,7 @@ pipeline {
                         }
                     }
                 }
-            // } // parallel
+            } // parallel
         }
     }
     post {
