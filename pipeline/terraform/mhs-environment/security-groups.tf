@@ -34,6 +34,17 @@ resource "aws_security_group_rule" "mhs_outbound_security_group_ingress_rule" {
   description = "Allow HTTP inbound requests from MHS outbound load balancer"
 }
 
+# Egress rule to allow Outbound HTTPS to Internet (for SDS API)
+resource "aws_security_group_rule" "mhs_outbound_security_group_internet_egress_rule" {
+  security_group_id = aws_security_group.mhs_outbound_security_group.id
+  type = "egress"
+  from_port = 443
+  to_port = 443
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  description = "Allow HTTPS outbound connections to Internet (For SDS API)"
+}
+
 # Egress rule to allow requests to S3 (as ECR stores images there and we need to be
 # able to get the MHS outbound image to run) and DynamoDB (as MHS outbound uses DynamoDB).
 resource "aws_security_group_rule" "mhs_outbound_security_group_vpc_endpoints_egress_rule" {
