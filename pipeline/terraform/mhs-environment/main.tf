@@ -74,9 +74,9 @@ resource "aws_subnet" "mhs_public_subnet" {
   }
 }
 
-# Default MHS route to NAT-GW
-resource "aws_route" "mhs_route_to_nat_gw" {
-  route_table_id = aws_vpc.mhs_vpc.main_route_table_id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id = aws_nat_gateway.mhs_nat_gw.id
-}
+# # Default MHS route to NAT-GW
+# resource "aws_route" "mhs_route_to_nat_gw" {
+#   route_table_id = aws_vpc.mhs_vpc.main_route_table_id
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id = aws_nat_gateway.mhs_nat_gw.id
+# }
