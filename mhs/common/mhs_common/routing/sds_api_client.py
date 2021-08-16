@@ -87,6 +87,10 @@ class SdsApiClient(RouteLookupClient):
         return list(filter(lambda kv: kv['system'] == system, resource['identifier']))[0]['value']
 
     @staticmethod
+    def _set_identifier_value(resource, system, value):
+        list(filter(lambda kv: kv['system'] == system, resource['identifier']))[0]['value'] = value
+
+    @staticmethod
     def _get_extension(endpoint, system, value_key):
         def _get_extensions(resource):
             return list(filter(lambda kv: kv['url'] == 'https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ReliabilityConfiguration', resource['extension']))[0]['extension']
@@ -99,10 +103,17 @@ class SdsApiClient(RouteLookupClient):
             ods_code = self.spine_org_code
 
         device_resource = await self._get_sds_device_resource(interaction_id, ods_code)
+
         party_key = self._get_identifier_value(device_resource, 'https://fhir.nhs.uk/Id/nhsMhsPartyKey')
         owner = device_resource['owner']['identifier']['value']
 
-        return await self._get_sds_endpoint_resource(interaction_id, party_key, owner)
+        endpoint_resource = await self._get_sds_endpoint_resource(interaction_id, party_key, owner)
+
+        # copy asid from Device to Endpoint the same as SpineRouteLookup does
+        asid = self._get_identifier_value(device_resource, 'https://fhir.nhs.uk/Id/nhsSpineASID')
+        self._set_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMHSId", asid)
+
+        return endpoint_resource
 
     async def _get_sds_device_resource(self, interaction_id: str, ods_code: str) -> Dict:
         device_url = self._build_device_url(ods_code, interaction_id)
