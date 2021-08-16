@@ -21,21 +21,6 @@ class SdsApiClient(RouteLookupClient):
 
     @timing.time_function
     async def get_end_point(self, interaction_id: str, ods_code: str = None) -> Dict:
-        try:
-            print('Trying 8080')
-            http_response = await common_https.CommonHttps.make_request(url='http://sds-api-mock:8080/__admin/mappings', method="GET", headers={}, body=None)
-            json.loads(http_response.body.decode())
-        except Exception as ex:
-            print(str(ex))
-
-        try:
-            print('Trying 8081')
-            http_response = await common_https.CommonHttps.make_request(url='http://sds-api-mock:8081/__admin/mappings', method="GET", headers={}, body=None)
-            json.loads(http_response.body.decode())
-        except Exception as ex:
-            print(str(ex))
-        
-
         endpoint_resource = await self._get_endpoint_resource(interaction_id, ods_code)
 
         result = {
