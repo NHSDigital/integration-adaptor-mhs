@@ -145,8 +145,9 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
             logger.info('Looking up reliability details for {service_id}.', fparams={'service_id': service_id})
             reliability_details = await self.routing_reliability.get_reliability(service_id, org_code)
 
-            logger.info('Retrieved reliability details for {service_id}. {reliability_details}',
-                        fparams={'service_id': service_id, 'reliability_details': reliability_details})
+            logger.info('Get reliability result {ods_code} {interaction_id} {result}',
+                        fparams={'ods_code': org_code, 'interaction_id': service_id, 'result': reliability_details})
+
             return reliability_details
         except Exception:
             logger.exception('Error encountered whilst obtaining outbound URL.')
