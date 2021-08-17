@@ -23,14 +23,17 @@ class SdsApiClient(RouteLookupClient):
     async def get_end_point(self, interaction_id: str, ods_code: str = None) -> Dict:
         endpoint_resource = await self._get_endpoint_resource(interaction_id, ods_code)
 
-        result = {}
-        fqdn = self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsFQDN")
-        if fqdn:
-            result["nhsMhsFQDN"] = fqdn
-        result["nhsMHSEndPoint"] = [endpoint_resource['address']]
-        result["nhsMHSPartyKey"] = self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsPartyKey")
-        result["nhsMhsCPAId"] = self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsCPAId")
-        result["uniqueIdentifier"] = [self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMHSId")]
+        result = {
+            "nhsMhsFQDN": self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsFQDN"),
+            "nhsMHSEndPoint": [
+                endpoint_resource['address']
+            ],
+            "nhsMHSPartyKey": self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsPartyKey"),
+            "nhsMhsCPAId": self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMhsCPAId"),
+            "uniqueIdentifier": [
+                self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMHSId")
+            ]
+        }
 
         return result
 
@@ -82,8 +85,7 @@ class SdsApiClient(RouteLookupClient):
 
     @staticmethod
     def _get_identifier_value(resource, system):
-        identifiers = list(filter(lambda kv: kv['system'] == system, resource['identifier']))
-        return identifiers[0]['value'] if identifiers else None
+        return list(filter(lambda kv: kv['system'] == system, resource['identifier']))[0]['value']
 
     @staticmethod
     def _set_identifier_value(resource, system, value):
