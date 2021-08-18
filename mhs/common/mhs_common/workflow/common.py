@@ -105,6 +105,9 @@ class CommonWorkflow(abc.ABC):
             logger.info('Looking up endpoint details for {service_id}.', fparams={'service_id': service_id})
             endpoint_details = await self.routing_reliability.get_end_point(service_id, ods_code)
 
+            logger.info('Get end point result {ods_code} {interaction_id} {result}',
+                        fparams={'ods_code': ods_code, 'interaction_id': service_id, 'result': endpoint_details})
+
             url = CommonWorkflow._extract_endpoint_url(endpoint_details)
             to_party_key = endpoint_details[MHS_TO_PARTY_KEY_KEY]
             cpa_id = endpoint_details[MHS_CPA_ID_KEY]

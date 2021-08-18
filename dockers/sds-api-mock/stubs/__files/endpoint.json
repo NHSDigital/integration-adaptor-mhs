@@ -66,6 +66,18 @@
                                 "valueString": "MSHSignalsOnly"
                             },
                             {
+                                "url": "nhsMHSRetryInterval",
+                                "valueString": "PT0.5S"
+                            },
+                            {
+                                "url": "nhsMHSRetries",
+                                "valueInteger": 3
+                            },
+                            {
+                                "url": "nhsMHSPersistDuration",
+                                "valueString": "PT5M"
+                            },
+                            {
                                 "url": "nhsMHSDuplicateElimination",
                                 "valueString": "always"
                             },

@@ -34,6 +34,7 @@ class SdsApiClient(RouteLookupClient):
                 self._get_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMHSId")
             ]
         }
+
         return result
 
     @timing.time_function
