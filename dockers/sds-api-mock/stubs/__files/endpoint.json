@@ -41,6 +41,10 @@
                 },
                 "identifier": [
                     {
+                        "system": "https://fhir.nhs.uk/Id/nhsMhsFQDN",
+                        "value": "test1-x26.nhsdnia.thirdparty.nhs.uk"
+                    },
+                    {
                         "system": "https://fhir.nhs.uk/Id/nhsMhsPartyKey",
                         "value": "party-key-default"
                     },
