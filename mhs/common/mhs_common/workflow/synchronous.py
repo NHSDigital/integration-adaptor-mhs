@@ -14,7 +14,7 @@ from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
 from mhs_common.workflow import common_synchronous
 from mhs_common.workflow.common import MessageData
-from utilities import timing, mdc
+from utilities import timing, mdc, config
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -60,7 +60,7 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
 
         try:
             endpoint_details = await self._lookup_endpoint_details(interaction_details)
-            url = endpoint_details[self.ENDPOINT_URL]
+            url = config.get_config("SYNCHRONOUS_ENDPOINT_URL", endpoint_details[self.ENDPOINT_URL])
             to_asid = endpoint_details[self.ENDPOINT_TO_ASID]
         except Exception:
             logger.exception('Error obtaining outbound URL')

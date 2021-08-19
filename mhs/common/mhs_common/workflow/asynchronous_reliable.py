@@ -8,7 +8,7 @@ import utilities.integration_adaptors_logger as log
 from comms import queue_adaptor
 from isodate import isoerror
 from tornado import httpclient
-from utilities import timing
+from utilities import timing, config
 from utilities.date_utilities import DateUtilities
 
 from mhs_common import workflow
@@ -55,7 +55,7 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
 
         try:
             details = await self._lookup_endpoint_details(interaction_details)
-            url = details[self.ENDPOINT_URL]
+            url = config.get_config("ASYNCHRONOUS_RELIABLE_ENDPOINT_URL", details[self.ENDPOINT_URL])
             to_party_key = details[self.ENDPOINT_PARTY_KEY]
             cpa_id = details[self.ENDPOINT_CPA_ID]
         except Exception:
