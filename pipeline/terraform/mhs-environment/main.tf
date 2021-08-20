@@ -61,3 +61,22 @@ resource "aws_subnet" "mhs_subnet" {
     EnvironmentId = var.environment_id
   }
 }
+
+# Create a public subnet for mhs-vpc in the region.
+resource "aws_subnet" "mhs_public_subnet" {
+
+  vpc_id = aws_vpc.mhs_vpc.id
+  cidr_block = cidrsubnet(var.mhs_vpc_cidr_block, 8, 3)
+  
+  tags = {
+    Name = "${var.environment_id}-mhs-public-subnet"
+    EnvironmentId = var.environment_id
+  }
+}
+
+# # Default MHS route to NAT-GW
+# resource "aws_route" "mhs_route_to_nat_gw" {
+#   route_table_id = aws_vpc.mhs_vpc.main_route_table_id
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id = aws_nat_gateway.mhs_nat_gw.id
+# }
