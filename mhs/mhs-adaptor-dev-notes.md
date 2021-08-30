@@ -79,6 +79,17 @@ contain sensitive information such as the content of messages being sent.
 * `MHS_RESYNC_INTERVAL` (outbound only) The time in between polls of the sync-async store, the interval is in seconds and defaults to `1`
 * `MHS_SPINE_ROUTE_LOOKUP_URL` (outbound only) The URL of the Spine route lookup service. E.g `https://example.com`. This URL should not contain path or query parameter parts.
 * `MHS_SPINE_ORG_CODE` (outbound only) The organisation code for the Spine instance that your MHS is communicating with. E.g `YES`
+* `MHS_FORWARD_RELIABLE_ENDPOINT_URL` (outbound only) The URL to communicate with Spine for Forward Reliable messaging
+* `MHS_RESYNC_INITIAL_DELAY` (Outbound service only) The initial delay (in seconds) before making the first poll to the sync-async
+    store after the outbound service receives an acknowledgement from Spine
+* `MHS_SPINE_REQUEST_MAX_SIZE` (outbound service only) The maximum size (in bytes) that request bodies sent to Spine
+are allowed to be. This should be set minus any HTTP headers and other content in the HTTP packets sent to Spine.
+e.g. Setting this to ~400 bytes less than the maximum request body size should be roughly the correct value
+(calculating this value accurately is pretty much impossible as one of the HTTP headers is the Content-Length header
+which varies depending on the request body size).
+* `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` Define which lookup method to use for routing and reliability. One of `SPINE_ROUTE_LOOKUP` or `SDS_API`
+
+Following variables are required if `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` is set to `SPINE_ROUTE_LOOKUP`
 * `MHS_SECRET_SPINE_ROUTE_LOOKUP_CLIENT_CERT` (outbound only) Optional. The client certificate to present when making HTTPS connections to the Spine Route Lookup service. If not specified, no client certificate will be presented.
 * `MHS_SECRET_SPINE_ROUTE_LOOKUP_CLIENT_KEY` (outbound only) Optional. The private key for the client certificate to present when making HTTPS connections to the Spine Route Lookup service. Must be specified if `MHS_SPINE_ROUTE_LOOKUP_CLIENT_CERT` is provided.
 * `MHS_SECRET_SPINE_ROUTE_LOOKUP_CA_CERTS` (outbound only) Optional. The CA certificates used to validate the certificate presented by the Spine Route Lookup service. Should include the following in this order: endpoint issuing subCA certificate, root CA Certificate. If not specified, the system defaults will be used.
@@ -97,15 +108,11 @@ connecting to the Redis host specified by `MHS_SDS_REDIS_CACHE_HOST`. Defaults t
 * `MHS_SDS_REDIS_DISABLE_TLS` (Spine Route Lookup service only) An optional flag that can be set to disable TLS for
 connections to the Redis cache used by the Spine Route Lookup service. *Must* be set to exactly `True` for TLS to be
 disabled.
-* `MHS_FORWARD_RELIABLE_ENDPOINT_URL` (outbound only) The URL to communicate with Spine for Forward Reliable messaging
-* `MHS_RESYNC_INITIAL_DELAY` (Outbound service only) The initial delay (in seconds) before making the first poll to the sync-async
-    store after the outbound service receives an acknowledgement from Spine
-* `MHS_SPINE_REQUEST_MAX_SIZE` (outbound service only) The maximum size (in bytes) that request bodies sent to Spine
-are allowed to be. This should be set minus any HTTP headers and other content in the HTTP packets sent to Spine.
-e.g. Setting this to ~400 bytes less than the maximum request body size should be roughly the correct value
-(calculating this value accurately is pretty much impossible as one of the HTTP headers is the Content-Length header
-which varies depending on the request body size).
 * `MHS_LAZY_LDAP` use lazy connection from spine route lookup component to SPINE LDAP service
+
+Following variables are required if `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` is set to `SDS_API`
+* `MHS_SDS_API_URL` URL to SDS API. e.g. `https://sandbox.api.service.nhs.uk/spine-directory/FHIR/R4`
+* `MHS_SDS_API_KEY` api key to authenticate with when sending requests to SDS API
 
 Note that if you are using Opentest, you should use the credentials you were given when you got access to set `MHS_SECRET_PARTY_KEY`, `MHS_SECRET_CLIENT_CERT`, `MHS_SECRET_CLIENT_KEY` and `MHS_SECRET_CA_CERTS`.
 

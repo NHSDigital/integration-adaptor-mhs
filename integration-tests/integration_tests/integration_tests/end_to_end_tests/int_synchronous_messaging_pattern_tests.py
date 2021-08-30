@@ -1,6 +1,7 @@
 """
 Provides tests around the Synchronous workflow
 """
+import uuid
 from unittest import TestCase
 
 from integration_tests.db.db_wrapper_factory import MHS_STATE_TABLE_WRAPPER
@@ -36,7 +37,11 @@ class SynchronousMessagingPatternTests(TestCase):
 
         # Act
         response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False) \
+            .with_headers(
+                interaction_id='QUPA_IN040000UK32',
+                message_id=message_id,
+                wait_for_response=False,
+                correlation_id=str(uuid.uuid4())) \
             .with_body(message) \
             .execute_post_expecting_success()
 
@@ -53,7 +58,11 @@ class SynchronousMessagingPatternTests(TestCase):
 
         # Act
         MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False) \
+            .with_headers(
+                interaction_id='QUPA_IN040000UK32',
+                message_id=message_id,
+                wait_for_response=False,
+                correlation_id=str(uuid.uuid4())) \
             .with_body(message) \
             .execute_post_expecting_success()
 

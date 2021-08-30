@@ -265,3 +265,16 @@ variable "healthcheck_threshold" {
   default = 3
   description = "Retries for confirming target status - healthy or unhealthy, AWS default is 3"
 }
+
+variable "mhs_outbound_routing_lookup_method" {
+  type = string
+  description = "Definnes which LDAP lookup mode to use. Must be one of SPINE_ROUTE_LOOKUP(default if empty) or SDS_API"
+}
+
+variable "mhs_sds_api_url" {
+  type = string
+}
+
+variable "mhs_sds_api_key_arn" {
+  type = string
+}

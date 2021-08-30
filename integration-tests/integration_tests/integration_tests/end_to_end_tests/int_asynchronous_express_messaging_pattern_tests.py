@@ -1,6 +1,7 @@
 """
 Provides tests around the Asynchronous Express workflow, including sync-async wrapping
 """
+import uuid
 from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
@@ -42,13 +43,14 @@ class AsynchronousExpressMessagingPatternTests(TestCase):
     def test_should_return_successful_response_from_spine_to_message_queue(self):
         # Arrange
         message, message_id = build_message('QUPC_IN160101UK05', '9691035456')
+        correlation_id = str(uuid.uuid4())
 
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='QUPC_IN160101UK05',
                           message_id=message_id,
                           wait_for_response=False,
-                          correlation_id='1') \
+                          correlation_id=correlation_id) \
             .with_body(message) \
             .execute_post_expecting_success()
 
@@ -58,7 +60,7 @@ class AsynchronousExpressMessagingPatternTests(TestCase):
         amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
         state_table_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
 
-        self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id)
+        self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
         hl7_xml_message_assertor = amq_assertor.assertor_for_hl7_xml_message()
         self.assertions.hl7_xml_contains_response_code_and_patient_id(hl7_xml_message_assertor)
         self.assertions.message_status_recorded_as_successfully_processed(state_table_assertor, message_id)
