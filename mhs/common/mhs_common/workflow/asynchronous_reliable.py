@@ -8,7 +8,7 @@ import utilities.integration_adaptors_logger as log
 from comms import queue_adaptor
 from isodate import isoerror
 from tornado import httpclient
-from utilities import timing
+from utilities import timing, config
 from utilities.date_utilities import DateUtilities
 
 from mhs_common import workflow
@@ -17,7 +17,7 @@ from mhs_common.errors.soap_handler import handle_soap_error
 from mhs_common.messages.ebxml_error_envelope import EbxmlErrorEnvelope
 from mhs_common.messages.soap_fault_envelope import SOAPFault
 from mhs_common.request import request_body_schema
-from mhs_common.routing import routing_reliability
+from mhs_common.routing import route_lookup_client
 from persistence import persistence_adaptor
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
@@ -33,7 +33,7 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
                  transmission: transmission_adaptor.TransmissionAdaptor = None,
                  queue_adaptor: queue_adaptor.QueueAdaptor = None,
                  max_request_size: int = None,
-                 routing: routing_reliability.RoutingAndReliability = None):
+                 routing: route_lookup_client.RouteLookupClient = None):
         super().__init__(party_key, persistence_store, transmission, queue_adaptor, max_request_size, routing)
 
         self.workflow_specific_interaction_details = dict(duplicate_elimination=True,
@@ -55,7 +55,7 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
 
         try:
             details = await self._lookup_endpoint_details(interaction_details)
-            url = details[self.ENDPOINT_URL]
+            url = config.get_config("ASYNCHRONOUS_RELIABLE_ENDPOINT_URL", details[self.ENDPOINT_URL])
             to_party_key = details[self.ENDPOINT_PARTY_KEY]
             cpa_id = details[self.ENDPOINT_CPA_ID]
         except Exception:

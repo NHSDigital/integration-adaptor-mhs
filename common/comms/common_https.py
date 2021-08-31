@@ -29,15 +29,22 @@ class CommonHttps(object):
         :param raise_error_response: Return an error response
         """
 
-        logger.info("About to send {method} request with {headers} to {url} using {proxy_host} & {proxy_port}",
-                    fparams={
-                        "method": method,
-                        "headers": headers,
-                        "url": url,
-                        "proxy_host": http_proxy_host,
-                        "proxy_port": http_proxy_port
-                    })
-        logger.debug("Request body: %s", body)
+        logger.info("About to send request {method} {url} {proxy_host} {proxy_port}",
+                     fparams={
+                         "method": method,
+                         "url": url,
+                         "proxy_host": http_proxy_host,
+                         "proxy_port": http_proxy_port
+                     })
+        logger.debug("About to send request {method} {url} {headers} {proxy_host} {proxy_port} {body}",
+                     fparams={
+                         "method": method,
+                         "url": url,
+                         "headers": headers,
+                         "proxy_host": http_proxy_host,
+                         "proxy_port": http_proxy_port,
+                         "body": body
+                     })
 
         if not validate_cert:
             logger.warning("Server certificate validation has been disabled.")
@@ -53,18 +60,13 @@ class CommonHttps(object):
                                                             validate_cert=validate_cert,
                                                             proxy_host=http_proxy_host,
                                                             proxy_port=http_proxy_port)
-        logger.info("Sent {method} request with {headers} to {url} using {proxy_host} & {proxy_port}, and "
-                    "received status code {code}",
-                    fparams={
-                        "method": method,
-                        "headers": headers,
-                        "url": url,
-                        "proxy_host": http_proxy_host,
-                        "proxy_port": http_proxy_port,
-                        "code": response.code
-                    })
 
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("Response body: %s", response.body.decode() if response.body else None)
+            logger.debug("Received response {code} {headers} {body}",
+                         fparams={
+                             "code": response.code,
+                             "headers": response.headers,
+                             "body": response.body.decode() if response.body else None
+                         })
 
         return response

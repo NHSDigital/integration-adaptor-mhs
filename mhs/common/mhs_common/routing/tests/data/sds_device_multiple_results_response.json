@@ -1,0 +1,1087 @@
+{
+    "resourceType": "Bundle",
+    "id": "5D7AE4D9-5398-4487-AAC9-A2F585BF223A",
+    "type": "searchset",
+    "total": 2,
+    "link": [
+        {
+            "relation": "self",
+            "url": "http://internal-dev.apis.ptl.api.platform.nhs.uk/Device?organization=https://fhir.nhs.uk/Id/ods-organization-code|YES&identifier=https://fhir.nhs.uk/Id/nhsServiceInteractionId|urn:nhs:names:services:psis:REPC_IN150016UK05"
+        }
+    ],
+    "entry": [
+        {
+            "fullUrl": "http://internal-dev.apis.ptl.api.platform.nhs.uk/Device/64053F76-0C72-4783-8B38-F22BB3ADF21E",
+            "resource": {
+                "resourceType": "Device",
+                "id": "64053F76-0C72-4783-8B38-F22BB3ADF21E",
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhsSpineASID",
+                        "value": "227319907548"
+                    },
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhsMhsPartyKey",
+                        "value": "PARTY_KEY"
+                    }
+                ],
+                "extension": [
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ManufacturingOrganisation",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                                "value": "YES"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150015UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150016UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150017UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150018UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:MCCI_IN010000UK13"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:MCCI_IN010000UK13"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN180000UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN200000UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN190000UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN210000UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUQI_IN010000UK14"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010011UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN140001UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN140002UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN150002UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN150004UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN160002UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN160004UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN170002UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN170004UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180001UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180002UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180003UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180004UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180005UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180006UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:healthspace:PRPA_IN000501UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:healthspace:MCCI_IN010000UK13"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160101UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160102UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160103UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160104UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160107UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160108UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160109UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160110UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN150002UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN150004UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN160002UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN160004UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN170002UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN170004UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160101UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160102UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160103UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160104UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160107UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160108UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160109UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160110UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN140001UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN140002UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180001UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180002UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180003UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180004UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180005UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180006UK02"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:healthspace:PRPA_IN000501UK03"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN140001UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN140002UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN150002UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN150004UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN160002UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN160004UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN170002UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN170004UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180001UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180002UK06"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180003UK03"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180004UK03"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180005UK03"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN180006UK03"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:healthspace:PRPA_IN000501UK04"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010012UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010013UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010014UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010015UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010016UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN010025UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN020002UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN020004UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN030002UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN030004UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN040002UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN040004UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN050002UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN050004UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060009UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060010UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060011UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060012UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060013UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060014UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060015UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN060016UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN070002UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:POCD_IN070004UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:REPC_IN000005GB01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:QUPC_IN000006GB01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:REPC_IN000007GB01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:MCCI_IN010000UK13"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:INACTIVE_NHS_NUMBERS"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisupload:REPC_IN000002SM01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisupload:REPC_IN000003GB01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:REPC_IN000004GB01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:ACCESS_TO_SERVICE"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:cpisquery:QUQI_IN010000UK14"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150016SM05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN180000SM04"
+                            }
+                        }
+                    }
+                ],
+                "owner": {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "OWNER_ORG_CODE"
+                    }
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "http://internal-dev.apis.ptl.api.platform.nhs.uk/Device/64053F76-0C72-4783-8B38-F22BB3ADF21E",
+            "resource": {
+                "resourceType": "Device",
+                "id": "68573d99-7940-4922-86fc-5b52ea4b608d",
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhsSpineASID",
+                        "value": "227319907548"
+                    },
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhsMhsPartyKey",
+                        "value": "YES-0000806"
+                    }
+                ],
+                "extension": [
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ManufacturingOrganisation",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                                "value": "YES"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150015UK05"
+                            }
+                        }
+                    }
+                ],
+                "owner": {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "YES"
+                    }
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

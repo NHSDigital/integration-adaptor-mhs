@@ -1,0 +1,96 @@
+{
+    "resourceType": "Bundle",
+    "id": "5D7AE4D9-5398-4487-AAC9-A2F585BF223A",
+    "type": "searchset",
+    "total": 1,
+    "link": [
+        {
+            "relation": "self",
+            "url": "{{request.url}}"
+        }
+    ],
+    "entry": [
+        {
+            "fullUrl": "{{request.baseUrl}}/Device/64053F76-0C72-4783-8B38-F22BB3ADF21E",
+            "resource": {
+                "resourceType": "Device",
+                "id": "64053F76-0C72-4783-8B38-F22BB3ADF21E",
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhsSpineASID",
+                        "value": "123456"
+                    },
+                    {
+                        "system": "https://fhir.nhs.uk/Id/nhsMhsPartyKey",
+                        "value": "party-key-default"
+                    }
+                ],
+                "extension": [
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ManufacturingOrganisation",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                                "value": "YES"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psisquery:QUPC_IN160101UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:psis:REPC_IN150016UK05"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:gp2gp:COPC_IN000001UK01"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:ebs:PRSC_IN080000UK07"
+                            }
+                        }
+                    },
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-SDS-NhsServiceInteractionId",
+                        "valueReference": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/nhsServiceInteractionId",
+                                "value": "urn:nhs:names:services:pdsquery:QUPA_IN040000UK32"
+                            }
+                        }
+                    }
+                ],
+                "owner": {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "YES"
+                    }
+                }
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

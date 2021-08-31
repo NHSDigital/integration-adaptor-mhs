@@ -1,0 +1,11 @@
+{
+    "nhsMhsFQDN": "msg.int.spine2.ncrs.nhs.uk",
+    "nhsMHSEndPoint": [
+        "https://msg.int.spine2.ncrs.nhs.uk/reliablemessaging/reliablerequest"
+    ],
+    "nhsMHSPartyKey": "YES-0000806",
+    "nhsMhsCPAId": "S20001A000182",
+    "uniqueIdentifier": [
+        "227319907548"
+    ]
+}

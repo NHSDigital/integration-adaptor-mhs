@@ -8,13 +8,13 @@ from mhs_common import workflow
 from mhs_common.errors.soap_handler import handle_soap_error
 from mhs_common.messages import soap_envelope
 from mhs_common.request import request_body_schema
-from mhs_common.routing import routing_reliability
+from mhs_common.routing import route_lookup_client
 from persistence import persistence_adaptor as pa
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
 from mhs_common.workflow import common_synchronous
 from mhs_common.workflow.common import MessageData
-from utilities import timing, mdc
+from utilities import timing, mdc, config
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -28,7 +28,7 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
                  transmission: transmission_adaptor.TransmissionAdaptor = None,
                  max_request_size: int = None,
                  persistence_store_max_retries: int = None,
-                 routing: routing_reliability.RoutingAndReliability = None):
+                 routing: route_lookup_client.RouteLookupClient = None):
         super().__init__(routing)
         self.party_key = party_key
         self.wd_store = work_description_store
@@ -60,7 +60,7 @@ class SynchronousWorkflow(common_synchronous.CommonSynchronousWorkflow):
 
         try:
             endpoint_details = await self._lookup_endpoint_details(interaction_details)
-            url = endpoint_details[self.ENDPOINT_URL]
+            url = config.get_config("SYNCHRONOUS_ENDPOINT_URL", endpoint_details[self.ENDPOINT_URL])
             to_asid = endpoint_details[self.ENDPOINT_TO_ASID]
         except Exception:
             logger.exception('Error obtaining outbound URL')
