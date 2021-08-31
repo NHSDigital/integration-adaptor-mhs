@@ -26,7 +26,7 @@ The following diagram provides a view of the services (run in docker containers)
 
 The MHS adaptor is composed of three main services, coloured in orange,  which are executed in Docker containers:
 1. The MHS Outbound Service which is responsible for listening for requests from the wider local system context and transmitting these to Spine
-2. Spine Route Lookup, which is used to lookup routing and reliability information from Spine's directory service. (alternatively, SDS API can be used)
+2. Spine Route Lookup, which is used to lookup routing and reliability information from Spine's directory service.
 3. the MHS Inbound Service which is responsible for listening for incoming requests from Spine.
 
 These services have some dependencies, shown in blue, which are implemented through the adaptor pattern:
@@ -47,6 +47,15 @@ Network Load Balancers to implement this.
 also demonstrated through Elasticache for Redis in AWS.
 
 The National Adaptors Common Module provides classes which implement common requirements leveraged by multiple services or modules.
+
+### Routing and reliability lookup
+
+There are two ways how routing and reliability information can be obtained by the adaptor.
+
+1. Using Spine Route Lookup component that directly communicates with Spine Directory Services using LDAP protocol. This method requires Spine Route Lookup to have direct access to LDAP catalogue.
+2. Using [SDS API](https://github.com/NHSDigital/spine-directory-service-api) where internet access is required for MHS Outbound Service to send requests to the API. In this case Spine Route Lookup and Cache components can be removed from the cluster as they are not used.
+
+Whether to use Spine Route Lookup or SDS API, is configurable using Outbound service environment variables. Check [MHS adaptor dev notes](./mhs-adaptor-dev-notes.md#environment-variables) variable `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` and following sections.
 
 ## API Documentation
 
