@@ -26,7 +26,7 @@ The following diagram provides a view of the services (run in docker containers)
 
 The MHS adaptor is composed of three main services, coloured in orange,  which are executed in Docker containers:
 1. The MHS Outbound Service which is responsible for listening for requests from the wider local system context and transmitting these to Spine
-2. Spine Route Lookup, which is used to lookup routing and reliability information from Spine's directory service.
+2. Spine Route Lookup, which is used to lookup routing and reliability information from Spine's directory service. (alternatively, SDS API can be used)
 3. the MHS Inbound Service which is responsible for listening for incoming requests from Spine.
 
 These services have some dependencies, shown in blue, which are implemented through the adaptor pattern:
