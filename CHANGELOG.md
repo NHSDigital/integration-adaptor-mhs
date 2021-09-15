@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2021-09-15
+ 
+### Changed
+- NIAD-1487: Support SDS API as an alternative method of retrieving routing and reliability information
+
 ## [1.0.2] - 2020-12-09
  
 ### Changed

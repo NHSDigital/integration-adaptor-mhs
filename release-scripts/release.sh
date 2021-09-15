@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-export BUILD_TAG=1.0.2
+export BUILD_TAG=1.0.3
 
 cd ..
 
