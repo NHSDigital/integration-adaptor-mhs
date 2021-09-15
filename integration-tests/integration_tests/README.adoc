@@ -25,7 +25,14 @@ When running the tests locally, you will need to set the MHS_ADDRESS, ASID, AWS_
 - The AWS_SECRET_ACCESS_KEY can be 'test' locally.
 - MHS_DB_ENDPOINT_URL can be http://localhost:8000 locally.
 
+Optionally, you can set following environment variables to choose whether to use direct LDAP connection via Spine Route Lookup or SDS API.
+- MHS_OUTBOUND_ROUTING_LOOKUP_METHOD (one of SPINE_ROUTE_LOOKUP or SDS_API)
+- MHS_SDS_API_URL - must be set if MHS_OUTBOUND_ROUTING_LOOKUP_METHOD=SDS_API (eg. https://sandbox.api.service.nhs.uk/spine-directory/FHIR/R4)
+- MHS_SDS_API_KEY - must be set if MHS_OUTBOUND_ROUTING_LOOKUP_METHOD=SDS_API
+
 You will need to complete the setup steps for all the associated services in test prior to running this test suite
+
+If MHS_OUTBOUND_ROUTING_LOOKUP_METHOD is set to SDS_API, then Redis Cache and Spine Route Lookup components are not used and can be turned off.
 
 == Running the Integration Tests from the Command Line locally
 
