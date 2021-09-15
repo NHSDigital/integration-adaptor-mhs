@@ -66,13 +66,7 @@ class ExternalAttachment:
     """
     document_id: str
     message_id: str
-    filename: str
-    content_type: str
-    compressed: bool
-    large_attachment: bool
-    original_base64: bool
-    length: int
-    domain_data: str
+    description: str
 
 
 class ExternalAttachmentSchema(marshmallow.Schema):
@@ -81,35 +75,11 @@ class ExternalAttachmentSchema(marshmallow.Schema):
                                          description='The document id of the attachment.')
     message_id = marshmallow.fields.Str(required=True,
                                         description='Attachment message id.')
-    filename = marshmallow.fields.Str(required=True,
-                                      description='File name of the attachment.')
-    content_type = marshmallow.fields.Str(required=True, description='Content type of the attachment',
-                                          validate=marshmallow.validate.OneOf(_ATTACHMENT_ALLOWED_CONTENT_TYPES))
-    compressed = marshmallow.fields.Bool(required=True,
-                                         description='Whether the attachment payload is compressed or not.',
-                                         truthy={True}, falsy={False})
-    large_attachment = marshmallow.fields.Bool(required=True,
-                                               description='If the attachment itself is "large".',
-                                               truthy={True}, falsy={False})
-    original_base64 = marshmallow.fields.Bool(required=True,
-                                              description='The CCLM process sends attachments as base64 encoded '
-                                                          'streams. If the "original" for the attachment was already '
-                                                          'base64 this is not done, but the "OriginalBase64" '
-                                                          'value is Yes. Otherwise No.',
-                                              truthy={True}, falsy={False})
-    length = marshmallow.fields.Int(required=True,
-                                    description='Size in bytes of the original attachment. This should be set after '
-                                                'any compression and base64 encoding (i.e. the contribution that '
-                                                'the attachment would make to the content length of a message '
-                                                'where it was sent in-line).')
-    domain_data = marshmallow.fields.Str(required=False,
-                                         description='Only included when the core HL7 Extract is over 5MB.')
+    description = marshmallow.fields.Str(required=True, description='Description of the attachment')
 
     @marshmallow.post_load
     def make_external_attachment(self, data, **kwargs):
-        return ExternalAttachment(
-            data['document_id'], data['message_id'], data['filename'], data['content_type'], data['compressed'],
-            data['large_attachment'], data['original_base64'], data['length'], data.get('domain_data'))
+        return ExternalAttachment(data['document_id'], data['message_id'], data['description'])
 
 
 @dataclasses.dataclass
