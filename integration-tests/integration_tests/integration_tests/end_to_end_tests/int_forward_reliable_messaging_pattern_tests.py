@@ -50,14 +50,9 @@ class ForwardReliableMessagingPatternTests(TestCase):
         }]
 
         external_attachments = [{
-            'reference_id': 'B6D2FFAF-1EE1-4023-B639-442E1CC931DB',
-            'href_id': '4AB8A3EA-A6A6-45C3-B1EA-FF588F054A2B',
-            'filename': 'blood_test.xml',
-            'content_type': 'text/plain',
-            'compressed': False,
-            'large_attachment': False,
-            'original_base64': False,
-            'length': 123456
+            'document_id': 'B6D2FFAF-1EE1-4023-B639-442E1CC931DB',
+            'message_id': '4AB8A3EA-A6A6-45C3-B1EA-FF588F054A2B',
+            'description': 'some description'
         }]
 
         # Act

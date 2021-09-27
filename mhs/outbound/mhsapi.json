@@ -112,69 +112,25 @@
             "ExternalAttachment": {
                 "type": "object",
                 "properties": {
-                    "reference_id": {
+                    "document_id": {
                         "type": "string",
-                        "description": "The reference id that points to the attachment."
+                        "description": "The document id of the attachment."
                     },
-                    "href_id": {
+                    "message_id": {
                         "type": "string",
-                        "description": "Actual attachment id."
+                        "description": "Attachment message id."
                     },
-                    "filename": {
+                    "description": {
                         "type": "string",
-                        "description": "File name of the attachment."
-                    },
-                    "content_type": {
-                        "type": "string",
-                        "enum": [
-                            "text/plain",
-                            "text/html",
-                            "application/pdf",
-                            "text/xml",
-                            "application/xml",
-                            "text/rtf",
-                            "audio/basic",
-                            "audio/mpeg",
-                            "image/png",
-                            "image/gif",
-                            "image/jpeg",
-                            "image/tiff",
-                            "video/mpeg",
-                            "application/msword",
-                            "application/octet-stream"
-                        ],
-                        "description": "Content type of the attachment"
-                    },
-                    "compressed": {
-                        "type": "boolean",
-                        "description": "Whether the attachment payload is compressed or not."
-                    },
-                    "large_attachment": {
-                        "type": "boolean",
-                        "description": "If the attachment itself is 'large'."
-                    },
-                    "original_base64": {
-                        "type": "boolean",
-                        "description": "The CCLM process sends attachments as base64 encoded streams. If the 'original' for the attachment was already base64 this is not done, but the 'OriginalBase64' value is Yes. Otherwise No."
-                    },
-                    "length": {
-                        "type": "integer",
-                        "description": "Size in bytes of the original attachment. This should be set after any compression and base64 encoding (i.e. the contribution that the attachment would make to the content length of a message where it was sent in-line)."
-                    },
-                    "domain_data": {
-                        "type": "string",
-                        "description": "Only included when the core HL7 Extract is over 5MB."
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "description": "Description of the attachment"
                     }
                 },
                 "required": [
-                    "reference_id",
-                    "href_id",
-                    "filename",
-                    "content_type",
-                    "compressed",
-                    "large_attachment",
-                    "original_base64",
-                    "length"
+                    "document_id",
+                    "message_id",
+                    "description"
                 ]
             },
             "Attachment": {

@@ -81,14 +81,9 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
                 ],
                 'external_attachments': [ # Optional, defaults to empty list if not set
                     {
-                        'reference_id' : '6a7b4c68-8be8-46ba-8fbc-9b8313569380',
-                        'href_id': '4dd554f1-2827-4b98-adf3-7cefab763fff',
-                        'filename': 'some_file.txt',
-                        'content_type': 'text/plain',
-                        'compressed': False,
-                        'large_attachment': False,
-                        'original_base64': True,
-                        'length': 123
+                        'document_id' : '6a7b4c68-8be8-46ba-8fbc-9b8313569380',
+                        'message_id': '4dd554f1-2827-4b98-adf3-7cefab763fff',
+                        'description': 'attachment description'
                     }
                 ]
             }
