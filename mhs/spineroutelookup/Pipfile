@@ -25,3 +25,5 @@ coverage-report = 'coverage report'
 coverage-report-xml = 'coverage xml'
 coverage-report-html = 'coverage html'
 start = "python main.py"
+uninstall_setuptools = "pip uninstall -y setuptools"
+install_setuptools = "pip install -Iv setuptools==57.5.0"
