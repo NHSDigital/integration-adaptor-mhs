@@ -14,6 +14,9 @@ COPY mhs/spineroutelookup/ /usr/src/app/mhs/spineroutelookup
 
 WORKDIR /usr/src/app/mhs/spineroutelookup
 
+RUN pipenv --python 3.7
+RUN pipenv run uninstall_setuptools
+RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 80

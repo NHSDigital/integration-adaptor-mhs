@@ -8,8 +8,12 @@ COPY integration-tests/fake_spine/ /usr/src/app/mhs/fakespine
 WORKDIR /usr/src/app/mhs/fakespine
 COPY integration-tests/fake_spine/Pipfile /usr/src/app
 COPY integration-tests/fake_spine/Pipfile.lock /usr/src/app
-RUN pip install pipenv
+
+RUN pipenv --python 3.7
+RUN pipenv run uninstall_setuptools
+RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
+
 COPY . .
 EXPOSE 80 443
 ENTRYPOINT ["pipenv", "run", "start", "--logging=DEBUG"]
