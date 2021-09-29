@@ -10,6 +10,10 @@ WORKDIR /test
 COPY . .
 
 WORKDIR /test/integration-tests/integration_tests
+
+RUN pipenv --python 3.7
+RUN pipenv run uninstall_setuptools
+RUN pipenv run install_setuptools
 RUN pipenv install --dev --deploy --ignore-pipfile
 
-ENTRYPOINT [ "pipenv", "run", "componenttests" ]
+ENTRYPOINT pipenv run componenttests
