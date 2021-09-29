@@ -14,8 +14,11 @@ COPY mhs/outbound/ /usr/src/app/mhs/outbound
 
 WORKDIR /usr/src/app/mhs/outbound
 
+RUN pipenv --python 3.7
+RUN pipenv run uninstall_setuptools
+RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 80
 
-ENTRYPOINT pipenv run start-outbound
+ENTRYPOINT pipenv run start
