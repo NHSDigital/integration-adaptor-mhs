@@ -600,7 +600,7 @@ class TestSynchronousHandlerRequestBodyValidation(BaseHandlerTest):
                                     "description": description}]}
                 response_body = self._make_request_and_check_invalid_request_response(
                     {'request_body': request_body, 'field_name': "description"})
-                self.assertIn("Length must be greater than 1", response_body)
+                self.assertIn("Shorter than minimum length 1.", response_body)
 
     def test_post_with_request_body_with_too_many_attachments(self):
         attachment = {
