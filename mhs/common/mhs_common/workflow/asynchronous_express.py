@@ -5,7 +5,7 @@ from xml.etree import ElementTree as ET
 import utilities.integration_adaptors_logger as log
 from comms import queue_adaptor
 from tornado import httpclient
-from utilities import timing
+from utilities import timing, config
 
 from mhs_common import workflow
 from mhs_common.errors import ebxml_handler
@@ -54,7 +54,7 @@ class AsynchronousExpressWorkflow(common_asynchronous.CommonAsynchronousWorkflow
 
         try:
             details = await self._lookup_endpoint_details(interaction_details)
-            url = details[self.ENDPOINT_URL]
+            url = config.get_config("ASYNCHRONOUS_EXPRESS_ENDPOINT_URL", details[self.ENDPOINT_URL])
             to_party_key = details[self.ENDPOINT_PARTY_KEY]
             cpa_id = details[self.ENDPOINT_CPA_ID]
         except Exception:

@@ -71,11 +71,10 @@ class SdsApiClient(RouteLookupClient):
     def _build_partykey_query_param(partykey):
         return urllib.parse.quote(f'https://fhir.nhs.uk/Id/nhsMhsPartyKey|{partykey}')
 
-    def _build_endpoint_url(self, organization, interaction, partykey):
-        organization = self._build_organization_query_param(organization)
+    def _build_endpoint_url(self, interaction, partykey):
         interaction = self._build_interaction_query_param(interaction)
         partykey = self._build_partykey_query_param(partykey)
-        return f"{self.base_url}/Endpoint?organization={organization}&identifier={interaction}&identifier={partykey}"
+        return f"{self.base_url}/Endpoint?identifier={interaction}&identifier={partykey}"
 
     def _build_device_url(self, organization, interaction):
         organization = self._build_organization_query_param(organization)
@@ -85,6 +84,10 @@ class SdsApiClient(RouteLookupClient):
     @staticmethod
     def _get_identifier_value(resource, system):
         return list(filter(lambda kv: kv['system'] == system, resource['identifier']))[0]['value']
+
+    @staticmethod
+    def _set_identifier_value(resource, system, value):
+        list(filter(lambda kv: kv['system'] == system, resource['identifier']))[0]['value'] = value
 
     @staticmethod
     def _get_extension(endpoint, system, value_key):
@@ -99,10 +102,16 @@ class SdsApiClient(RouteLookupClient):
             ods_code = self.spine_org_code
 
         device_resource = await self._get_sds_device_resource(interaction_id, ods_code)
-        party_key = self._get_identifier_value(device_resource, 'https://fhir.nhs.uk/Id/nhsMhsPartyKey')
-        owner = device_resource['owner']['identifier']['value']
 
-        return await self._get_sds_endpoint_resource(interaction_id, party_key, owner)
+        party_key = self._get_identifier_value(device_resource, 'https://fhir.nhs.uk/Id/nhsMhsPartyKey')
+
+        endpoint_resource = await self._get_sds_endpoint_resource(interaction_id, party_key)
+
+        # copy asid from Device to Endpoint the same as SpineRouteLookup does
+        asid = self._get_identifier_value(device_resource, 'https://fhir.nhs.uk/Id/nhsSpineASID')
+        self._set_identifier_value(endpoint_resource, "https://fhir.nhs.uk/Id/nhsMHSId", asid)
+
+        return endpoint_resource
 
     async def _get_sds_device_resource(self, interaction_id: str, ods_code: str) -> Dict:
         device_url = self._build_device_url(ods_code, interaction_id)
@@ -119,8 +128,8 @@ class SdsApiClient(RouteLookupClient):
 
         return resources[0]
 
-    async def _get_sds_endpoint_resource(self, interaction_id: str, party_key: str, ods_code) -> Dict:
-        endpoint_url = self._build_endpoint_url(ods_code, interaction_id, party_key)
+    async def _get_sds_endpoint_resource(self, interaction_id: str, party_key: str) -> Dict:
+        endpoint_url = self._build_endpoint_url(interaction_id, party_key)
 
         http_response = await common_https.CommonHttps.make_request(url=endpoint_url, method="GET", headers=self._build_headers(), body=None)
         sds_api_result = json.loads(http_response.body.decode())
@@ -133,7 +142,7 @@ class SdsApiClient(RouteLookupClient):
         if len(resources) == 0:
             raise SDSException('Empty response from accredited system lookup')
         if len(resources) > 1:
-            logger.warning("More than one accredited system details returned on inputs: {ods_code} & "
-                           "{interaction_id}", fparams={"ods_code": ods_code, "interaction_id": interaction_id})
+            logger.warning("More than one accredited system details returned on inputs: {interaction_id} & "
+                           "{party_key}", fparams={"interaction_id": interaction_id, "party_key": party_key})
 
         return resources[0]

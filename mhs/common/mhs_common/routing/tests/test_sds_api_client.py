@@ -71,7 +71,7 @@ class TestSdsApiClient(unittest.TestCase):
                 self.assertEqual(expected_result, routing_details)
 
                 expected_device_url = self._build_url(path=DEVICE_PATH, org_code=ORG_CODE, interaction_id=SERVICE_ID)
-                expected_endpoint_url = self._build_url(path=ENDPOINT_PATH, org_code=OWNER_ORG_CODE, interaction_id=SERVICE_ID, party_key=PARTY_KEY)
+                expected_endpoint_url = self._build_url(path=ENDPOINT_PATH, interaction_id=SERVICE_ID, party_key=PARTY_KEY)
 
                 self._assert_http_client_called_with_expected_args([expected_device_url, expected_endpoint_url])
 
@@ -88,7 +88,7 @@ class TestSdsApiClient(unittest.TestCase):
                 self.assertEqual(expected_result, routing_details)
 
                 expected_device_url = self._build_url(path=DEVICE_PATH, org_code=SPINE_ORG_CODE, interaction_id=SERVICE_ID)
-                expected_endpoint_url = self._build_url(path=ENDPOINT_PATH, org_code=OWNER_ORG_CODE, interaction_id=SERVICE_ID, party_key=PARTY_KEY)
+                expected_endpoint_url = self._build_url(path=ENDPOINT_PATH, interaction_id=SERVICE_ID, party_key=PARTY_KEY)
 
                 self._assert_http_client_called_with_expected_args([expected_device_url, expected_endpoint_url])
 
@@ -104,7 +104,7 @@ class TestSdsApiClient(unittest.TestCase):
                 self.assertEqual(expected_result, routing_details)
 
                 expected_device_url = self._build_url(path=DEVICE_PATH, org_code=SPINE_ORG_CODE, interaction_id=SERVICE_ID)
-                expected_endpoint_url = self._build_url(path=ENDPOINT_PATH, org_code=OWNER_ORG_CODE, interaction_id=SERVICE_ID, party_key=PARTY_KEY)
+                expected_endpoint_url = self._build_url(path=ENDPOINT_PATH, interaction_id=SERVICE_ID, party_key=PARTY_KEY)
 
                 self._assert_http_client_called_with_expected_args([expected_device_url, expected_endpoint_url])
 
@@ -133,7 +133,6 @@ class TestSdsApiClient(unittest.TestCase):
         mock_device_response.body = device_response
         mock_endpoint_response = mock.Mock()
         mock_endpoint_response.body = endpoint_response
-        # self.mock_http_client.fetch.return_value = test_utilities.awaitable(mock_endpoint_response)
         self.mock_http_client.fetch.side_effect = [
             test_utilities.awaitable(mock_device_response),
             test_utilities.awaitable(mock_endpoint_response)
@@ -160,6 +159,6 @@ class TestSdsApiClient(unittest.TestCase):
             ('identifier', 'https://fhir.nhs.uk/Id/nhsMhsPartyKey', party_key),
         ]
 
-        query_params = "&".join(map(lambda v: f'{v[0]}={urllib.parse.quote(f"{v[1]}|{v[2]}")}' ,filter(lambda v: v[2], query_params)))
+        query_params = "&".join(map(lambda v: f'{v[0]}={urllib.parse.quote(f"{v[1]}|{v[2]}")}', filter(lambda v: v[2], query_params)))
 
         return f'{BASE_URL}/{path}?{query_params}'
