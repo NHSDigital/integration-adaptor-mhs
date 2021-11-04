@@ -38,7 +38,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
 
         cert = config.get_config('DB_CA_CERTS', default=None)
         # If cert present create client with ssl enabled
-        if cert not None:
+        if cert is not None:
             cert_file = open(_CERT_FILE_PATH, "a")
             cert_file.write(cert)
             cert_file.close()
