@@ -1,4 +1,6 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
+import ssl
+
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError
@@ -32,7 +34,12 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.retry_delay = retry_delay
         self.max_retries = max_retries
 
-        client = AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'))
+        client = AsyncIOMotorClient(
+            config.get_config('DB_ENDPOINT_URL'),
+            ssl_certfile=config.get_config('DB_CLIENT_CERT', default=None),
+            ssl_cert_reqs=ssl.CERT_NONE,
+            ssl_ca_certs=config.get_config('DB_CLIENT_CA_CERTS', default=None)
+        )
         self.collection = client[_DB_NAME][table_name]
 
     @validate_data_has_no_primary_key_field(primary_key=_KEY)

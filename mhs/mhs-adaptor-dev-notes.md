@@ -108,6 +108,8 @@ e.g. Setting this to ~400 bytes less than the maximum request body size should b
 which varies depending on the request body size).
 * `MHS_LAZY_LDAP` use lazy connection from spine route lookup component to SPINE LDAP service
 * `MHS_DB_ENDPOINT_URL` The URL for the adaptors DB
+* `MHS_DB_CLIENT_CERT` The client cert to use for the adaptors DB connection
+* `MHS_DB_CLIENT_CA_CERTS` The CA certs to use for the adaptors DB connection
 * `MHS_CLOUD_REGION` Cloud region that the adaptor has/will be been deployed to
 * `MHS_PERSISTENCE_ADAPTOR` Used to determine the type of persistence adaptor to implement (dynamodb/mongodb)  
 * `MHS_LOG_FORMAT` #[%(asctime)sZ] | %(levelname)s | %(process)d | %(interaction_id)s | %(message_id)s | %(correlation_id)s | (inbound_message_id)s | %(name)s | %(message)s"
