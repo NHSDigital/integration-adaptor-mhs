@@ -1,5 +1,6 @@
+from comms.http_headers import HttpHeaders
 from request.base_handler import BaseHandler
-from utilities import timing, integration_adaptors_logger as log
+from utilities import timing, integration_adaptors_logger as log, mdc
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -18,4 +19,5 @@ class ReliabilityRequestHandler(BaseHandler):
         logger.info("Obtained reliability information. {reliability_information}",
                     fparams={"reliability_information": reliability_info})
 
+        self.set_header(HttpHeaders.CORRELATION_ID, mdc.correlation_id.get())
         self.write(reliability_info)
