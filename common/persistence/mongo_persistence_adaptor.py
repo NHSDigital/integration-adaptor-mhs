@@ -1,5 +1,6 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
 import ssl
+import os
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
@@ -34,10 +35,15 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.retry_delay = retry_delay
         self.max_retries = max_retries
 
+        # Create a temporary file to dump the CERT data into from ENV VAR
+        cert_file = open("cert_file.pem", "a")
+        cert_file.write(config.get_config('DB_CA_CERTS', default=None))
+        cert_file.close()
+        
         client = AsyncIOMotorClient(
             config.get_config('DB_ENDPOINT_URL'),
             ssl_cert_reqs=ssl.CERT_REQUIRED,
-            ssl_ca_certs=config.get_config('DB_CA_CERTS', default=None)
+            ssl_ca_certs="cert_file.pem"
         )
         self.collection = client[_DB_NAME][table_name]
 
