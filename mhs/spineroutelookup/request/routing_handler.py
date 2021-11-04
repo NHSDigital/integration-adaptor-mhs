@@ -1,6 +1,5 @@
-from comms.http_headers import HttpHeaders
 from request.base_handler import BaseHandler
-from utilities import timing, integration_adaptors_logger as log, mdc
+from utilities import timing, integration_adaptors_logger as log
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -19,5 +18,4 @@ class RoutingRequestHandler(BaseHandler):
         logger.info("Obtained routing information. {routing_information}",
                     fparams={"routing_information": routing_info})
 
-        self.set_header(HttpHeaders.CORRELATION_ID, mdc.correlation_id.get())
         self.write(routing_info)
