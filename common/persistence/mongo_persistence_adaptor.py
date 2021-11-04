@@ -36,8 +36,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
 
         client = AsyncIOMotorClient(
             config.get_config('DB_ENDPOINT_URL'),
-            ssl_certfile=config.get_config('DB_CLIENT_CERT', default=None),
-            ssl_cert_reqs=ssl.CERT_NONE,
+            ssl_cert_reqs=ssl.CERT_REQUIRED,
             ssl_ca_certs=config.get_config('DB_CA_CERTS', default=None)
         )
         self.collection = client[_DB_NAME][table_name]
