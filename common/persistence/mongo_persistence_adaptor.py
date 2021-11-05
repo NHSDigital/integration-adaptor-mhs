@@ -41,7 +41,6 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         cert = config.get_config('DB_CA_CERTS', default=None)
         print(f'Before SSL Check:  cert value is -->{cert} : Typeof cert is {type(cert)}')
         logger.info(f'Before SSL:  cert value is -->{cert} : Typeof cert is {type(cert)}')
-        print(config)
         # If cert present create client with ssl enabled
         if cert is not None:
             print(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
