@@ -11,7 +11,7 @@ from persistence import persistence_adaptor
 from persistence.persistence_adaptor import retriable, RecordCreationError, RecordUpdateError, RecordRetrievalError, \
     RecordDeletionError, validate_data_has_no_primary_key_field, DuplicatePrimaryKeyError
 from utilities import config
-from utilities.config import config
+
 
 
 logger = log.IntegrationAdaptorsLogger(__name__)

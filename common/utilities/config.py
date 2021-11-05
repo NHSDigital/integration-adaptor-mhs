@@ -23,7 +23,7 @@ def setup_config(component_name: str):
     for k, v in os.environ.items():
         if k.startswith(prefix):
             config[k[len(prefix):]] = v
-    print(config)
+
 
 _config_default = object()
 
