@@ -1,5 +1,6 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
 import ssl
+import os
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
@@ -38,7 +39,8 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.max_retries = max_retries
 
 
-        cert = config.get_config('DB_CA_CERTS', default=None)
+        #cert = config.get_config('DB_CA_CERTS', default=None)
+        cert = os.environ.get('MHS_DB_ENDPOINT_URL', None)
         print(f'Before SSL Check:  cert value is -->{cert} : Typeof cert is {type(cert)}')
         logger.info(f'Before SSL:  cert value is -->{cert} : Typeof cert is {type(cert)}')
         # If cert present create client with ssl enabled
