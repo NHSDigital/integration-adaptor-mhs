@@ -15,7 +15,7 @@ logger = log.IntegrationAdaptorsLogger(__name__)
 
 _DB_NAME = 'integration-adaptors'
 _KEY = "_id"
-_CERT_FILE_PATH = "db-cert.pem"
+_CERT_FILE_PATH = "~/db-cert.pem"
 
 
 class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
@@ -37,8 +37,13 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
 
 
         cert = config.get_config('DB_CA_CERTS', default=None)
+        print(f'Before SSL Check:  cert value is -->{cert} : Typeof cert is {type(cert)}')
+        logger.info(f'Before SSL:  cert value is -->{cert} : Typeof cert is {type(cert)}')
+
         # If cert present create client with ssl enabled
         if cert is not None:
+            print(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
+            logger.info(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
             cert_file = open(_CERT_FILE_PATH, "a")
             cert_file.write(cert)
             cert_file.close()
