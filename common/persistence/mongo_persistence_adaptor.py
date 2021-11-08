@@ -1,6 +1,5 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
 import ssl
-import os
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
@@ -11,8 +10,6 @@ from persistence import persistence_adaptor
 from persistence.persistence_adaptor import retriable, RecordCreationError, RecordUpdateError, RecordRetrievalError, \
     RecordDeletionError, validate_data_has_no_primary_key_field, DuplicatePrimaryKeyError
 from utilities import config
-
-
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -38,27 +35,22 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.retry_delay = retry_delay
         self.max_retries = max_retries
 
-
-        #cert = config.get_config('DB_CA_CERTS', default=None)
-        cert = os.environ.get('MHS_DB_CA_CERTS', None)
-        print(f'Before SSL Check:  cert value is -->{cert} : Typeof cert is {type(cert)}')
-        logger.info(f'Before SSL:  cert value is -->{cert} : Typeof cert is {type(cert)}')
-        # If cert present create client with ssl enabled
-        if cert is not None:
-            print(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
-            logger.info(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
-            cert_file = open(_CERT_FILE_PATH, "a")
-            cert_file.write(cert)
-            cert_file.close()
-            client = AsyncIOMotorClient(
-                config.get_config('DB_ENDPOINT_URL'),
-                ssl_cert_reqs=ssl.CERT_REQUIRED,
-                ssl_ca_certs=_CERT_FILE_PATH
-            )
-        else:
-            client = AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'))
+        client = self._build_client()
         
         self.collection = client[_DB_NAME][table_name]
+
+    @staticmethod
+    def _build_client():
+        cert = config.get_config('DB_CA_CERTS', None)
+        kwargs = {}
+        if cert:
+            with open(_CERT_FILE_PATH, "a") as cert_file:
+                cert_file.write(cert)
+            kwargs = {
+                'ssl_cert_reqs': ssl.CERT_REQUIRED,
+                'ssl_ca_certs': _CERT_FILE_PATH
+            }
+        return AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'), **kwargs)
 
     @validate_data_has_no_primary_key_field(primary_key=_KEY)
     @retriable
