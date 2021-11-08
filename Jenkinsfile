@@ -222,6 +222,7 @@ pipeline {
                     post {
                         always {
                             sh label: 'Docker status', script: 'docker ps --all'
+                            sh label: 'Docker inspect network', script: 'docker network inspect ${BUILD_TAG_LOWER}_default'
                             sh label: 'Dump container logs to files', script: '''
                                 mkdir -p logs
                                 docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound_2.log
