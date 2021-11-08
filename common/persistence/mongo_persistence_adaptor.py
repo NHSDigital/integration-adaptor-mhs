@@ -47,7 +47,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         if cert is not None:
             print(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
             logger.info(f'SSL Enabled:  cert value is -->{cert} : Typeof cert is {type(cert)}')
-            cert_file = open(_CERT_FILE_PATH, "a")
+            cert_file = open(_CERT_FILE_PATH, "w")
             cert_file.write(cert)
             cert_file.close()
 
