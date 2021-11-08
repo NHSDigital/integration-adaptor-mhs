@@ -19,7 +19,7 @@ logger = log.IntegrationAdaptorsLogger(__name__)
 _DB_NAME = 'integration-adaptors'
 _KEY = "_id"
 _CERT_FILE_PATH = "/db-cert.pem"
-
+_CERT_FILE_CONTENTS = ""
 
 class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
     """Class responsible for persisting items into a MongoDB."""
@@ -51,10 +51,14 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             cert_file.write(cert)
             cert_file.close()
 
-            cert_file = open(_CERT_FILE_PATH, "r")
-            logger.info(f'Contents of {_CERT_FILE_PATH} are;')
-            logger.info(f'{cert_file.read()}')
-            cert_file.close()
+            cert_file1 = open(_CERT_FILE_PATH, "r")
+            _CERT_FILE_CONTENTS = cert_file1.read()
+            cert_file1.close()
+            print(f'Content _ of {_CERT_FILE_PATH} is ')
+            logger.info(f'Content of {_CERT_FILE_PATH} is ')
+            print(f'{_CERT_FILE_CONTENTS}')
+            logger.info(f'{_CERT_FILE_CONTENTS}')
+
 
             client = AsyncIOMotorClient(
                 config.get_config('DB_ENDPOINT_URL'),
