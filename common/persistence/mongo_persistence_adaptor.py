@@ -52,7 +52,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             cert_file.close()
             client = AsyncIOMotorClient(
                 config.get_config('DB_ENDPOINT_URL'),
-                ssl_cert_reqs=ssl.CERT_REQUIRED,
+                ssl=True,
                 ssl_ca_certs=_CERT_FILE_PATH
             )
         else:
