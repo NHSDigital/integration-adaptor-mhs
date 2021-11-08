@@ -43,7 +43,7 @@ class ForwardReliableMessagingPatternTests(TestCase):
         message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
 
         attachments = [{
-            'content_type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'content_type': 'application/octet-stream',
             'is_base64': False,
             'description': 'Some description',
             'payload': 'Some payload'
