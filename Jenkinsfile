@@ -203,6 +203,9 @@ pipeline {
                         }
                         stage('Component Tests (SDS API)') {
                             steps {
+                                sh label: 'Print SDS API Mock mappings', script: '''
+                                    curl http://localhost:8081/__admin/mappings
+                                '''
                                 sh label: 'Run component tests', script: '''
                                     docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .
                                     docker run --rm --network "${BUILD_TAG_LOWER}_default" \
