@@ -50,10 +50,16 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             cert_file = open(_CERT_FILE_PATH, "a")
             cert_file.write(cert)
             cert_file.close()
+
+            cert_file = open(_CERT_FILE_PATH, "r")
+            logger.info(f'Contents of {_CERT_FILE_PATH} are;')
+            logger.info(f'{cert_file.read()}')
+            cert_file.close()
+
             client = AsyncIOMotorClient(
                 config.get_config('DB_ENDPOINT_URL'),
-                tls=True,
-                tls_ca_certs=_CERT_FILE_PATH
+                ssl=True,
+                ssl_ca_certs=_CERT_FILE_PATH
             )
         else:
             client = AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'))
