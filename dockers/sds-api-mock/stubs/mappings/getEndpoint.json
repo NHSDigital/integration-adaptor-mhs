@@ -3,14 +3,6 @@
 	"request": {
 		"method": "GET",
 		"urlPath": "/Endpoint",
-		"queryParameters": {
-			"organization": {
-				"matches": "https:\/\/fhir[.]nhs[.]uk\/Id\/ods-organization-code[|].*"
-			},
-			"identifier": {
-				"matches": "https:\/\/fhir[.]nhs[.]uk\/Id\/nhsServiceInteractionId[|].*"
-			}
-		},
 		"headers": {
 			"X-Correlation-Id": {
 				"matches": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
