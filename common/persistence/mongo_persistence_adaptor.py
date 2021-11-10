@@ -1,4 +1,5 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
+import os
 import ssl
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -41,10 +42,10 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
 
     @staticmethod
     def _build_client():
-        cert = config.get_config('DB_CA_CERTS', None)
+        cert = os.environ.get('MHS_DB_CA_CERTS', None)
         kwargs = {}
         if cert:
-            with open(_CERT_FILE_PATH, "a") as cert_file:
+            with open(_CERT_FILE_PATH, "w") as cert_file:
                 cert_file.write(cert)
             kwargs = {
                 'ssl': True,
