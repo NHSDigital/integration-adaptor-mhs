@@ -1,6 +1,6 @@
 # National Integration Adaptors - MHS SETUP
 ___
-##1. OpenTest Setup (requires waiting for response from NHSD Services)
+### 1. OpenTest Setup (requires waiting for response from NHSD Services)
 Find [THIS](https://github.com/nhsconnect/integration-adaptor-mhs/blob/develop/setup-opentest.md)
 document useful for the setup of OpenTest necessary in order to make this project work
 * [OpenVPN](https://openvpn.net/community-downloads/)
@@ -9,7 +9,7 @@ document useful for the setup of OpenTest necessary in order to make this projec
 
 
 ___
-##2. Intellij IDEA initial setup
+### 2. Intellij IDEA initial setup
 * Press `⌘ + ,` (Command + comma) to step into `Preferences` window
 * Go to `Plugins` tab
 * Install `EnvFile` and `Python` plugins
@@ -19,7 +19,7 @@ ___
 * Open cloned project from folder or clone using VCS 
 `git clone https://github.com/nhsconnect/integration-adaptor-mhs.git`
 ---
-##3. Terminal actions
+### 3. Terminal actions
 
 Install ``Python 3.7``:
 ```shell
@@ -44,7 +44,7 @@ Note: If you have ``pyenv`` already installed, ``pipenv`` will get the global se
 ```
 
 ___
-##3.1 If you're getting a `Pystache 0.5.4` error
+### 3.1 If you're getting a `Pystache 0.5.4` error
 For each module:
 * Open shell using `pipenv shell`
 * Uninstall `setuptools` `pip uninstall -y setuptools`
@@ -53,7 +53,7 @@ For each module:
 * Try installing dependencies again `pipenv install --dev`
 
 ---
-##3.2 For MacOS users
+### 3.2 For MacOS users
 * Go to terminal window where you have ``mhs/outbound`` directory open
 * Install ``openssl`` and ``curl-openssl`` using
 ```shell
@@ -71,7 +71,7 @@ pip install --no-cache-dir --compile --ignore-installed --install-option="--with
 ```
 * `exit` virtual enviroment shell
 ___
-##4. Adding virtual enviroment SDKs
+### 4. Adding virtual enviroment SDKs
 
 For each module:
 * Check and copy the path to virtual enviroment `pipenv --venv` from terminal
@@ -83,7 +83,7 @@ For each module:
   * e.g.:`/Users/<username>/.local/share/virtualenvs/outbound-vfKgBI9O/bin/python3`
 
 ___
-##5. Importing modules to the project
+### 5. Importing modules to the project
 
 For each module:
 * In IntelliJ press `⌘ + ;` (Command + semicolon) to open `Project Structure` window
