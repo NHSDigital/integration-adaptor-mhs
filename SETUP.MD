@@ -1,12 +1,18 @@
 # National Integration Adaptors - MHS SETUP
 ___
-### 1. OpenTest Setup (requires waiting for response from NHSD Services)
+### 1. OpenTest And VPN initial setup (requires waiting for response from NHSD Services)
 Find [THIS](https://github.com/nhsconnect/integration-adaptor-mhs/blob/develop/setup-opentest.md)
 document useful for the setup of OpenTest necessary in order to make this project work
 * [OpenVPN](https://openvpn.net/community-downloads/)
 * [TunnelBlick VPN](https://tunnelblick.net/downloads.html)
 
-
+Using TunnelBlick VPN, after receiving a response containing two files:
+* Download both of them
+* Remove `.txt` from `<filename>.ovpn.txt`, so it's an `.ovpn` extension file
+  * **Note:** It was changed because of mail attachments policies 
+* Open TunnelBlick, go into `Configurations` tab and simply drag the `.ovpn` configuration file into the box
+* Choose `Only Me` when asked
+  * **Note:** Might be prompted to confirm the action using system credentials
 
 ___
 ### 2. Intellij IDEA initial setup
@@ -29,13 +35,13 @@ Install ``Python 3.7``:
 
 Note: If you have ``pyenv`` already installed, ``pipenv`` will get the global set Python version from it on installation
 
-* cd into each of the directories in terminal (from the root directory of the project):
-    * ``common``
-    * ``integration-tests/integration_tests``
-    * ``mhs/common``
-    * ``mhs/spineroutelookup``
-    * ``mhs/inbound``
-    * ``mhs/outbound``
+* Go into each of the directories in terminal (from the root directory of the project):
+    * `common`
+    * `integration-tests/integration_tests`
+    * `mhs/common`
+    * `mhs/spineroutelookup`
+    * `mhs/inbound`
+    * `mhs/outbound`
 
 
 **Install dependencies for `Python 3.7` for each:**
@@ -96,4 +102,82 @@ For each module:
   * **Note:** Rename `common` to `mhs-common` if working on this module
 * Select the corresponding `Module SDK` in `Dependencies` tab after clicking on newly imported module
 * Click `Apply` button
+
+---
+### 6. Adding certificate keys to .yaml configuration file
+
+```
+- MAKE SURE TO STORE THIS FILE SOMEWHERE OUTSIDE THE PROJECT TO AVOID IT BEING COMMITTED
+- DO NOT SHARE THESE KEYS WITH OTHERS AS IT IS FOR YOUR PERSONAL USE ONLY
+```
+
+* Download and open [MHS YAML FILE GOES HERE]()
+* Look for `User-specific env variables`, don't change anything else
+* Input `MHS_SECRET_PARTY_KEY`value from email's attached text file's `Party key`
+* **NOTE FOR KEYS:** Make sure to have two empty spaces on each line if the key has pasted differently
+  * Paste keys from new line leaving variable name with `|`, e.g. `MHS_SECRET_CLIENT_CERT: |`
+* Input `MHS_SECRET_CLIENT_CERT` value from `Your endpoint certificate`
+* Input `MHS_SECRET_CLIENT_KEY` value from `Your endpoint private key`
+* Input `MHS_SECRET_CA_CERTS` values
+  * First from `Endpoint issuing subCA certificate`
+  * Second from `Root CA certificate`
+
+### 7. Adding .yaml files to IntelliJ Run Configurations
+
+* Find `main.py` files of `inbound`, `outbound` and `spineroutelookup` modules in project structure
+* For each of them:
+  * Right mouse click, `Modify Run Configuration...` (Should be under `Run` and `Debug` buttons)
+  * In the `Edit Run Configuration` window:
+    * Rename `main` to module name
+    * Open `EnvFile` tab
+  * EnvFile is disabled by default, so tick `Enable EnvFile` checkbox
+  * Click `+` sign on top of the box below or press `⌘ + N` (Command + N) and `JSON/YAML file`
+  * Specify path to the `.yaml` configuration file
+  * Make sure it's enabled and click `Apply` and then `Ok`
+
+**Note:** If there are any problems with not found imports or errors in any module's main script:
+* Consider invalidating caches (`File` -> `Invalidate Caches` and select all) and see if the problem dissapeared after the restart
+* If this didn't work, make sure your intelliJ and all plugins are up to date
+
+### 8. Attaching integration-tests configuration file to Run
+
+* Download [MHS INTEGRATION TESTS YAML FILE GOES HERE]()
+* Click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
+* Click `Edit Configuration Templates`
+* Find `Python tests` -> `Unittests` template and open `EnvFile` tab
+* EnvFile is disabled by default, so tick `Enable EnvFile` checkbox
+* Click `+` sign on top of the box below or press `⌘ + N` (Command + N) and `JSON/YAML file`
+* Specify path to the `.yaml` integration-tests configuration file
+* Make sure it's enabled and click `Apply` and then `Ok`
+
+### 8.1 Make running services easier
+
+* Click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
+* Click `+` sign on top of window or press `⌘ + N` (Command + N) to add a new configuration and click `Compound`
+* Rename the compound to `Run services`
+* Add `inbound`, `outbound` and `spineroutelookup` modules to the `Compound`
+* Click `Apply` to save changes
+
+### 8.2 Make running tests easier
+
+* Click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
+* For each module:
+  * 
+* Click `+` sign on top of window or press `⌘ + N` (Command + N) to add a new configuration and click `Compound`
+* Rename the compound to `Run Unit Tests`
+* Add 
+
+### 9. Running 
+
+* Connect to the VPN you configured earlier
+* Make sure Docker is running and from the root directory of the project, run:
+```shell
+./start-dependencies-docker-containers.sh
+```
+* Run the `Run Services` compound you made earlier
+  * If not:
+    * please refer to [Making compound with services](#8.1-make-running-services-easier)
+    * or start `inbound`, `outbound` and `spineroutelookup` modules to run parallelly
+
+
 
