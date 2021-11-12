@@ -1,5 +1,7 @@
 # National Integration Adaptors - MHS SETUP
 ___
+**Note:** Setup for Windows would differ only in commands and keyboard shortcuts used
+___
 ### 1. OpenTest And VPN initial setup (requires waiting for response from NHSD Services)
 Find [THIS](https://github.com/nhsconnect/integration-adaptor-mhs/blob/develop/setup-opentest.md)
 document useful for the setup of OpenTest necessary in order to make this project work
@@ -75,7 +77,7 @@ export CPPFLAGS="-I/usr/local/opt/curl-openssl/include"
 
 pip install --no-cache-dir --compile --ignore-installed --install-option="--with-openssl" --install-option="--openssl-dir=/usr/local/opt/openssl" pycurl
 ```
-* `exit` virtual enviroment shell
+* `exit` virtual environment shell
 ___
 ### 4. Adding virtual enviroment SDKs
 
@@ -104,14 +106,16 @@ For each module:
 * Click `Apply` button
 
 ---
-### 6. Adding certificate keys to .yaml configuration file
+### 6. Adding certificate keys to .yaml configuration file - TODO: Find MHS Config YAML
 
 ```
 - MAKE SURE TO STORE THIS FILE SOMEWHERE OUTSIDE THE PROJECT TO AVOID IT BEING COMMITTED
 - DO NOT SHARE THESE KEYS WITH OTHERS AS IT IS FOR YOUR PERSONAL USE ONLY
 ```
 
-* Download and open [MHS YAML FILE GOES HERE]()
+* Create a copy of [MHS CONFIGURATION FILE]()
+  * Directory: `THERE'S NO RELATION TO WORKING CONFIG FILE`
+  * Optionally you might want to rename the file to `mhs-config.yaml`
 * Look for `User-specific env variables`, don't change anything else
 * Input `MHS_SECRET_PARTY_KEY`value from email's attached text file's `Party key`
 * **NOTE FOR KEYS:** Make sure to have two empty spaces on each line if the key has pasted differently
@@ -138,11 +142,21 @@ For each module:
 **Note:** If there are any problems with not found imports or errors in any module's main script:
 * Consider invalidating caches (`File` -> `Invalidate Caches` and select all) and see if the problem dissapeared after the restart
 * If this didn't work, make sure your intelliJ and all plugins are up to date
+  * This might change modules structure after indexing, but it doesn't have any impact on them
 
 ### 8. Attaching integration-tests configuration file to Run
 
-* Download [MHS INTEGRATION TESTS YAML FILE GOES HERE]()
-* Click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
+```
+- MAKE SURE TO STORE THIS FILE SOMEWHERE OUTSIDE THE PROJECT TO AVOID IT BEING COMMITTED
+- DO NOT SHARE THESE KEYS WITH OTHERS AS IT IS FOR YOUR PERSONAL USE ONLY
+```
+
+* Create a copy of [MHS INTEGRATION TESTS CONFIGURATION FILE](https://github.com/nhsconnect/integration-adaptor-mhs/blob/develop/integration-tests/integration_tests/integration-test-env-example.yaml)
+  * Directory: `/integration-tests/integration_tests/integration-test-env-example.yaml`
+  * Optionally you might want to rename the file to `integration-tests.yaml`
+* Fill the `INTEGRATION_TEST_ASID`'s empty `''` with a value of `ASID` from e-mail's attached text file  
+* Choose the proper `MHS_PERSISTENCE_ADAPTOR` and `MHS_DB_ENDPOINT_URL`
+* In IntelliJ, click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
 * Click `Edit Configuration Templates`
 * Find `Python tests` -> `Unittests` template and open `EnvFile` tab
 * EnvFile is disabled by default, so tick `Enable EnvFile` checkbox
@@ -158,11 +172,11 @@ For each module:
 * Add `inbound`, `outbound` and `spineroutelookup` modules to the `Compound`
 * Click `Apply` to save changes
 
-### 8.2 Make running tests easier
+### 8.2 Make running tests easier - TODO - Complete
 
 * Click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
 * For each module:
-  * 
+  * TODO: Specify steps on unit tests config
 * Click `+` sign on top of window or press `⌘ + N` (Command + N) to add a new configuration and click `Compound`
 * Rename the compound to `Run Unit Tests`
 * Add 
@@ -175,9 +189,12 @@ For each module:
 ./start-dependencies-docker-containers.sh
 ```
 * Run the `Run Services` compound you made earlier
-  * If not:
+  * If you skipped this stage:
     * please refer to [8.1 Make running services easier](#81-make-running-services-easier) section
     * or start `inbound`, `outbound` and `spineroutelookup` modules to run parallelly
+  
+* When those services are running, `integration tests` should be passing
+
 
 
 
