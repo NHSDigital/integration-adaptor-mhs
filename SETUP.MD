@@ -176,7 +176,7 @@ For each module:
 ```
 * Run the `Run Services` compound you made earlier
   * If not:
-    * please refer to [Making compound with services](#8.1-make-running-services-easier)
+    * please refer to [Making compound with services](#81-make-running-services-easier)
     * or start `inbound`, `outbound` and `spineroutelookup` modules to run parallelly
 
 
