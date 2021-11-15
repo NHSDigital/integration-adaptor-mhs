@@ -171,14 +171,18 @@ For each module:
 * Add `inbound`, `outbound` and `spineroutelookup` modules to the `Compound`
 * Click `Apply` to save changes
 
-### 8.2 Make running tests easier - TODO - Complete
+### 8.2 Make running tests easier
 
 * Click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
 * For each module:
-  * TODO: Specify steps on unit tests config
+  * Right click on module root folder name -> `Mark Directory As` -> `Test Sources Root` (The green one)
+  * Right click on module root folder name -> `Modify Run Configuration...`
+  * Go to `EnvFile` tab, add `integration-tests.yaml` configuration file ([8 Attaching integration-tests configuration file to Run](#8-attaching-integration-tests-configuration-file-to-run))
+  * You can change name to `UnitTests in <modulename>`, click `Apply` and `OK` button to save
+  * Right click on module root folder name -> `Mark Directory As` -> `Unmark As Test Sources Root`
 * Click `+` sign on top of window or press `⌘ + N` (Command + N) to add a new configuration and click `Compound`
 * Rename the compound to `Run Unit Tests`
-* Add 
+* Add all newly created `UnitTests in <modulename>` configurations to the compound
 
 ### 9. Running 
 
@@ -191,8 +195,13 @@ For each module:
   * If you skipped this stage:
     * please refer to [8.1 Make running services easier](#81-make-running-services-easier) section
     * or start `inbound`, `outbound` and `spineroutelookup` modules to run parallelly
-  
+
 * When those services are running, `integration tests` should be passing
+
+* Run the `Run Unit Tests` compound you made earlier
+  * If you skipped this stage
+    * please refer to [8.2 Make running tests easier](#82-make-running-tests-easier)
+    * or run each Unit Test individually
 
 
 
