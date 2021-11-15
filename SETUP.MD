@@ -106,16 +106,15 @@ For each module:
 * Click `Apply` button
 
 ---
-### 6. Adding certificate keys to .yaml configuration file - TODO: Find MHS Config YAML
+### 6. Adding certificate keys to .yaml configuration file
 
 ```
 - MAKE SURE TO STORE THIS FILE SOMEWHERE OUTSIDE THE PROJECT TO AVOID IT BEING COMMITTED
 - DO NOT SHARE THESE KEYS WITH OTHERS AS IT IS FOR YOUR PERSONAL USE ONLY
 ```
 
-* Create a copy of [MHS CONFIGURATION FILE]()
-  * Directory: `THERE'S NO RELATION TO WORKING CONFIG FILE`
-  * Optionally you might want to rename the file to `mhs-config.yaml`
+* Create a copy of [MHS CONFIGURATION FILE](https://github.com/nhsconnect/integration-adaptor-mhs/blob/develop/mhs-config.yaml)
+  * Directory: `Root-folder-of-the-project/mhs-config.yaml`
 * Look for `User-specific env variables`, don't change anything else
 * Input `MHS_SECRET_PARTY_KEY`value from email's attached text file's `Party key`
 * **NOTE FOR KEYS:** Make sure to have two empty spaces on each line if the key has pasted differently
