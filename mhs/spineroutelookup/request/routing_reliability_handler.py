@@ -1,5 +1,6 @@
+from comms.http_headers import HttpHeaders
 from request.base_handler import BaseHandler
-from utilities import timing, integration_adaptors_logger as log
+from utilities import timing, integration_adaptors_logger as log, mdc
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -28,4 +29,5 @@ class RoutingReliabilityRequestHandler(BaseHandler):
         logger.info("Combined routing and reliability information. {routing_reliability_information}",
                     fparams={"routing_reliability_information": combined_info})
 
+        self.set_header(HttpHeaders.CORRELATION_ID, mdc.correlation_id.get())
         self.write(combined_info)
