@@ -49,9 +49,7 @@ class AttachmentSchema(marshmallow.Schema):
                                      # EIS section 2.5.4.2
                                      validate=marshmallow.validate.Length(min=1, max=5_000_000))
     description = marshmallow.fields.Str(required=True, description='Description of the attachment',
-                                         # Max length is a reasonable maximum as a maximum isn't explicitly documented
-                                         # in the EIS
-                                         validate=marshmallow.validate.Length(min=1, max=100))
+                                         validate=marshmallow.validate.Length(min=1))
 
     @marshmallow.post_load
     def make_attachment(self, data, **kwargs):
