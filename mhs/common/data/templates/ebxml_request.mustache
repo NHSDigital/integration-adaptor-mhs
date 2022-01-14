@@ -20,7 +20,9 @@ Content-Transfer-Encoding: 8bit
 		<eb:MessageData>
 			<eb:MessageId>{{message_id}}</eb:MessageId>
 			<eb:Timestamp>{{timestamp}}</eb:Timestamp>
+            <eb:TimeToLive>{{time_to_live}}</eb:TimeToLive>
 		</eb:MessageData>
+        <eb:DuplicateElimination>always</eb:DuplicateElimination>
         {{#duplicate_elimination}}
         <eb:DuplicateElimination/>
         {{/duplicate_elimination}}
@@ -51,7 +53,7 @@ Content-Transfer-Encoding: 8bit
 
 ----=_MIME-Boundary
 Content-Id: <{{message_id}}@spine.nhs.uk>
-Content-Type: text/xml; charset=UTF-8
+Content-Type: application/xml; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 {{{hl7_message}}}

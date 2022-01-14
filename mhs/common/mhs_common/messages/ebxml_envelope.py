@@ -20,6 +20,7 @@ SERVICE = "service"
 ACTION = "action"
 MESSAGE_ID = 'message_id'
 TIMESTAMP = 'timestamp'
+TIME_TO_LIVE = 'time_to_live'
 RECEIVED_MESSAGE_ID = "received_message_id"  # RefToMessageId - id of original message sent to outbound
 ERROR_CODE = "error_code"
 SEVERITY = "severity"
@@ -76,6 +77,8 @@ class EbxmlEnvelope(envelope.Envelope):
             message_id = message_utilities.get_uuid()
             ebxml_message_dictionary[MESSAGE_ID] = message_id
         timestamp = message_utilities.get_timestamp()
+        time_to_live = message_utilities.get_time_to_live()
+        ebxml_message_dictionary[TIME_TO_LIVE] = time_to_live
         ebxml_message_dictionary[TIMESTAMP] = timestamp
         logger.info('Creating ebXML message with {MessageId} and {Timestamp}',
                     fparams={'MessageId': message_id, 'Timestamp': timestamp})

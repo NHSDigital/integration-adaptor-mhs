@@ -22,6 +22,16 @@ def get_timestamp():
     current_utc_time = datetime.datetime.utcnow()
     return current_utc_time.strftime(EBXML_TIMESTAMP_FORMAT)
 
+def get_time_to_live():
+    """Generate a timestamp in a format suitable for sending in ebXML messages.
+
+    :return: A string representation of the time to live (timestamp + 1 day)
+    """
+
+    time_to_live = datetime.datetime.utcnow()
+    time_to_live += datetime.timedelta(days=1)
+    return time_to_live.strftime(EBXML_TIMESTAMP_FORMAT)
+
 
 def load_test_data(message_dir, filename_without_extension):
     message = file_utilities.get_file_string(message_dir / (filename_without_extension + ".msg"))
