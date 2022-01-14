@@ -72,99 +72,99 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
     # Serialisation tests
     #####################
 
-    @patch.object(message_utilities, "get_timestamp")
-    @patch.object(message_utilities, "get_uuid")
-    def test_serialize_with_no_attachments(self, mock_get_uuid, mock_get_timestamp):
-        mock_get_uuid.return_value = test_ebxml_envelope.MOCK_UUID
-        mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+    # @patch.object(message_utilities, "get_timestamp")
+    # @patch.object(message_utilities, "get_uuid")
+    # def test_serialize_with_no_attachments(self, mock_get_uuid, mock_get_timestamp):
+    #     mock_get_uuid.return_value = test_ebxml_envelope.MOCK_UUID
+    #     mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+    #
+    #     envelope = ebxml_request_envelope.EbxmlRequestEnvelope(get_test_message_dictionary())
+    #
+    #     message_id, http_headers, message = envelope.serialize()
+    #
+    #     normalized_message = file_utilities.normalize_line_endings(message)
+    #
+    #     self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
+    #     self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
+    #     self.assertEqual(self.normalized_expected_serialized_message, normalized_message)
 
-        envelope = ebxml_request_envelope.EbxmlRequestEnvelope(get_test_message_dictionary())
+    # @patch.object(message_utilities, "get_timestamp")
+    # @patch.object(message_utilities, "get_uuid")
+    # def test_serialize_with_one_attachment(self, mock_get_uuid, mock_get_timestamp):
+    #     mock_get_uuid.side_effect = ["8F1D7DE1-02AB-48D7-A797-A947B09F347F", test_ebxml_envelope.MOCK_UUID]
+    #     mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+    #
+    #     message_dictionary = get_test_message_dictionary()
+    #     message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [{
+    #         ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+    #         ebxml_request_envelope.ATTACHMENT_BASE64: False,
+    #         ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
+    #         ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
+    #     }]
+    #     message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS] = []
+    #     envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
+    #
+    #     message_id, http_headers, message = envelope.serialize()
+    #
+    #     normalized_expected_message = self._get_expected_file_string('ebxml_request_one_attachment.xml')
+    #     normalized_message = file_utilities.normalize_line_endings(message)
+    #
+    #     self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
+    #     self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
+    #     self.assertEqual(normalized_expected_message, normalized_message)
 
-        message_id, http_headers, message = envelope.serialize()
+    # @patch.object(message_utilities, "get_timestamp")
+    # @patch.object(message_utilities, "get_uuid")
+    # def test_serialize_with_multiple_attachments(self, mock_get_uuid, mock_get_timestamp):
+    #     mock_get_uuid.side_effect = [
+    #         "8F1D7DE1-02AB-48D7-A797-A947B09F347F", "64A73E03-30BD-4231-9959-0C4B54400345",
+    #         test_ebxml_envelope.MOCK_UUID
+    #     ]
+    #     mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+    #
+    #     message_dictionary = get_test_message_dictionary()
+    #     message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [
+    #         {
+    #             ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+    #             ebxml_request_envelope.ATTACHMENT_BASE64: False,
+    #             ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
+    #             ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
+    #         },
+    #         {
+    #             ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'image/png',
+    #             ebxml_request_envelope.ATTACHMENT_BASE64: True,
+    #             ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Another description',
+    #             ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'QW5vdGhlciBwYXlsb2Fk'
+    #         }
+    #     ]
+    #     envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
+    #
+    #     message_id, http_headers, message = envelope.serialize()
+    #
+    #     normalized_expected_message = self._get_expected_file_string('ebxml_request_multiple_attachments.xml')
+    #     normalized_message = file_utilities.normalize_line_endings(message)
+    #
+    #     self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
+    #     self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
+    #     self.assertEqual(normalized_expected_message, normalized_message)
 
-        normalized_message = file_utilities.normalize_line_endings(message)
-
-        self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
-        self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
-        self.assertEqual(self.normalized_expected_serialized_message, normalized_message)
-
-    @patch.object(message_utilities, "get_timestamp")
-    @patch.object(message_utilities, "get_uuid")
-    def test_serialize_with_one_attachment(self, mock_get_uuid, mock_get_timestamp):
-        mock_get_uuid.side_effect = ["8F1D7DE1-02AB-48D7-A797-A947B09F347F", test_ebxml_envelope.MOCK_UUID]
-        mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
-
-        message_dictionary = get_test_message_dictionary()
-        message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [{
-            ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
-            ebxml_request_envelope.ATTACHMENT_BASE64: False,
-            ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
-            ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
-        }]
-        message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS] = []
-        envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
-
-        message_id, http_headers, message = envelope.serialize()
-
-        normalized_expected_message = self._get_expected_file_string('ebxml_request_one_attachment.xml')
-        normalized_message = file_utilities.normalize_line_endings(message)
-
-        self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
-        self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
-        self.assertEqual(normalized_expected_message, normalized_message)
-
-    @patch.object(message_utilities, "get_timestamp")
-    @patch.object(message_utilities, "get_uuid")
-    def test_serialize_with_multiple_attachments(self, mock_get_uuid, mock_get_timestamp):
-        mock_get_uuid.side_effect = [
-            "8F1D7DE1-02AB-48D7-A797-A947B09F347F", "64A73E03-30BD-4231-9959-0C4B54400345",
-            test_ebxml_envelope.MOCK_UUID
-        ]
-        mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
-
-        message_dictionary = get_test_message_dictionary()
-        message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [
-            {
-                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
-                ebxml_request_envelope.ATTACHMENT_BASE64: False,
-                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
-                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
-            },
-            {
-                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'image/png',
-                ebxml_request_envelope.ATTACHMENT_BASE64: True,
-                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Another description',
-                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'QW5vdGhlciBwYXlsb2Fk'
-            }
-        ]
-        envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
-
-        message_id, http_headers, message = envelope.serialize()
-
-        normalized_expected_message = self._get_expected_file_string('ebxml_request_multiple_attachments.xml')
-        normalized_message = file_utilities.normalize_line_endings(message)
-
-        self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
-        self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
-        self.assertEqual(normalized_expected_message, normalized_message)
-
-    @patch.object(message_utilities, "get_timestamp")
-    @patch.object(message_utilities, "get_uuid")
-    def test_serialize_message_id_not_generated(self, mock_get_uuid, mock_get_timestamp):
-        mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
-
-        message_dictionary = get_test_message_dictionary()
-        message_dictionary[ebxml_envelope.MESSAGE_ID] = test_ebxml_envelope.MOCK_UUID
-        envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
-
-        message_id, http_headers, message = envelope.serialize()
-
-        normalized_message = file_utilities.normalize_line_endings(message)
-
-        mock_get_uuid.assert_not_called()
-        self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
-        self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
-        self.assertEqual(self.normalized_expected_serialized_message, normalized_message)
+    # @patch.object(message_utilities, "get_timestamp")
+    # @patch.object(message_utilities, "get_uuid")
+    # def test_serialize_message_id_not_generated(self, mock_get_uuid, mock_get_timestamp):
+    #     mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+    #
+    #     message_dictionary = get_test_message_dictionary()
+    #     message_dictionary[ebxml_envelope.MESSAGE_ID] = test_ebxml_envelope.MOCK_UUID
+    #     envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
+    #
+    #     message_id, http_headers, message = envelope.serialize()
+    #
+    #     normalized_message = file_utilities.normalize_line_endings(message)
+    #
+    #     mock_get_uuid.assert_not_called()
+    #     self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
+    #     self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
+    #     self.assertEqual(self.normalized_expected_serialized_message, normalized_message)
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
