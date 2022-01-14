@@ -74,9 +74,11 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
-    def test_serialize_with_no_attachments(self, mock_get_uuid, mock_get_timestamp):
+    @patch.object(message_utilities, "get_time_to_live")
+    def test_serialize_with_no_attachments(self, mock_get_uuid, mock_get_timestamp, mock_get_time_to_live):
         mock_get_uuid.return_value = test_ebxml_envelope.MOCK_UUID
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         envelope = ebxml_request_envelope.EbxmlRequestEnvelope(get_test_message_dictionary())
 
@@ -90,9 +92,11 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
-    def test_serialize_with_one_attachment(self, mock_get_uuid, mock_get_timestamp):
+    @patch.object(message_utilities, "get_time_to_live")
+    def test_serialize_with_one_attachment(self, mock_get_uuid, mock_get_timestamp, mock_get_time_to_live):
         mock_get_uuid.side_effect = ["8F1D7DE1-02AB-48D7-A797-A947B09F347F", test_ebxml_envelope.MOCK_UUID]
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         message_dictionary = get_test_message_dictionary()
         message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [{
@@ -115,12 +119,14 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
-    def test_serialize_with_multiple_attachments(self, mock_get_uuid, mock_get_timestamp):
+    @patch.object(message_utilities, "get_time_to_live")
+    def test_serialize_with_multiple_attachments(self, mock_get_uuid, mock_get_timestamp, mock_get_time_to_live):
         mock_get_uuid.side_effect = [
             "8F1D7DE1-02AB-48D7-A797-A947B09F347F", "64A73E03-30BD-4231-9959-0C4B54400345",
             test_ebxml_envelope.MOCK_UUID
         ]
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         message_dictionary = get_test_message_dictionary()
         message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [
@@ -150,8 +156,10 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
-    def test_serialize_message_id_not_generated(self, mock_get_uuid, mock_get_timestamp):
+    @patch.object(message_utilities, "get_time_to_live")
+    def test_serialize_message_id_not_generated(self, mock_get_uuid, mock_get_timestamp, mock_get_time_to_live):
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         message_dictionary = get_test_message_dictionary()
         message_dictionary[ebxml_envelope.MESSAGE_ID] = test_ebxml_envelope.MOCK_UUID
@@ -168,9 +176,12 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
-    def test_serialize_raises_error_when_required_tags_not_passed(self, mock_get_uuid, mock_get_timestamp):
+    @patch.object(message_utilities, "get_time_to_live")
+    def test_serialize_raises_error_when_required_tags_not_passed(self, mock_get_uuid, mock_get_timestamp,
+                                                                  mock_get_time_to_live):
         mock_get_uuid.return_value = test_ebxml_envelope.MOCK_UUID
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         keys = set(get_test_message_dictionary().keys())
         keys.remove(ebxml_envelope.ATTACHMENTS)
@@ -187,8 +198,11 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
-    def test_serialize_raises_error_when_required_attachment_tags_not_passed(self, mock_get_uuid, mock_get_timestamp):
+    @patch.object(message_utilities, "get_time_to_live")
+    def test_serialize_raises_error_when_required_attachment_tags_not_passed(self, mock_get_uuid, mock_get_timestamp,
+                                                                             mock_get_time_to_live):
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         required_tags = [
             ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE, ebxml_request_envelope.ATTACHMENT_BASE64,
@@ -213,10 +227,13 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
     @patch.object(message_utilities, "get_timestamp")
     @patch.object(message_utilities, "get_uuid")
+    @patch.object(message_utilities, "get_time_to_live")
     def test_serialize_doesnt_include_xml_tag_when_corresponding_boolean_flag_set_to_false(self, mock_get_uuid,
-                                                                                           mock_get_timestamp):
+                                                                                           mock_get_timestamp,
+                                                                                           mock_get_time_to_live):
         mock_get_uuid.return_value = test_ebxml_envelope.MOCK_UUID
         mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+        mock_get_time_to_live.return_value = test_ebxml_envelope.MOCK_TIME_TO_LIVE
 
         test_cases = [
             (ebxml_request_envelope.DUPLICATE_ELIMINATION, 'eb:DuplicateElimination'),
