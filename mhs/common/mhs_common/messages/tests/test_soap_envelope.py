@@ -31,7 +31,7 @@ TEST_MESSAGE_DIR = "mhs_common/messages/tests/test_messages"
 EXPECTED_HTTP_HEADERS = {
     'charset': 'UTF-8',
     'SOAPAction': 'urn:nhs:names:services:pdsquery/QUPA_IN040000UK32',
-    'Content-Type': 'text/xml',
+    'Content-Type': 'multipart/related',
     'type': 'text/xml'
 }
 
