@@ -1,5 +1,8 @@
 """This module defines the outbound synchronous request handler component."""
 import json
+import uuid
+import base64
+from datetime import datetime
 
 import marshmallow
 import mhs_common.state.work_description as wd
@@ -10,6 +13,7 @@ import tornado.web
 
 from lxml import etree
 from comms.http_headers import HttpHeaders
+from persistence.mongo_persistence_adaptor import MongoPersistenceAdaptor
 from utilities import mdc
 from mhs_common.handler import base_handler
 from mhs_common.messages import ebxml_envelope
@@ -37,6 +41,15 @@ class SynchronousHandler(base_handler.BaseHandler):
 
         logger.info('Outbound POST received. {Request}', fparams={'Request': str(self.request)})
         logger.debug('Outbound POST request body: {Body}', fparams={'Body': self.request.body.decode()})
+
+        mongo_persistence_adaptor = MongoPersistenceAdaptor(table_name='requests', max_retries=1, retry_delay=1)
+        await mongo_persistence_adaptor.add(
+            str(uuid.uuid4()),
+            {
+                'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                'type': 'outbound-incoming',
+                'request_body': self.request.body.decode().encode('ascii')
+            })
 
         request_body = self._parse_body()
 
