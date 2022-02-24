@@ -77,7 +77,7 @@ class ExternalAttachmentSchema(marshmallow.Schema):
 
     @marshmallow.post_load
     def make_external_attachment(self, data, **kwargs):
-        return ExternalAttachment(data['document_id'], data['message_id'], data['description'])
+        return ExternalAttachment(data.get('document_id') or [], data['message_id'], data['description'])
 
 
 @dataclasses.dataclass

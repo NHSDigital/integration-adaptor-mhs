@@ -88,7 +88,6 @@ are allowed to be. This should be set minus any HTTP headers and other content i
 e.g. Setting this to ~400 bytes less than the maximum request body size should be roughly the correct value
 (calculating this value accurately is pretty much impossible as one of the HTTP headers is the Content-Length header
 which varies depending on the request body size).
-* `MHS_LAZY_LDAP` use lazy connection from spine route lookup component to SPINE LDAP service
 * `MHS_DB_ENDPOINT_URL` The URL for the adaptors DB
 * `MHS_CLOUD_REGION` Cloud region that the adaptor has/will be been deployed to
 * `MHS_PERSISTENCE_ADAPTOR` Used to determine the type of persistence adaptor to implement (dynamodb/mongodb)  
@@ -100,6 +99,7 @@ which varies depending on the request body size).
 * `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` Define which lookup method to use for routing and reliability. One of `SPINE_ROUTE_LOOKUP` or `SDS_API`
 
 Following variables are required if `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` is set to `SPINE_ROUTE_LOOKUP`
+* `MHS_LAZY_LDAP` use lazy connection from spine route lookup component to SPINE LDAP service
 * `MHS_SECRET_SPINE_ROUTE_LOOKUP_CLIENT_CERT` (outbound only) Optional. The client certificate to present when making HTTPS connections to the Spine Route Lookup service. If not specified, no client certificate will be presented.
 * `MHS_SECRET_SPINE_ROUTE_LOOKUP_CLIENT_KEY` (outbound only) Optional. The private key for the client certificate to present when making HTTPS connections to the Spine Route Lookup service. Must be specified if `MHS_SPINE_ROUTE_LOOKUP_CLIENT_CERT` is provided.
 * `MHS_SECRET_SPINE_ROUTE_LOOKUP_CA_CERTS` (outbound only) Optional. The CA certificates used to validate the certificate presented by the Spine Route Lookup service. Should include the following in this order: endpoint issuing subCA certificate, root CA Certificate. If not specified, the system defaults will be used.

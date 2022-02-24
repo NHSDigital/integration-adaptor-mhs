@@ -36,6 +36,7 @@ class SynchronousHandler(base_handler.BaseHandler):
         ods_code = self._extract_ods_code()
 
         logger.info('Outbound POST received. {Request}', fparams={'Request': str(self.request)})
+        logger.debug('Outbound POST request body: {Body}', fparams={'Body': self.request.body.decode()})
 
         request_body = self._parse_body()
 
