@@ -480,6 +480,7 @@ pipeline {
                                             }
                                         }
                                     }
+                                    sh label: 'Setting SKIP_FORWARD_RELIABLE_INT_TEST', script 'export SKIP_FORWARD_RELIABLE_INT_TEST=true'
                                     sh label: 'Running integration tests', script: 'pipenv run inttests'
                                 }
                             }
