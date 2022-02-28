@@ -7,7 +7,7 @@ import utilities.integration_adaptors_logger as log
 from comms import queue_adaptor
 from comms.http_headers import HttpHeaders
 from mhs_common.messages import ebxml_request_envelope, ebxml_envelope
-from mhs_common.routing import routing_reliability
+from mhs_common.routing import route_lookup_client
 from mhs_common.state import work_description as wd
 from mhs_common.transmission import transmission_adaptor
 from mhs_common.workflow.common import CommonWorkflow, MessageData
@@ -32,7 +32,7 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
                  transmission: transmission_adaptor.TransmissionAdaptor = None,
                  queue_adaptor: queue_adaptor.QueueAdaptor = None,
                  max_request_size: int = None,
-                 routing: routing_reliability.RoutingAndReliability = None):
+                 routing: route_lookup_client.RouteLookupClient = None):
 
         self.persistence_store = persistence_store
         self.transmission = transmission

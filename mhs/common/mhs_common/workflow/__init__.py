@@ -2,8 +2,8 @@
 from typing import Dict
 
 from comms import queue_adaptor
+from mhs_common.routing import route_lookup_client
 
-from mhs_common.routing import routing_reliability
 from persistence import persistence_adaptor
 from mhs_common.transmission import transmission_adaptor
 from mhs_common.workflow.asynchronous_express import AsynchronousExpressWorkflow
@@ -28,7 +28,7 @@ def get_workflow_map(party_key: str = None,
                      inbound_async_queue: queue_adaptor.QueueAdaptor = None,
                      max_request_size: int = None,
                      resynchroniser: SyncAsyncResynchroniser = None,
-                     routing: routing_reliability.RoutingAndReliability = None
+                     routing: route_lookup_client.RouteLookupClient = None
                      ) -> Dict[str, CommonWorkflow]:
     """
     Get a map of workflows. Keys for each workflow should correspond with keys used in interactions.json

@@ -86,7 +86,15 @@ locals {
     {
       name = "MHS_OUTBOUND_SPINE_ROUTE_LOOKUP_VALIDATE_CERT"
       value = var.mhs_outbound_spineroutelookup_verify_certificate
-    }
+    },
+    {
+      name = "MHS_OUTBOUND_ROUTING_LOOKUP_METHOD"
+      value = var.mhs_outbound_routing_lookup_method
+    },
+    {
+      name = "MHS_SDS_API_URL"
+      value = var.mhs_sds_api_url
+    },
   ]
   mhs_outbound_base_secrets = [
     {
@@ -104,7 +112,11 @@ locals {
     {
       name = "MHS_SECRET_CA_CERTS"
       valueFrom = var.ca_certs_arn
-    }
+    },
+    {
+      name = "MHS_SDS_API_KEY"
+      valueFrom = var.mhs_sds_api_key_arn
+    },
   ]
 }
 
