@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2022-03-02
+
+### Changed
+
+Support using SDS API instead of Spine Route Lookup allowing to use MHS without LDAP connectivity. 
+
 ## [1.1.1] - 2021-09-15
 
 ### Changed
