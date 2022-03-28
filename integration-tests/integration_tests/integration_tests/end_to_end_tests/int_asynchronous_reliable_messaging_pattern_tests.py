@@ -1,6 +1,7 @@
 """
 Provides tests around the Asynchronous Reliable workflow, including sync-async wrapping
 """
+import uuid
 from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
@@ -47,19 +48,19 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
     def test_should_return_successful_response_from_spine_to_message_queue(self):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
-
+        correlation_id = str(uuid.uuid4())
         # Act
         MhsHttpRequestBuilder() \
             .with_headers(interaction_id='REPC_IN150016UK05',
                           message_id=message_id,
                           wait_for_response=False,
-                          correlation_id='1') \
+                          correlation_id=correlation_id) \
             .with_body(message) \
             .execute_post_expecting_success()
 
         # Assert
         amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
-        self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id)
+        self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
         hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
         self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
 
@@ -72,7 +73,7 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
             .with_headers(interaction_id='REPC_IN150016UK05',
                           message_id=message_id,
                           wait_for_response=False,
-                          correlation_id='1') \
+                          correlation_id=str(uuid.uuid4())) \
             .with_body(message) \
             .execute_post_expecting_success()
 

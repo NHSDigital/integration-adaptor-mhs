@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  outbound:
+    environment:
+      - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD=SDS_API
+      - MHS_SDS_API_URL=http://sds-api-mock:8080
+      - MHS_SDS_API_KEY=none
+
+  route:
+    deploy:
+      replicas: 0
+
+  redis:
+    deploy:
+      replicas: 0

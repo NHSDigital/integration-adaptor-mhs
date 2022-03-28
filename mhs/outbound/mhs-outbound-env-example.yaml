@@ -14,6 +14,11 @@ MHS_PERSISTENCE_ADAPTOR: # one of: dynamodb(default) | mongodb
 #then set appropriate db url
 MHS_DB_ENDPOINT_URL: # one of: http://localhost:8000 | mongodb://localhost:27017 for local docker development
 
+# following 3 are mandatory for SDS API use instead of spine-route-lookup component
+MHS_OUTBOUND_ROUTING_LOOKUP_METHOD: SDS_API # one of SPINE_ROUTE_LOOKUP(default if empty) or SDS_API
+MHS_SDS_API_URL: # URL to the SDS API (eg. INT - https://internal-dev.api.service.nhs.uk/spine-directory/FHIR/R4)
+MHS_SDS_API_KEY: # api key used to authenticate with the SDS API
+
 AWS_ACCESS_KEY_ID: test
 AWS_SECRET_ACCESS_KEY: test
 MHS_RESYNC_INTERVAL: "1"

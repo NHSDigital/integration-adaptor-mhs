@@ -27,7 +27,15 @@ are required to run the MHS Adaptor locally.
   export MHS_SECRET_CLIENT_KEY=$'client key from NHS Digital here'
   export MHS_SECRET_CA_CERTS=$'ca certs from NHS Digital here'
   ```
-  and then run `source configure-env-vars.sh`
+  and then run `source configure-env-vars.sh`.
+
+  Optionally, add following environment variables to replace spine-route-lookup with INT SDS API Sandbox for routing and reliability lookup.
+
+  ```sh
+  export MHS_OUTBOUND_ROUTING_LOOKUP_METHOD=SDS_API
+  export MHS_SDS_API_URL=https://sandbox.api.service.nhs.uk/spine-directory/FHIR/R4
+  export MHS_SDS_API_KEY=none
+  ```
 
 * Ensure your OpenTest connectivity is enabled in OpenVPN. (This does not apply if you have an available HSCN connection)
     
