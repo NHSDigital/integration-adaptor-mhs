@@ -1,6 +1,4 @@
 """This module defines the inbound request handler component."""
-import uuid
-from datetime import datetime
 from typing import Dict, Optional
 
 import mhs_common.messages.common_ack_envelope as common_ack_envelope
@@ -12,7 +10,6 @@ import mhs_common.workflow as workflow
 import tornado.web
 
 from mhs_common.workflow.common import MessageData
-from persistence.mongo_persistence_adaptor import MongoPersistenceAdaptor
 from utilities import mdc
 from mhs_common.configuration import configuration_manager
 from mhs_common.handler import base_handler
@@ -52,15 +49,6 @@ class InboundHandler(base_handler.BaseHandler):
         logger.info('Inbound POST received: {request}', fparams={'request': self.request})
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
-
-        mongo_persistence_adaptor = MongoPersistenceAdaptor(table_name='requests', max_retries=1, retry_delay=1)
-        await mongo_persistence_adaptor.add(
-            str(uuid.uuid4()),
-            {
-                'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
-                'type': 'inbound',
-                'request_body': self.request.body.decode().encode('ascii')
-            })
 
         request_message = self._extract_incoming_ebxml_request_message()
 

@@ -1,10 +1,7 @@
-import uuid
-from datetime import datetime
 from typing import Dict
 
 from tornado import httpclient
 
-from persistence.mongo_persistence_adaptor import MongoPersistenceAdaptor
 from utilities import integration_adaptors_logger as log
 import logging
 
@@ -41,16 +38,6 @@ class CommonHttps(object):
                         "proxy_port": http_proxy_port
                     })
         logger.debug("Request body: %s", body)
-
-        if body:
-            mongo_persistence_adaptor = MongoPersistenceAdaptor(table_name='requests', max_retries=1, retry_delay=1)
-            await mongo_persistence_adaptor.add(
-                str(uuid.uuid4()),
-                {
-                    'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
-                    'type': 'outbound-outgoing',
-                    'request_body': body.encode('ascii')
-                })
 
         if not validate_cert:
             logger.warning("Server certificate validation has been disabled.")
