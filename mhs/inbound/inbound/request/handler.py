@@ -1,5 +1,4 @@
 """This module defines the inbound request handler component."""
-
 from typing import Dict, Optional
 
 import mhs_common.messages.common_ack_envelope as common_ack_envelope
@@ -50,6 +49,7 @@ class InboundHandler(base_handler.BaseHandler):
         logger.info('Inbound POST received: {request}', fparams={'request': self.request})
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Request body: %s', self.request.body.decode() if self.request.body else None)
+
         request_message = self._extract_incoming_ebxml_request_message()
 
         message_id = self._extract_message_id(request_message)

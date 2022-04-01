@@ -29,15 +29,16 @@ class CommonHttps(object):
         :param raise_error_response: Return an error response
         """
 
-        logger.info("About to send {method} request with {headers} to {url} using {proxy_host} & {proxy_port}",
+        logger.info("Request {method} to {url} using {proxy_host} and {proxy_port}",
                     fparams={
                         "method": method,
-                        "headers": headers,
                         "url": url,
                         "proxy_host": http_proxy_host,
                         "proxy_port": http_proxy_port
                     })
-        logger.debug("Request body: %s", body)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug("Request {headers}", fparams={"headers": headers})
+            logger.debug("Request {body}", fparams={"body": body})
 
         if not validate_cert:
             logger.warning("Server certificate validation has been disabled.")
@@ -53,18 +54,9 @@ class CommonHttps(object):
                                                             validate_cert=validate_cert,
                                                             proxy_host=http_proxy_host,
                                                             proxy_port=http_proxy_port)
-        logger.info("Sent {method} request with {headers} to {url} using {proxy_host} & {proxy_port}, and "
-                    "received status code {code}",
-                    fparams={
-                        "method": method,
-                        "headers": headers,
-                        "url": url,
-                        "proxy_host": http_proxy_host,
-                        "proxy_port": http_proxy_port,
-                        "code": response.code
-                    })
 
+        logger.info("Response {code}", fparams={"code": response.code})
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("Response body: %s", response.body.decode() if response.body else None)
+            logger.debug("Response {body}", fparams={"body": response.body.decode() if response.body else ''})
 
         return response
