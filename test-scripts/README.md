@@ -30,7 +30,7 @@ Populate the variables in this file with the details provided when you signed up
 
 ## Start it up
 ```bash
-$ cd 1.1.1
+$ cd 1.2.2
 $ ./run.sh
 ```
 
