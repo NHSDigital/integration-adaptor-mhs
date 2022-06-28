@@ -165,3 +165,5 @@ export-env-vars-and-run-mhs-docker.sh
 out/
 
 *.env
+/smoke-tests/.gradle/
+/smoke-tests/smoke_vars.sh

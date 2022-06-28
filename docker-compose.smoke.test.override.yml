@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  inbound:
+    ports:
+      - "${MHS_INBOUND_HEALTHCHECK_SERVER_PORT}:${MHS_INBOUND_HEALTHCHECK_SERVER_PORT}"
+    environment:
+      - MHS_INBOUND_HEALTHCHECK_SERVER_PORT=${MHS_INBOUND_HEALTHCHECK_SERVER_PORT}
