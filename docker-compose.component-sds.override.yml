@@ -4,7 +4,7 @@ services:
   outbound:
     environment:
       - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD=SDS_API
-      - MHS_SDS_API_URL=http://sds-api-mock:8080
+      - MHS_SDS_API_URL=https://internal-dev.api.service.nhs.uk/spine-directory/FHIR/R4
       - MHS_SDS_API_KEY=none
 
   route:
