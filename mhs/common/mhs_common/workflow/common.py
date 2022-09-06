@@ -23,6 +23,7 @@ class MessageData:
     ebxml: str
     payload: str
     attachments: List
+    external_attachments: List
 
 
 class CommonWorkflow(abc.ABC):
