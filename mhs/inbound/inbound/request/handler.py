@@ -64,7 +64,11 @@ class InboundHandler(base_handler.BaseHandler):
 
         message_data = MessageData(request_message.message_dictionary[ebxml_request_envelope.EBXML],
                                    request_message.message_dictionary[ebxml_request_envelope.MESSAGE],
-                                   request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS])
+                                   request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS],
+                                   request_message.message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS])
+
+        logger.error("ZAQWSX:")
+        logger.error(str(message_data))
 
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
@@ -72,6 +76,7 @@ class InboundHandler(base_handler.BaseHandler):
         else:
             logger.info(f'No RefToMessageId on inbound reply: handling as an unsolicited message')
             await self._handle_unsolicited_message(message_id, correlation_id, interaction_id, message_data)
+
         self._send_ack(request_message)
 
     async def _handle_referenced_reply_message(self, message_id: str, correlation_id: str, message_data: MessageData):
@@ -79,7 +84,7 @@ class InboundHandler(base_handler.BaseHandler):
         message_workflow = self.workflows[work_description.workflow]
         logger.info('Forwarding message {message_id} to {workflow}', fparams={
                     'workflow': message_workflow, 'message_id': message_id})
-
+       
         try:
             await message_workflow.handle_inbound_message(message_id, correlation_id, work_description, message_data)
         except Exception as e:
@@ -102,6 +107,12 @@ class InboundHandler(base_handler.BaseHandler):
         # Lookup workflow for request
         interaction_details = self._get_interaction_details(interaction_id)
         message_workflow = self._extract_default_workflow(interaction_details, interaction_id)
+
+        # logger.error("azzzebml:")
+        # for key, value in message_data.items():
+        #     logger.error("Attr name:" + key)
+        #     # logger.error("Attr Value:" + str(base_context[attr]))
+        # logger.error("zzzebml2:")
 
         # If it matches forward reliable workflow, then this will be an unsolicited request from another GP system.
         # So let the workflow handle this.
@@ -143,7 +154,7 @@ class InboundHandler(base_handler.BaseHandler):
             ebxml_envelope.CPA_ID: message_details[ebxml_envelope.CPA_ID],
             ebxml_envelope.CONVERSATION_ID: message_details[ebxml_envelope.CONVERSATION_ID],
             common_ack_envelope.RECEIVED_MESSAGE_TIMESTAMP: message_details[ebxml_envelope.TIMESTAMP],
-            ebxml_envelope.RECEIVED_MESSAGE_ID: message_details[ebxml_envelope.MESSAGE_ID]
+            ebxml_envelope.RECEIVED_MESSAGE_ID: message_details[ebxml_envelope.MESSAGE_ID],
         }
 
         base_context.update(additional_context)
