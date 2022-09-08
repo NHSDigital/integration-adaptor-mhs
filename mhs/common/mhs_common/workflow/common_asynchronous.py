@@ -1,5 +1,4 @@
 """This module defines the common base for all asynchronous workflows."""
-import json
 from typing import Dict, Callable, Tuple, Optional
 
 from tornado import httpclient
@@ -162,7 +161,6 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
                 'ebXML': message_data.ebxml,
                 'payload': message_data.payload,
                 'attachments': message_data.attachments or [],
-                # 'external_attachments': json.loads(message_data.external_attachments["external_attachments"]) or []
                 'external_attachments' : message_data.external_attachments or []
             },
             properties={

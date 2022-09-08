@@ -138,7 +138,6 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         """
         msg = EbxmlRequestEnvelope._parse_mime_message(headers, message)
         ebxml_part, payload_part, attachments = EbxmlRequestEnvelope._extract_message_parts(msg)
-        # logger.error("!!!attachments " + attachments)
 
         # parts not a breakdown
         xml_tree: Element = ElementTree.fromstring(ebxml_part)
@@ -151,11 +150,9 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         if payload_part:
             extracted_values[MESSAGE] = payload_part
 
-        logger.error("Pre New Logic: " + str(attachments))
         # We have the payload section of the Attachments but we don't have the additional details from the ebxml body
         extracted_values[ATTACHMENTS] = super().parse_attachments(xml_tree, attachments)[ATTACHMENTS]
 
-        logger.error("POST: " + str(extracted_values[ATTACHMENTS]))
         # External attachments only exist in the ebxml body so they have to be extracted using a different method
         extracted_values[EXTERNAL_ATTACHMENTS] = super().parse_external_attachments(xml_tree)[EXTERNAL_ATTACHMENTS]
 
@@ -219,10 +216,6 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
         payload_part = None
         attachments = []
-        logger.error("MSG PARTS")
-        logger.error(len(message_parts))
-        # logger.error(message_parts)
-        logger.error(str(message_parts[2:]))
 
         if len(message_parts) > 1:
             # HL7 payload part is the second part of the message
@@ -231,8 +224,6 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
             # Any additional attachments are from the third part of the message onwards
             attachments.extend(EbxmlRequestEnvelope._extract_additional_attachments_parts(message_parts[2:]))
 
-        
-        # logger.error("ATTACH: " + str(attachments) + " : " + str(len(attachments)))
         return ebxml_part, payload_part, attachments
 
     @staticmethod

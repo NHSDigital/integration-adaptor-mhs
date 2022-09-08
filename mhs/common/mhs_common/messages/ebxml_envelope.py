@@ -148,7 +148,6 @@ class EbxmlEnvelope(envelope.Envelope):
         attachments = []
         for child in manifestElement:
 
-            logger.error("zzz: Child")
             cid_attribute = None
             xpath_description = None 
             description_attribute = None
@@ -156,36 +155,24 @@ class EbxmlEnvelope(envelope.Envelope):
             # If we have an eb:id then continue, it's a form of attachment, EHR payloads do not have an eb:id
             if '{'+ NAMESPACES[EBXML_NAMESPACE]+ '}id' in child.attrib:
                 
-                logger.error("zzz: eb check")
-
                 if '{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href' in child.attrib:
                     cid_attribute = (child.attrib['{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href'])
                 
                 if "cid" in cid_attribute:
 
-                    logger.error("zzz: cid check")
                     xpath_description = EbxmlEnvelope._path_to_ebxml_element(ATTACHMENTS_DESCRIPTION_TAG, None)
                     description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
                     if description_attribute is not None:
                         description = description_attribute.text
                         cid = cid_attribute.split(":")[1]
-                        logger.error("zzz: aquired cid")
-                        logger.error(cid)
                         
-                        for item in attachment_payloads:
-                            logger.error("item:" + str(item) )
-                            for attribute in item.keys():
-                                logger.error("attr: " + attribute + " value: " + str(item[attribute]))
-
                         # grab the existing payload item by cid 
                         foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
-                        logger.error("payload:" + str(foundPayload))
                         
                         # All this to add the description field :)
                         if (foundPayload is not None): 
 
-                            logger.error("payload found")
                             attachment = {
                                 ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
                                 ATTACHMENT_BASE64: foundPayload[ATTACHMENT_BASE64],
@@ -262,45 +249,16 @@ class EbxmlEnvelope(envelope.Envelope):
         return path
 
     @staticmethod
-    def _extract_ebxml_manifest_references(xml_tree: Element, element_name: str):
-        xpath = EbxmlEnvelope._path_to_ebxml_element(element_name, None)
-        manifestElement = xml_tree.find(xpath, namespaces=NAMESPACES)
-
-        for child in manifestElement:
-            logger.error("zzzzz: ")
-            logger.error(child.tag + ": " +  str(child.attrib))
-            logger.error("xlink: " + str(child.find('XLINK_NAMESPACE:href', NAMESPACES)))
-            # logger.error(child.attrib["xlink"])
-
-
-    @staticmethod
     def _extract_ebxml_value(xml_tree: Element, element_name: str, parent: str = None,
                              required: bool = False) -> Optional[Element]:
         xpath = EbxmlEnvelope._path_to_ebxml_element(element_name, parent=parent)
 
-        logger.error("@1 element:" + str(xml_tree))
-        logger.error("@2 element name:" + element_name)
-
-        if parent is not None:
-            logger.error("@3 element parent:" + parent)
-
-        logger.error("@4 element path:" + xpath)
-
         value = xml_tree.find(xpath, namespaces=NAMESPACES)
-
-        if value is not None:
-            logger.error("@5 value:" + str(value) + " " + str(value.text))
             
         if value is None and required:
             logger.error("Weren't able to find required element {xpath} during parsing of EbXML message.",
                          fparams={'xpath': xpath})
             raise EbXmlParsingError(f"Weren't able to find required element {xpath} during parsing of EbXML message")
-        return value
-
-    @staticmethod
-    def _extract_ebxml_element_value(xml_tree: Element, element_name: str, parent: str = None,
-                                  required: bool = False) -> Optional[Element]:                 
-        value = EbxmlEnvelope._extract_ebxml_value(xml_tree, element_name, parent, required)
         return value
    
     @staticmethod
