@@ -145,16 +145,16 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         extracted_values = super().parse_message(xml_tree)
         cls._extract_more_values_from_xml_tree(xml_tree, extracted_values)
 
-        extracted_values[EBXML] = ebxml_part
-
-        if payload_part:
-            extracted_values[MESSAGE] = payload_part
-
         # We have the payload section of the Attachments but we don't have the additional details from the ebxml body
         extracted_values[ATTACHMENTS] = super().parse_attachments(xml_tree, attachments)[ATTACHMENTS]
 
         # External attachments only exist in the ebxml body so they have to be extracted using a different method
         extracted_values[EXTERNAL_ATTACHMENTS] = super().parse_external_attachments(xml_tree)[EXTERNAL_ATTACHMENTS]
+
+        extracted_values[EBXML] = ebxml_part
+
+        if payload_part:
+            extracted_values[MESSAGE] = payload_part
 
         return EbxmlRequestEnvelope(extracted_values)
 

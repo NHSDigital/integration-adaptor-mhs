@@ -161,7 +161,7 @@ class CommonAsynchronousWorkflow(CommonWorkflow):
                 'ebXML': message_data.ebxml,
                 'payload': message_data.payload,
                 'attachments': message_data.attachments or [],
-                'external_attachments' : message_data.external_attachments or []
+                'external_attachments': message_data.external_attachments or []
             },
             properties={
                 'message-id': message_id,

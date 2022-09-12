@@ -27,7 +27,6 @@ config.setup_config("MHS")
 secrets.setup_secret_config("MHS")
 log.configure_logging("inbound")
 
-
 def build_ssl_context(local_certs_file: str, ca_certs_file: str, key_file: str, ):
     """
     :param local_certs_file: The filename of the certificate to present for authentication.

@@ -116,7 +116,7 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
 
 class TestSyncAsyncWorkflowInbound(TestCase):
 
-    message_data = MessageData(None, 'wqe', None)
+    message_data = MessageData(None, 'wqe', None, None)
 
     def setUp(self):
         self.persistence = MagicMock()
