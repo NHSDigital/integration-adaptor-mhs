@@ -34,11 +34,13 @@ REF_TO_MESSAGE_ID = "B4D38C15-4981-4366-BDE9-8F56EDC4AB72"
 UNSOLICITED_REF_TO_MESSAGE_ID = "C614484E-4B10-499A-9ACD-5D645CFACF61"
 CORRELATION_ID = '10F5A436-1913-43F0-9F18-95EA0E43E61A'
 EXPECTED_MESSAGE = '<hl7:MCCI_IN010000UK13 xmlns:hl7="urn:hl7-org:v3"/>'
-EXPECTED_UNSOLICITED_ATTACHMENTS = [{ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
-                                     ebxml_request_envelope.ATTACHMENT_BASE64: False,
-                                     ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797'
-                                                                                   '-A947B09F347F@spine.nhs.uk',
-                                     ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain'}]
+EXPECTED_UNSOLICITED_ATTACHMENTS = [{
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description'
+}]
 EXPECTED_EXTERNAL_ATTACHMENTS = []
 
 state_data = [
