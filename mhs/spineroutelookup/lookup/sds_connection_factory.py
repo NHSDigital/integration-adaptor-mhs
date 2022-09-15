@@ -5,7 +5,7 @@ import ldap3
 from lookup import sds_mock_connection_factory
 from utilities import certs, config, integration_adaptors_logger as log, secrets
 
-import definitions
+from mhs_common import definitions
 from utilities.string_utilities import str2bool
 
 _LDAP_CONNECTION_RETRIES = int(config.get_config('LDAP_CONNECTION_RETRIES', default='3'))

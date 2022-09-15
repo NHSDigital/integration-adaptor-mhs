@@ -8,7 +8,7 @@ from tornado.testing import AsyncHTTPTestCase
 from tornado.web import Application
 from utilities import file_utilities, test_utilities, xml_utilities
 
-from definitions import ROOT_DIR
+from mhs_common.definitions import ROOT_DIR
 from endpoints import summary_care_record
 from message_handling import message_sender, message_forwarder
 

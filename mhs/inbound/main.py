@@ -2,12 +2,11 @@ import pathlib
 import ssl
 from typing import Dict
 
-
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-import definitions
+from mhs_common import definitions
 import utilities.config as config
 import utilities.integration_adaptors_logger as log
 from mhs_common import workflow

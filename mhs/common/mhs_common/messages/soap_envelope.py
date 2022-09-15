@@ -9,7 +9,7 @@ import lxml.etree as ET
 from comms.http_headers import HttpHeaders
 from utilities import integration_adaptors_logger as log, message_utilities
 
-from definitions import ROOT_DIR
+from mhs_common.definitions import ROOT_DIR
 from mhs_common.messages import envelope
 
 SOAP_CONTENT_TYPE_VALUE = 'text/xml'

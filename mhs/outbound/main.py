@@ -6,12 +6,11 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-import definitions
 import mhs_common.configuration.configuration_manager as configuration_manager
 import outbound.request.synchronous.handler as client_request_handler
 import utilities.integration_adaptors_logger as log
 from handlers import healthcheck_handler
-from mhs_common import workflow
+from mhs_common import workflow, definitions
 from mhs_common.routing import route_lookup_client, spine_route_lookup_client, sds_api_client
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor

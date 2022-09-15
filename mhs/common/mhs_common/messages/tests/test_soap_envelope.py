@@ -3,7 +3,7 @@ from unittest.mock import patch
 from pathlib import Path
 
 from builder import pystache_message_builder
-from definitions import ROOT_DIR
+from mhs_common.definitions import ROOT_DIR
 from mhs_common.messages import soap_envelope
 from utilities import file_utilities
 from utilities import message_utilities

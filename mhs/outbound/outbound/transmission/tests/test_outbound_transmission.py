@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch, sentinel, call
 
-import definitions
+from mhs_common import definitions
 from tornado import httpclient
 from utilities.test_utilities import async_test, awaitable
 

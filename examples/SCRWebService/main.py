@@ -5,7 +5,7 @@ import utilities.integration_adaptors_logger as log
 from scr import gp_summary_upload
 from utilities import config, secrets, certs
 
-import definitions
+from mhs_common import definitions
 from endpoints import summary_care_record
 from message_handling import message_forwarder, message_sender
 
