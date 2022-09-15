@@ -145,6 +145,7 @@ pipeline {
                                     . ./component-test-source.sh
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
+                                sh label: 'Docker Status', script: '''docker ps -a'''
                             }
                         }
                         stage('Component Tests (SpineRouteLookup)') {
@@ -162,6 +163,7 @@ pipeline {
                                         --env "SCR_ADDRESS=http://scradaptor" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
+                                sh label: 'Docker Status', script: '''docker ps -a'''
                             }
                         }
                     }
