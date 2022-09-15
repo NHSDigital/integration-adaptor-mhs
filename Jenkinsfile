@@ -149,8 +149,11 @@ pipeline {
                         }
                         stage('Component Tests (SpineRouteLookup)') {
                             steps {
-                                sh label: 'Run component tests', script: '''
-                                    docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .
+                                sh label: 'Run component tests', script: '''docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .'''
+                                sh label: 'export filesystem', script: '''docker export -o hello.tar ${BUILD_TAG_LOWER}_inbound_1'''
+                                sh label: 'export filesystem', script: '''tar -tvf hello.tar'''
+                                sh label: 'Run component tests', script:'''
+
                                     docker run --rm --network "${BUILD_TAG_LOWER}_default" \
                                         --env "MHS_ADDRESS=http://outbound" \
                                         --env "AWS_ACCESS_KEY_ID=test" \
