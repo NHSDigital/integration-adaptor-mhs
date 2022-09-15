@@ -143,8 +143,8 @@ pipeline {
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
                                     . ./component-test-source.sh
-                                    docker-compose -f docker-compose.yml -f build
-                                    docker-compose -f docker-compose.yml -f -p ${BUILD_TAG_LOWER} up -d'''
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
+                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                                 sh label: 'Docker Status', script: '''docker ps -a'''
                                 sh label: 'Docker Status Inbound logs', script: '''docker logs ${BUILD_TAG_LOWER}_inbound_1 --tail 300'''
                                 sh label: 'Docker Status Outbound logs', script: '''docker logs ${BUILD_TAG_LOWER}_outbound_1 --tail 300'''
