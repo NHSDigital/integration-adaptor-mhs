@@ -14,7 +14,7 @@ WORKDIR /usr/src/app/mhs/inbound
 RUN pipenv --python 3.7
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
-RUN pipenv install --deploy --ignore-pipfile
+RUN pipenv install --dev --deploy --ignore-pipfile
 
 EXPOSE 443 80
 
