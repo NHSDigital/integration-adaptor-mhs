@@ -2,10 +2,11 @@ import pathlib
 import ssl
 from typing import Dict
 
-import definitions
+
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+
 import utilities.config as config
 import utilities.integration_adaptors_logger as log
 from comms import proton_queue_adaptor
@@ -15,6 +16,7 @@ from handlers import healthcheck_handler
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor
 from utilities import secrets, certs
+from mhs.inbound import definitions
 
 import inbound.request.handler as async_request_handler
 from utilities.string_utilities import str2bool
@@ -118,6 +120,7 @@ def create_work_description_store():
 
 
 def main():
+
     certificates = certs.Certs.create_certs_files(definitions.ROOT_DIR,
                                                   private_key=secrets.get_secret_config('CLIENT_KEY'),
                                                   local_cert=secrets.get_secret_config('CLIENT_CERT'),
