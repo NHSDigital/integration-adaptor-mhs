@@ -7,16 +7,17 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
+import definitions
 import utilities.config as config
 import utilities.integration_adaptors_logger as log
-from comms import proton_queue_adaptor
 from mhs_common import workflow
 from mhs_common.configuration import configuration_manager
+from comms import proton_queue_adaptor
 from handlers import healthcheck_handler
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor
 from utilities import secrets, certs
-from mhs.inbound import definitions
+
 
 import inbound.request.handler as async_request_handler
 from utilities.string_utilities import str2bool
