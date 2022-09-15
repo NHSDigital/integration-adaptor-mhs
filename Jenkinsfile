@@ -521,7 +521,7 @@ void executeUnitTestsWithCoverage() {
 }
 
 void buildModules(String action) {
-    sh label: action, script: 'pipenv install --dev --deploy --ignore-pipfile'
+    sh label: action, script: 'pipenv install'
 }
 
 int ecrLogin(String aws_region) {
