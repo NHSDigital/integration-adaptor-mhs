@@ -5,7 +5,7 @@ import utilities.integration_adaptors_logger as log
 from scr import gp_summary_upload
 from utilities import config, secrets, certs
 
-from mhs_common import definitions
+from definitions import ROOT_DIR
 from endpoints import summary_care_record
 from message_handling import message_forwarder, message_sender
 
@@ -18,7 +18,7 @@ def build_app():
     }
     address = config.get_config('MHS_ADDRESS')
 
-    certificates = certs.Certs.create_certs_files(definitions.ROOT_DIR,
+    certificates = certs.Certs.create_certs_files(ROOT_DIR,
                                                   ca_certs=secrets.get_secret_config('MHS_CA_CERTS', default=None))
 
     sender = message_sender.MessageSender(address, ca_certs=certificates.ca_certs_path)

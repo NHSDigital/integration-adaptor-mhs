@@ -8,7 +8,7 @@ from typing import Dict, Tuple, Any
 
 from builder import pystache_message_builder
 
-from mhs_common.definitions import ROOT_DIR
+from definitions import ROOT_DIR
 
 FROM_PARTY_ID = "from_party_id"
 TO_PARTY_ID = "to_party_id"

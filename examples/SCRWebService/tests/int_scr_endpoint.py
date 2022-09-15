@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from utilities import file_utilities
-from mhs_common import definitions
+import definitions
 import pathlib
 import os
 import handlers

@@ -6,11 +6,12 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
+from definitions import ROOT_DIR
 import mhs_common.configuration.configuration_manager as configuration_manager
 import outbound.request.synchronous.handler as client_request_handler
 import utilities.integration_adaptors_logger as log
 from handlers import healthcheck_handler
-from mhs_common import workflow, definitions
+from mhs_common import workflow
 from mhs_common.routing import route_lookup_client, spine_route_lookup_client, sds_api_client
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor
@@ -70,7 +71,7 @@ def initialise_spine_route_lookup():
     spine_org_code = config.get_config('SPINE_ORG_CODE')
     validate_cert = str2bool(config.get_config('SPINE_ROUTE_LOOKUP_VALIDATE_CERT', default=str(True)))
 
-    route_data_dir = pathlib.Path(definitions.ROOT_DIR) / "route"
+    route_data_dir = pathlib.Path(ROOT_DIR) / "route"
     certificates = certs.Certs.create_certs_files(route_data_dir,
                                                   private_key=secrets.get_secret_config('SPINE_ROUTE_LOOKUP_CLIENT_KEY',
                                                                                         default=None),
@@ -141,7 +142,7 @@ def main():
     secrets.setup_secret_config("MHS")
     log.configure_logging("outbound")
 
-    data_dir = pathlib.Path(definitions.ROOT_DIR) / "data"
+    data_dir = pathlib.Path(ROOT_DIR) / "data"
 
     configure_http_client()
 

@@ -1,3 +1,6 @@
+import sys
+print(sys.path)
+
 import pathlib
 import ssl
 from typing import Dict
@@ -6,7 +9,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from mhs_common import definitions
+from definitions import ROOT_DIR
 import utilities.config as config
 import utilities.integration_adaptors_logger as log
 from mhs_common import workflow
@@ -121,7 +124,7 @@ def create_work_description_store():
 
 def main():
 
-    certificates = certs.Certs.create_certs_files(definitions.ROOT_DIR,
+    certificates = certs.Certs.create_certs_files(ROOT_DIR,
                                                   private_key=secrets.get_secret_config('CLIENT_KEY'),
                                                   local_cert=secrets.get_secret_config('CLIENT_CERT'),
                                                   ca_certs=secrets.get_secret_config('CA_CERTS'))
@@ -135,7 +138,7 @@ def main():
                                           work_description_store=work_description_store,
                                           sync_async_store=sync_async_store)
 
-    interactions_config_file = pathlib.Path(definitions.ROOT_DIR) / 'data' / "interactions" / "interactions.json"
+    interactions_config_file = pathlib.Path(ROOT_DIR) / 'data' / "interactions" / "interactions.json"
     config_manager = configuration_manager.ConfigurationManager(str(interactions_config_file))
 
     start_inbound_server(certificates.local_cert_path, certificates.ca_certs_path, certificates.private_key_path,

@@ -4,7 +4,7 @@ import pathlib
 
 from builder.pystache_message_builder import MessageGenerationError
 from utilities import file_utilities, test_utilities
-from mhs_common.definitions import ROOT_DIR
+from definitions import ROOT_DIR
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import Application
 from unittest import mock

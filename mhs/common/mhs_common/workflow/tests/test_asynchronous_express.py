@@ -9,7 +9,7 @@ import mhs_common.workflow.asynchronous_express as async_express
 import mhs_common.workflow.common_asynchronous as common_async
 import utilities.file_utilities as file_utilities
 from comms import proton_queue_adaptor
-from mhs_common.definitions import ROOT_DIR
+from definitions import ROOT_DIR
 from mhs_common import workflow
 from mhs_common.messages import ebxml_request_envelope, ebxml_envelope
 from mhs_common.request.request_body_schema import RequestBody
