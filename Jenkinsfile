@@ -146,6 +146,8 @@ pipeline {
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                                 sh label: 'Docker Status', script: '''docker ps -a'''
+                                sh label: 'Docker Status Inbound logs', script: '''docker logs pr-108-2-cb2c50e_inbound_1 --tail 300'''
+                                sh label: 'Docker Status Outbound logs', script: '''docker logs pr-108-2-cb2c50e_outbound_1 --tail 300'''
                             }
                         }
                         stage('Component Tests (SpineRouteLookup)') {
@@ -164,6 +166,8 @@ pipeline {
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
                                 sh label: 'Docker Status', script: '''docker ps -a'''
+                                sh label: 'Docker Status Inbound logs', script: '''docker logs pr-108-2-cb2c50e_inbound_1 --tail 300'''
+                                sh label: 'Docker Status Outbound logs', script: '''docker logs pr-108-2-cb2c50e_outbound_1 --tail 300'''
                             }
                         }
                     }
