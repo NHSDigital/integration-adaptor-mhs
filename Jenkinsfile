@@ -59,6 +59,7 @@ pipeline {
                             }
                             steps {
                                 buildAndPushImage('${LOCAL_INBOUND_IMAGE_NAME}', '${INBOUND_IMAGE_NAME}', 'mhs/inbound/Dockerfile')
+
                             }
                         }
                     }
@@ -146,6 +147,8 @@ pipeline {
                                     docker-compose -f docker-compose.yml build
                                     docker-compose -f docker-compose.yml -p ${BUILD_TAG_LOWER} up -d'''
                                 sh label: 'Docker Status', script: '''docker ps -a'''
+                                sh label: 'export filesystem', script: '''docker export -o hello.tar ${BUILD_TAG_LOWER}_inbound_1'''
+                                sh label: 'export filesystem', script: '''tar -tvf hello.tar'''
                                 sh label: 'Docker Status Inbound logs', script: '''docker logs ${BUILD_TAG_LOWER}_inbound_1 --tail 300'''
                                 sh label: 'Docker Status Outbound logs', script: '''docker logs ${BUILD_TAG_LOWER}_outbound_1 --tail 300'''
                             }
@@ -521,7 +524,7 @@ void executeUnitTestsWithCoverage() {
 }
 
 void buildModules(String action) {
-    sh label: action, script: 'pipenv install --dev --ignore-pipfile'
+    sh label: action, script: 'pipenv install --dev --deploy --ignore-pipfile'
 }
 
 int ecrLogin(String aws_region) {
