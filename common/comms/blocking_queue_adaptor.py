@@ -25,6 +25,8 @@ class BlockingQueueAdaptor(object):
         print(self.username)
         print("password")
         print(self.password)
+        print("q name")
+        print(self.queue_name)
         receiver = connection.create_receiver(self.queue_name)
         message = receiver.receive(timeout=30)
         receiver.accept()
