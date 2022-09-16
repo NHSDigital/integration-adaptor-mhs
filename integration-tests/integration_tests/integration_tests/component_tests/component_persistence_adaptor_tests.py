@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 
+from exceptions import MaxRetriesExceeded
 from persistence.persistence_adaptor import PersistenceAdaptor, DuplicatePrimaryKeyError
 from persistence.persistence_adaptor_factory import get_persistence_adaptor, PERSISTENCE_ADAPTOR_TYPES
 from utilities import test_utilities
@@ -34,8 +35,6 @@ DB_KEY_FIELDS = {
     'mongodb': '_id',
 }
 
-class MaxRetriesExceeded(Exception):
-    pass
 
 class DbAdaptorsTests(unittest.TestCase):
 

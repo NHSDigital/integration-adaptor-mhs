@@ -10,8 +10,8 @@ WORKDIR /test
 COPY . .
 
 WORKDIR /test/integration-tests/integration_tests
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/mhs/common"
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
+ENV PYTHONPATH "${PYTHONPATH}:/test/usr/src/app/mhs/common"
+ENV PYTHONPATH "${PYTHONPATH}:/test/usr/src/app/common"
 
 RUN pipenv --python 3.7
 RUN pipenv run uninstall_setuptools

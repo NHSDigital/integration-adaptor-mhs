@@ -150,11 +150,9 @@ pipeline {
                         stage('Component Tests (SpineRouteLookup)') {
                             steps {
                                 sh label: 'Run component tests', script: '''docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .'''
-                                sh label: 'export filesystem', script: '''docker export -o hello.tar ${BUILD_TAG_LOWER}_inbound_1'''
-                                sh label: 'export filesystem', script: '''tar -tvf hello.tar'''
                                 sh label: 'Run component tests', script:'''
 
-                                    docker run --rm --network "${BUILD_TAG_LOWER}_default" \
+                                    docker run --network "${BUILD_TAG_LOWER}_default" \
                                         --env "MHS_ADDRESS=http://outbound" \
                                         --env "AWS_ACCESS_KEY_ID=test" \
                                         --env "AWS_SECRET_ACCESS_KEY=test" \
@@ -163,8 +161,12 @@ pipeline {
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
                                         --env "SCR_ADDRESS=http://scradaptor" \
+                                        --name "${BUILD_TAG_LOWER}_component_test"
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
+
+                                sh label: 'export filesystem', script: '''docker export -o hello.tar ${BUILD_TAG_LOWER}_component_test'''
+                                sh label: 'export filesystem', script: '''tar -tvf hello2.tar'''
                             }
                         }
                     }
