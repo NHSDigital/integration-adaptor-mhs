@@ -164,7 +164,6 @@ pipeline {
                                         --name "${BUILD_TAG_LOWER}_component_test" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
-
                             }
                         }
                     }
@@ -498,6 +497,7 @@ pipeline {
         }
     }
     post {
+        always {
             cobertura coberturaReportFile: '**/coverage.xml'
             junit '**/test-reports/*.xml'
             sh 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
