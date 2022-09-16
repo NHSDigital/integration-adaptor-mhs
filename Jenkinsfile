@@ -19,22 +19,22 @@ pipeline {
     }
 
     stages {
-        stage('Build & test Common') {
+//        stage('Build & test Common') {
 //             steps {
 //                 dir('common') {
 //                     buildModules('Installing common dependencies')
 //                     executeUnitTestsWithCoverage()
 //                 }
 //             }
-        }
-        stage('Build & test MHS Common') {
+//        }
+//        stage('Build & test MHS Common') {
 //             steps {
 //                 dir('mhs/common') {
 //                     buildModules('Installing mhs common dependencies')
 //                     executeUnitTestsWithCoverage()
 //                 }
 //             }
-        }
+//        }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
