@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 
-from exceptions import MaxRetriesExceeded
+from common.exceptions import MaxRetriesExceeded
 from persistence.persistence_adaptor import PersistenceAdaptor, DuplicatePrimaryKeyError
 from persistence.persistence_adaptor_factory import get_persistence_adaptor, PERSISTENCE_ADAPTOR_TYPES
 from utilities import test_utilities
