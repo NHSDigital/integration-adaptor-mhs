@@ -165,8 +165,6 @@ pipeline {
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
 
-                                sh label: 'export filesystem', script: '''docker export -o hello2.tar ${BUILD_TAG_LOWER}_component_test'''
-                                sh label: 'export filesystem', script: '''tar -tvf hello2.tar'''
                             }
                         }
                     }
