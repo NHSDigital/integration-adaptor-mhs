@@ -360,9 +360,9 @@ pipeline {
                                             }
                                         }
                                     }
-                                    sh label: 'Running', script: """
+                                    sh label: 'Running integration tests', script: """
                                         export SKIP_FORWARD_RELIABLE_INT_TEST=true
-                                        Running integration tests', script: 'pipenv run inttests
+                                        pipenv run inttests
                                     """
                                 }
                             }
