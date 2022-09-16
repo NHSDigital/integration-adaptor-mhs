@@ -500,9 +500,6 @@ pipeline {
         }
     }
     post {
-        always {
-            sh label: 'Docker Status Inbound logs', script: '''docker logs ${BUILD_TAG_LOWER}_inbound_1 --tail 500'''
-            sh label: 'Docker Status Inbound logs', script: '''docker logs ${BUILD_TAG_LOWER}_outbound_1 --tail 500'''
             cobertura coberturaReportFile: '**/coverage.xml'
             junit '**/test-reports/*.xml'
             sh 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
