@@ -37,7 +37,7 @@ output "inbound_service_bus_port" {
 }
 
 output "service_bus_protocol" {
-  value = var.use_servicebus ? "amqps" : "amqp"
+  value = var.use_servicebus ? "amqp+ssl" : "amqp"
 }
 
 output "inbound_service_bus_queue_name" {
