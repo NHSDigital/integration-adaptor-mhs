@@ -19,44 +19,44 @@ pipeline {
     }
 
     stages {
-        stage('Build & test Common') {
-            steps {
-                dir('common') {
-                    buildModules('Installing common dependencies')
-                    executeUnitTestsWithCoverage()
-                }
-            }
-        }
-        stage('Build & test MHS Common') {
-            steps {
-                dir('mhs/common') {
-                    buildModules('Installing mhs common dependencies')
-                    executeUnitTestsWithCoverage()
-                }
-            }
-        }
+//         stage('Build & test Common') {
+//             steps {
+//                 dir('common') {
+//                     buildModules('Installing common dependencies')
+//                     executeUnitTestsWithCoverage()
+//                 }
+//             }
+//         }
+//         stage('Build & test MHS Common') {
+//             steps {
+//                 dir('mhs/common') {
+//                     buildModules('Installing mhs common dependencies')
+//                     executeUnitTestsWithCoverage()
+//                 }
+//             }
+//         }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
                     stages {
-                        stage('Build') {
-                            steps {
-                                dir('mhs/inbound') {
-                                    buildModules('Installing inbound dependencies')
-                                }
-                            }
-                        }
-                        stage('Unit test') {
-                            steps {
-                                dir('mhs/inbound') {
-                                    executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
+//                         stage('Build') {
+//                             steps {
+//                                 dir('mhs/inbound') {
+//                                     buildModules('Installing inbound dependencies')
+//                                 }
+//                             }
+//                         }
+//                         stage('Unit test') {
+//                             steps {
+//                                 dir('mhs/inbound') {
+//                                     executeUnitTestsWithCoverage()
+//                                 }
+//                             }
+//                         }
                         stage('Build and Push image') {
-                            when {
-                                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-                            }
+//                             when {
+//                                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+//                             }
                             steps {
                                 buildAndPushImage('${LOCAL_INBOUND_IMAGE_NAME}', '${INBOUND_IMAGE_NAME}', 'mhs/inbound/Dockerfile')
                             }
@@ -65,24 +65,24 @@ pipeline {
                 }
                 stage('Outbound') {
                     stages {
-                        stage('Build') {
-                            steps {
-                                dir('mhs/outbound') {
-                                    buildModules('Installing outbound dependencies')
-                                }
-                            }
-                        }
-                        stage('Unit test') {
-                            steps {
-                                dir('mhs/outbound') {
-                                    executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
+//                         stage('Build') {
+//                             steps {
+//                                 dir('mhs/outbound') {
+//                                     buildModules('Installing outbound dependencies')
+//                                 }
+//                             }
+//                         }
+//                         stage('Unit test') {
+//                             steps {
+//                                 dir('mhs/outbound') {
+//                                     executeUnitTestsWithCoverage()
+//                                 }
+//                             }
+//                         }
                         stage('Build and Push image') {
-                          when {
-                              expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-                          }
+//                           when {
+//                               expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+//                           }
                           steps {
                               buildAndPushImage('${LOCAL_OUTBOUND_IMAGE_NAME}', '${OUTBOUND_IMAGE_NAME}', 'mhs/outbound/Dockerfile')
                           }
@@ -91,24 +91,24 @@ pipeline {
                 }
                 stage('Route') {
                     stages {
-                        stage('Build') {
-                            steps {
-                                dir('mhs/spineroutelookup') {
-                                    buildModules('Installing route lookup dependencies')
-                                }
-                            }
-                        }
-                        stage('Unit test') {
-                            steps {
-                                dir('mhs/spineroutelookup') {
-                                    executeUnitTestsWithCoverage()
-                                }
-                            }
-                        }
+//                         stage('Build') {
+//                             steps {
+//                                 dir('mhs/spineroutelookup') {
+//                                     buildModules('Installing route lookup dependencies')
+//                                 }
+//                             }
+//                         }
+//                         stage('Unit test') {
+//                             steps {
+//                                 dir('mhs/spineroutelookup') {
+//                                     executeUnitTestsWithCoverage()
+//                                 }
+//                             }
+//                         }
                         stage('Build and Push image') {
-                            when {
-                                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-                            }
+//                             when {
+//                                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+//                             }
                             steps {
                                 buildAndPushImage('${LOCAL_ROUTE_IMAGE_NAME}', '${ROUTE_IMAGE_NAME}', 'mhs/spineroutelookup/Dockerfile')
                             }
@@ -165,7 +165,7 @@ pipeline {
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
 
-                                sh label: 'export filesystem', script: '''docker export -o hello.tar ${BUILD_TAG_LOWER}_component_test'''
+                                sh label: 'export filesystem', script: '''docker export -o hello2.tar ${BUILD_TAG_LOWER}_component_test'''
                                 sh label: 'export filesystem', script: '''tar -tvf hello2.tar'''
                             }
                         }
