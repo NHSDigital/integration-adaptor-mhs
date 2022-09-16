@@ -40,79 +40,79 @@ class ForwardReliableMessagingPatternTests(TestCase):
         MHS_INBOUND_QUEUE.drain()
         self.assertions = CommonAssertions('forward-reliable')
 
-    @unittest.skipIf(os.environ.get('SKIP_FORWARD_RELIABLE_INT_TEST'), 'skipping because SKIP_FORWARD_RELIABLE_INT_TEST is set')
-    def test_should_return_successful_response_from_spine_to_message_queue(self):
-        # Arrange
-        message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
-
-        attachments = [{
-            'content_type': 'text/plain',
-            'is_base64': False,
-            'description': 'Some description',
-            'payload': 'Some payload'
-        }]
-
-        external_attachments = [{
-            'document_id': 'B6D2FFAF-1EE1-4023-B639-442E1CC931DB',
-            'message_id': '4AB8A3EA-A6A6-45C3-B1EA-FF588F054A2B',
-            'description': 'some description'
-        }]
-
-        # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='COPC_IN000001UK01',
-                          message_id=message_id,
-                          wait_for_response=False,
-                          correlation_id=message_id,
-                          ods_code='X26') \
-            .with_body(message, attachments=attachments, external_attachments=external_attachments) \
-            .execute_post_expecting_success()
-
-        # Assert
-        AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
-            .assert_property('message-id', message_id) \
-            .assert_property('correlation-id', message_id) \
-            .assert_json_content_type() \
-            .assertor_for_hl7_xml_message() \
-            .assert_element_attribute('.//acknowledgement//messageRef//id', 'root', message_id)
-
-    @unittest.skipIf(os.environ.get('SKIP_FORWARD_RELIABLE_INT_TEST'), 'skipping because SKIP_FORWARD_RELIABLE_INT_TEST is set')
-    def test_should_record_forward_reliable_message_status_as_successful(self):
-        # Arrange
-        # The to_party_id, and to_asid are fixed values that the forward reliable responder in opentest will respond to.
-        # If failures are seen here, it is probably an issue with opentest SDS not being correctly configured for your
-        # account
-        message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
-
-        attachments = [{
-            'content_type': 'text/plain',
-            'is_base64': False,
-            'description': 'Some description',
-            'payload': 'Some payload'
-        }]
-
-        # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='COPC_IN000001UK01',
-                          message_id=message_id,
-                          wait_for_response=False,
-                          correlation_id=message_id,
-                          ods_code='X26') \
-            .with_body(message, attachments=attachments) \
-            .execute_post_expecting_success()
-
-        # Assert
-        AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
-            .assertor_for_hl7_xml_message() \
-            .assert_element_attribute('.//acknowledgement//messageRef//id', 'root', message_id)
-
-        AssertWithRetries(retry_count=10) \
-            .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
-
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values({
-            'INBOUND_STATUS': 'INBOUND_RESPONSE_SUCCESSFULLY_PROCESSED',
-            'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_ACKD',
-            'WORKFLOW': 'forward-reliable'
-        })
+    # @unittest.skipIf(os.environ.get('SKIP_FORWARD_RELIABLE_INT_TEST'), 'skipping because SKIP_FORWARD_RELIABLE_INT_TEST is set')
+    # def test_should_return_successful_response_from_spine_to_message_queue(self):
+    #     # Arrange
+    #     message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
+    #
+    #     attachments = [{
+    #         'content_type': 'text/plain',
+    #         'is_base64': False,
+    #         'description': 'Some description',
+    #         'payload': 'Some payload'
+    #     }]
+    #
+    #     external_attachments = [{
+    #         'document_id': 'B6D2FFAF-1EE1-4023-B639-442E1CC931DB',
+    #         'message_id': '4AB8A3EA-A6A6-45C3-B1EA-FF588F054A2B',
+    #         'description': 'some description'
+    #     }]
+    #
+    #     # Act
+    #     MhsHttpRequestBuilder() \
+    #         .with_headers(interaction_id='COPC_IN000001UK01',
+    #                       message_id=message_id,
+    #                       wait_for_response=False,
+    #                       correlation_id=message_id,
+    #                       ods_code='X26') \
+    #         .with_body(message, attachments=attachments, external_attachments=external_attachments) \
+    #         .execute_post_expecting_success()
+    #
+    #     # Assert
+    #     AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
+    #         .assert_property('message-id', message_id) \
+    #         .assert_property('correlation-id', message_id) \
+    #         .assert_json_content_type() \
+    #         .assertor_for_hl7_xml_message() \
+    #         .assert_element_attribute('.//acknowledgement//messageRef//id', 'root', message_id)
+    #
+    # @unittest.skipIf(os.environ.get('SKIP_FORWARD_RELIABLE_INT_TEST'), 'skipping because SKIP_FORWARD_RELIABLE_INT_TEST is set')
+    # def test_should_record_forward_reliable_message_status_as_successful(self):
+    #     # Arrange
+    #     # The to_party_id, and to_asid are fixed values that the forward reliable responder in opentest will respond to.
+    #     # If failures are seen here, it is probably an issue with opentest SDS not being correctly configured for your
+    #     # account
+    #     message, message_id = build_message('COPC_IN000001UK01', to_party_id='X26-9199246', to_asid='918999199246')
+    #
+    #     attachments = [{
+    #         'content_type': 'text/plain',
+    #         'is_base64': False,
+    #         'description': 'Some description',
+    #         'payload': 'Some payload'
+    #     }]
+    #
+    #     # Act
+    #     MhsHttpRequestBuilder() \
+    #         .with_headers(interaction_id='COPC_IN000001UK01',
+    #                       message_id=message_id,
+    #                       wait_for_response=False,
+    #                       correlation_id=message_id,
+    #                       ods_code='X26') \
+    #         .with_body(message, attachments=attachments) \
+    #         .execute_post_expecting_success()
+    #
+    #     # Assert
+    #     AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
+    #         .assertor_for_hl7_xml_message() \
+    #         .assert_element_attribute('.//acknowledgement//messageRef//id', 'root', message_id)
+    #
+    #     AssertWithRetries(retry_count=10) \
+    #         .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
+    #
+    #     MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
+    #         .assert_single_item_exists_with_key(message_id) \
+    #         .assert_item_contains_values({
+    #         'INBOUND_STATUS': 'INBOUND_RESPONSE_SUCCESSFULLY_PROCESSED',
+    #         'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_ACKD',
+    #         'WORKFLOW': 'forward-reliable'
+    #     })
