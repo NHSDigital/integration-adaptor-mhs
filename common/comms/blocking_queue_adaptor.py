@@ -19,6 +19,12 @@ class BlockingQueueAdaptor(object):
         :return: Message read from queue
         """
         connection = BlockingConnection(self.queue_url, user=self.username, password=self.password)
+        print("queue")
+        print(self.queue_url)
+        print("user")
+        print(self.username)
+        print("password")
+        print(self.password)
         receiver = connection.create_receiver(self.queue_name)
         message = receiver.receive(timeout=30)
         receiver.accept()
