@@ -152,9 +152,7 @@ class EbxmlEnvelope(envelope.Envelope):
             xpath_description = None 
             description_attribute = None
 
-            # If we have an eb:id then continue, it's a form of attachment, EHR payloads do not have an eb:id
-            #if '{'+ NAMESPACES[EBXML_NAMESPACE]+ '}id' in child.attrib:
-                
+
             if '{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href' in child.attrib:
                 cid_attribute = (child.attrib['{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href'])
 
@@ -163,25 +161,27 @@ class EbxmlEnvelope(envelope.Envelope):
                 xpath_description = EbxmlEnvelope._path_to_ebxml_element(ATTACHMENTS_DESCRIPTION_TAG, None)
                 description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
+                description = "" #it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
                 if description_attribute is not None:
                     description = description_attribute.text
-                    cid = cid_attribute.split(":")[1]
 
-                    # grab the existing payload item by cid
-                    foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
+                cid = cid_attribute.split(":")[1]
 
-                    # All this to add the description field :)
-                    if (foundPayload is not None):
+                # grab the existing payload item by cid
+                foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
 
-                        attachment = {
-                            ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
-                            ATTACHMENT_BASE64: foundPayload[ATTACHMENT_BASE64],
-                            ATTACHMENT_CONTENT_ID: foundPayload[ATTACHMENT_CONTENT_ID],
-                            ATTACHMENT_CONTENT_TYPE: foundPayload[ATTACHMENT_CONTENT_TYPE],
-                            ATTACHMENT_DESCRIPTION: description.strip()
-                        }
+                # All this to add the description field :)
+                if (foundPayload is not None):
 
-                        attachments.append(attachment)
+                    attachment = {
+                        ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
+                        ATTACHMENT_BASE64: foundPayload[ATTACHMENT_BASE64],
+                        ATTACHMENT_CONTENT_ID: foundPayload[ATTACHMENT_CONTENT_ID],
+                        ATTACHMENT_CONTENT_TYPE: foundPayload[ATTACHMENT_CONTENT_TYPE],
+                        ATTACHMENT_DESCRIPTION: description.strip()
+                    }
+
+                    attachments.append(attachment)
 
         EbxmlEnvelope._add_if_present(extracted_values, ATTACHMENTS, attachments)
         return extracted_values

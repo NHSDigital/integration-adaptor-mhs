@@ -25,7 +25,6 @@ BASE_EXPECTED_VALUES = {
     ebxml_envelope.RECEIVED_MESSAGE_ID: "F106022D-758B-49A9-A80A-8FF211C32A43"
 }
 
-
 class BaseTestEbxmlEnvelope(TestCase):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     message_dir = Path(current_dir) / MESSAGE_DIR
