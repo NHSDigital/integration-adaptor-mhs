@@ -19,22 +19,22 @@ pipeline {
     }
 
     stages {
-        stage('Build & test Common') {
+       stage('Build & test Common') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-        }
-        stage('Build & test MHS Common') {
+       }
+       stage('Build & test MHS Common') {
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-        }
+       }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
@@ -149,9 +149,10 @@ pipeline {
                         }
                         stage('Component Tests (SpineRouteLookup)') {
                             steps {
-                                sh label: 'Run component tests', script: '''
-                                    docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .
-                                    docker run --rm --network "${BUILD_TAG_LOWER}_default" \
+                                sh label: 'Run component tests', script: '''docker build -t local/mhs-componenttest:$BUILD_TAG -f ./component-test.Dockerfile .'''
+                                sh label: 'Run component tests', script:'''
+
+                                    docker run --network "${BUILD_TAG_LOWER}_default" \
                                         --env "MHS_ADDRESS=http://outbound" \
                                         --env "AWS_ACCESS_KEY_ID=test" \
                                         --env "AWS_SECRET_ACCESS_KEY=test" \
@@ -160,6 +161,7 @@ pipeline {
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
                                         --env "SCR_ADDRESS=http://scradaptor" \
+                                        --name "${BUILD_TAG_LOWER}_component_test" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
                             }
@@ -342,7 +344,6 @@ pipeline {
                             steps {
                                 dir('integration-tests/integration_tests') {
                                     sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'
-
                                     // Wait for MHS load balancers to have healthy targets
                                     dir('../../pipeline/scripts/check-target-group-health') {
                                         sh script: 'pipenv install'
@@ -356,7 +357,10 @@ pipeline {
                                             }
                                         }
                                     }
-                                    sh label: 'Running integration tests', script: 'pipenv run inttests'
+                                    sh label: 'Running integration tests', script: """
+                                        export SKIP_FORWARD_RELIABLE_INT_TEST=true
+                                        pipenv run inttests
+                                    """
                                 }
                             }
                         }
