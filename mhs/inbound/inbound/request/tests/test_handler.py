@@ -34,11 +34,14 @@ REF_TO_MESSAGE_ID = "B4D38C15-4981-4366-BDE9-8F56EDC4AB72"
 UNSOLICITED_REF_TO_MESSAGE_ID = "C614484E-4B10-499A-9ACD-5D645CFACF61"
 CORRELATION_ID = '10F5A436-1913-43F0-9F18-95EA0E43E61A'
 EXPECTED_MESSAGE = '<hl7:MCCI_IN010000UK13 xmlns:hl7="urn:hl7-org:v3"/>'
-EXPECTED_UNSOLICITED_ATTACHMENTS = [{ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
-                                     ebxml_request_envelope.ATTACHMENT_BASE64: False,
-                                     ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797'
-                                                                                   '-A947B09F347F@spine.nhs.uk',
-                                     ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain'}]
+EXPECTED_UNSOLICITED_ATTACHMENTS = [{
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description'
+}]
+EXPECTED_EXTERNAL_ATTACHMENTS = []
 
 state_data = [
     {
@@ -114,7 +117,7 @@ class TestInboundHandler(tornado.testing.AsyncHTTPTestCase):
         self.assertEqual(ack_response.headers["Content-Type"], "text/xml")
         xml_utilities.XmlUtilities.assert_xml_equal(expected_ack_response, ack_response.body)
         self.mock_workflow.handle_inbound_message.assert_called_once_with(REF_TO_MESSAGE_ID, CORRELATION_ID,
-                                                                          unittest.mock.ANY, MessageData(ebxml, EXPECTED_MESSAGE, []))
+                                                                          unittest.mock.ANY, MessageData(ebxml, EXPECTED_MESSAGE, [], []))
 
     def test_when_workflow_throws_exception_then_http_500_response(self):
         """
@@ -222,7 +225,7 @@ class TestInboundHandler(tornado.testing.AsyncHTTPTestCase):
             str(self.message_dir / EXPECTED_ASYNC_ACK_RESPONSE_FILE))
         xml_utilities.XmlUtilities.assert_xml_equal(expected_ack_response, ack_response.body)
         self.mock_forward_reliable_workflow.handle_unsolicited_inbound_message.assert_called_once_with(
-            UNSOLICITED_REF_TO_MESSAGE_ID, CORRELATION_ID, MessageData(ebxml, EXPECTED_MESSAGE, EXPECTED_UNSOLICITED_ATTACHMENTS))
+            UNSOLICITED_REF_TO_MESSAGE_ID, CORRELATION_ID, MessageData(ebxml, EXPECTED_MESSAGE, EXPECTED_UNSOLICITED_ATTACHMENTS, EXPECTED_EXTERNAL_ATTACHMENTS))
 
     def test_post_unsolicited_non_forward_reliable_request_results_in_error_response(self):
         """

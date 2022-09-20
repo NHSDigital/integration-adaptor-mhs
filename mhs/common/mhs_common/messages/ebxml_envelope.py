@@ -27,6 +27,23 @@ DESCRIPTION = "description"
 ATTACHMENTS = "attachments"
 EXTERNAL_ATTACHMENTS = "external_attachments"
 
+EXTERNAL_ATTACHMENTS_PARENT = "Manifest"
+EXTERNAL_ATTACHMENTS_DESCRIPTION_TAG = "Description"
+
+EXTERNAL_ATTACHMENT_DOCUMENT_ID = 'document_id'
+EXTERNAL_ATTACHMENT_MESSAGE_ID = 'message_id'
+EXTERNAL_ATTACHMENT_DESCRIPTION = 'description'
+EXTERNAL_ATTACHMENT_TITLE = 'title'
+
+ATTACHMENTS_DESCRIPTION_TAG = "Description"
+
+ATTACHMENT_CONTENT_ID = 'content_id'
+ATTACHMENT_CONTENT_TYPE = 'content_type'
+ATTACHMENT_BASE64 = 'is_base64'
+ATTACHMENT_CONTENT_TRANSFER_ENCODING = 'content_transfer_encoding'
+ATTACHMENT_PAYLOAD = 'payload'
+ATTACHMENT_DESCRIPTION = 'description'
+
 EBXML_NAMESPACE = "eb"
 SOAP_NAMESPACE = "SOAP"
 XLINK_NAMESPACE = "xlink"
@@ -54,7 +71,7 @@ class EbxmlEnvelope(envelope.Envelope):
         _ElementToExtractWhenParsing(ACTION, 'Action'),
         _ElementToExtractWhenParsing(MESSAGE_ID, 'MessageId', xml_parent='MessageData'),
         _ElementToExtractWhenParsing(TIMESTAMP, 'Timestamp', xml_parent='MessageData'),
-        _ElementToExtractWhenParsing(RECEIVED_MESSAGE_ID, 'RefToMessageId', xml_parent='MessageData', required=False)
+        _ElementToExtractWhenParsing(RECEIVED_MESSAGE_ID, 'RefToMessageId', xml_parent='MessageData', required=False),
     ]
 
     def __init__(self, template_file: str, message_dictionary: Dict[str, Any]):
@@ -116,6 +133,113 @@ class EbxmlEnvelope(envelope.Envelope):
         return extracted_values
 
     @staticmethod
+    def parse_attachments(xml_tree: Element, attachment_payloads) -> Dict[str, str]:
+        """Extract a dictionary of attachments from the provided xml Element tree.
+
+        :param xml_tree: The xml tree to extract values from
+        :param attachments: A dictionary of previously extracted attachment payloads
+        :return: A dictionary of values extracted from the message.
+        """
+        extracted_values = {}
+
+        xpath = EbxmlEnvelope._path_to_ebxml_element(EXTERNAL_ATTACHMENTS_PARENT, None)
+        manifestElement = xml_tree.find(xpath, namespaces=NAMESPACES)
+
+        attachments = []
+        for child in manifestElement:
+
+            cid_attribute = None
+            xpath_description = None 
+            description_attribute = None
+
+
+            if '{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href' in child.attrib:
+                cid_attribute = (child.attrib['{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href'])
+
+            if "cid" in cid_attribute:
+
+                xpath_description = EbxmlEnvelope._path_to_ebxml_element(ATTACHMENTS_DESCRIPTION_TAG, None)
+                description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
+
+                # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
+                description = ""
+                if description_attribute is not None:
+                    if description_attribute.text is not None:
+                        description = description_attribute.text
+
+                cid = cid_attribute.split(":")[1]
+
+                # grab the existing payload item by cid
+                foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
+
+                # All this to add the description field :)
+                if (foundPayload is not None):
+
+                    attachment = {
+                        ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
+                        ATTACHMENT_BASE64: foundPayload[ATTACHMENT_BASE64],
+                        ATTACHMENT_CONTENT_ID: foundPayload[ATTACHMENT_CONTENT_ID],
+                        ATTACHMENT_CONTENT_TYPE: foundPayload[ATTACHMENT_CONTENT_TYPE],
+                        ATTACHMENT_DESCRIPTION: description.strip()
+                    }
+
+                    attachments.append(attachment)
+
+        EbxmlEnvelope._add_if_present(extracted_values, ATTACHMENTS, attachments)
+        return extracted_values
+
+    @staticmethod
+    def parse_external_attachments(xml_tree: Element) -> Dict[str, str]:
+        """Extract a dictionary of external attachments from the provided xml Element tree.
+
+        :param xml_tree: The xml tree to extract values from
+        :return: A dictionary of values extracted from the message.
+        """
+        extracted_values = {}
+
+        xpath = EbxmlEnvelope._path_to_ebxml_element(EXTERNAL_ATTACHMENTS_PARENT, None)
+        manifestElement = xml_tree.find(xpath, namespaces=NAMESPACES)
+
+        external_attachments = []
+        for child in manifestElement:
+
+            mid_attribute = None
+            document_id_attribute = None
+            xpath_description = None 
+            description_attribute = None
+
+            if '{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href' in child.attrib:
+                mid_attribute = (child.attrib['{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href'])
+
+            if "mid" in mid_attribute:
+                if '{'+ NAMESPACES[EBXML_NAMESPACE]+ '}id' in child.attrib:
+                    document_id_attribute = (child.attrib['{'+ NAMESPACES[EBXML_NAMESPACE]+ '}id'])
+
+                xpath_description = EbxmlEnvelope._path_to_ebxml_element(EXTERNAL_ATTACHMENTS_DESCRIPTION_TAG, None)
+                description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
+
+                if description_attribute is not None:
+                    description = description_attribute.text;
+                    variables = description.strip().split(" ")
+                    filename = None
+                    description_variables = dict(pair.split("=") for pair in variables)
+                    if "Filename" in description_variables:
+                        filename = description_variables["Filename"]
+                    
+                    mid = mid_attribute.split(":")[1]
+                    external_attachment =  { 
+                        EXTERNAL_ATTACHMENT_DOCUMENT_ID :document_id_attribute, 
+                        EXTERNAL_ATTACHMENT_MESSAGE_ID :mid_attribute.split(":")[1], 
+                        EXTERNAL_ATTACHMENT_DESCRIPTION: description, 
+                        EXTERNAL_ATTACHMENT_TITLE: filename 
+                    }
+
+                    external_attachments.append(external_attachment)
+
+        EbxmlEnvelope._add_if_present(extracted_values, EXTERNAL_ATTACHMENTS, external_attachments)
+        return extracted_values
+    
+    @staticmethod
     def _path_to_ebxml_element(name: str, parent: str = None) -> str:
         path = ".//"
 
@@ -130,13 +254,15 @@ class EbxmlEnvelope(envelope.Envelope):
     def _extract_ebxml_value(xml_tree: Element, element_name: str, parent: str = None,
                              required: bool = False) -> Optional[Element]:
         xpath = EbxmlEnvelope._path_to_ebxml_element(element_name, parent=parent)
+
         value = xml_tree.find(xpath, namespaces=NAMESPACES)
+            
         if value is None and required:
             logger.error("Weren't able to find required element {xpath} during parsing of EbXML message.",
                          fparams={'xpath': xpath})
             raise EbXmlParsingError(f"Weren't able to find required element {xpath} during parsing of EbXML message")
         return value
-
+   
     @staticmethod
     def _extract_ebxml_text_value(xml_tree: Element, element_name: str, parent: str = None,
                                   required: bool = False) -> Optional[str]:

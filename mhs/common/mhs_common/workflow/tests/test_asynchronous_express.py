@@ -47,9 +47,10 @@ INTERACTION_DETAILS = {
 EBXML = "ebxml_data"
 PAYLOAD = 'payload'
 ATTACHMENTS = ['attachment1', 'attachment2']
+EXTERNAL_ATTACHMENTS = []
 REQUEST_BODY = RequestBody(PAYLOAD, [], [])
 
-INBOUND_MESSAGE_DATA = MessageData(EBXML, PAYLOAD, ATTACHMENTS)
+INBOUND_MESSAGE_DATA = MessageData(EBXML, PAYLOAD, ATTACHMENTS, EXTERNAL_ATTACHMENTS)
 
 SERIALIZED_MESSAGE = 'serialized-message'
 MAX_REQUEST_SIZE = 5_000_000
@@ -388,7 +389,7 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
         await self.workflow.handle_inbound_message(MESSAGE_ID, CORRELATION_ID, self.mock_work_description, INBOUND_MESSAGE_DATA)
 
         self.mock_queue_adaptor.send_async.assert_called_once_with(
-            {'ebXML': EBXML, 'payload': PAYLOAD, 'attachments': ATTACHMENTS},
+            {'ebXML': EBXML, 'payload': PAYLOAD, 'attachments': ATTACHMENTS, 'external_attachments': EXTERNAL_ATTACHMENTS},
             properties={'message-id': MESSAGE_ID, 'correlation-id': CORRELATION_ID})
         self.assertEqual([mock.call(MessageStatus.INBOUND_RESPONSE_SUCCESSFULLY_PROCESSED)],
                          self.mock_work_description.set_inbound_status.call_args_list)

@@ -39,6 +39,7 @@ ATTACHMENT_BASE64 = 'is_base64'
 ATTACHMENT_CONTENT_TRANSFER_ENCODING = 'content_transfer_encoding'
 ATTACHMENT_PAYLOAD = 'payload'
 ATTACHMENT_DESCRIPTION = 'description'
+
 EBXML_CONTENT_TYPE_VALUE = 'multipart/related; boundary="--=_MIME-Boundary"; type=text/xml; ' \
                            'start=ebXMLHeader@spine.nhs.uk'
 
@@ -137,13 +138,20 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         """
         msg = EbxmlRequestEnvelope._parse_mime_message(headers, message)
         ebxml_part, payload_part, attachments = EbxmlRequestEnvelope._extract_message_parts(msg)
-        xml_tree: Element = ElementTree.fromstring(ebxml_part)
-        extracted_values = super().parse_message(xml_tree)
 
+        # parts not a breakdown
+        xml_tree: Element = ElementTree.fromstring(ebxml_part)
+       
+        extracted_values = super().parse_message(xml_tree)
         cls._extract_more_values_from_xml_tree(xml_tree, extracted_values)
 
+        # We have the payload section of the Attachments but we don't have the additional details from the ebxml body
+        extracted_values[ATTACHMENTS] = super().parse_attachments(xml_tree, attachments)[ATTACHMENTS]
+
+        # External attachments only exist in the ebxml body so they have to be extracted using a different method
+        extracted_values[EXTERNAL_ATTACHMENTS] = super().parse_external_attachments(xml_tree)[EXTERNAL_ATTACHMENTS]
+
         extracted_values[EBXML] = ebxml_part
-        extracted_values[ATTACHMENTS] = attachments
 
         if payload_part:
             extracted_values[MESSAGE] = payload_part
@@ -208,6 +216,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
         payload_part = None
         attachments = []
+
         if len(message_parts) > 1:
             # HL7 payload part is the second part of the message
             payload_part = EbxmlRequestEnvelope._extract_hl7_payload_part(message_parts[1])
