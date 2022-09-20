@@ -164,7 +164,8 @@ class EbxmlEnvelope(envelope.Envelope):
                 # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
                 description = ""
                 if description_attribute is not None:
-                    description = description_attribute.text
+                    if description_attribute.text is not None:
+                        description = description_attribute.text
 
                 cid = cid_attribute.split(":")[1]
 
