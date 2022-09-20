@@ -162,8 +162,7 @@ class EbxmlEnvelope(envelope.Envelope):
                 description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
                 # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
-
-                description = "No Description Provided"
+                description = ""
                 if description_attribute is not None:
                     description = description_attribute.text
 
