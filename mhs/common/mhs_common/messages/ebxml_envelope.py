@@ -226,7 +226,7 @@ class EbxmlEnvelope(envelope.Envelope):
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
-                        filename = description_variables["Filename"].replace('\"', '')
+                        filename = description_variables["Filename"].replace('\\', '')
                     
                     mid = mid_attribute.split(":")[1]
                     external_attachment =  { 
