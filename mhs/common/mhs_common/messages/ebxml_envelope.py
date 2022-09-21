@@ -1,5 +1,6 @@
 """This module defines the envelope used to wrap asynchronous messages to be sent to a remote MHS."""
 import copy
+import re
 from typing import Dict, Tuple, Any, Optional, NamedTuple
 from xml.etree.ElementTree import Element
 
@@ -152,7 +153,6 @@ class EbxmlEnvelope(envelope.Envelope):
             xpath_description = None 
             description_attribute = None
 
-
             if '{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href' in child.attrib:
                 cid_attribute = (child.attrib['{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href'])
 
@@ -165,12 +165,14 @@ class EbxmlEnvelope(envelope.Envelope):
                 description = ""
                 if description_attribute is not None:
                     if description_attribute.text is not None:
-                        description = description_attribute.text
+                        description = re.sub(r"[\n\t]*", "", description_attribute.text)
 
                 cid = cid_attribute.split(":")[1]
-
                 # grab the existing payload item by cid
                 foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
+
+                for item in attachment_payloads:
+                    logger.error("Attachment IDs:" + item[ATTACHMENT_CONTENT_ID])
 
                 # All this to add the description field :)
                 if (foundPayload is not None):
@@ -219,12 +221,12 @@ class EbxmlEnvelope(envelope.Envelope):
                 description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
                 if description_attribute is not None:
-                    description = description_attribute.text;
+                    description = re.sub(r"[\n\t]*", "", description_attribute.text)
                     variables = description.strip().split(" ")
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
-                        filename = description_variables["Filename"]
+                        filename = description_variables["Filename"].replace('\\', '')
                     
                     mid = mid_attribute.split(":")[1]
                     external_attachment =  { 
