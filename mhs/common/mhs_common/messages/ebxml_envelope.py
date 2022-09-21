@@ -1,6 +1,5 @@
 """This module defines the envelope used to wrap asynchronous messages to be sent to a remote MHS."""
 import copy
-import logging
 import re
 from typing import Dict, Tuple, Any, Optional, NamedTuple
 from xml.etree.ElementTree import Element
@@ -169,7 +168,6 @@ class EbxmlEnvelope(envelope.Envelope):
                         description = re.sub(r"[\n\t]*", "", description_attribute.text)
 
                 cid = cid_attribute.split(":")[1]
-                logger.error("ZZZZ Found CID:" + cid)
                 # grab the existing payload item by cid
                 foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
 
