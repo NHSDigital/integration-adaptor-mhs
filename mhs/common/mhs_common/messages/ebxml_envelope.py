@@ -1,6 +1,7 @@
 """This module defines the envelope used to wrap asynchronous messages to be sent to a remote MHS."""
 import copy
-from typing import Dict, Tuple, Any, Optional, NamedTuple, re
+import re
+from typing import Dict, Tuple, Any, Optional, NamedTuple
 from xml.etree.ElementTree import Element
 
 import utilities.message_utilities as message_utilities
