@@ -164,13 +164,9 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
                 description = ""
-                logger.error("ZZZZ: Description set to empty")
                 if description_attribute is not None:
-                    logger.error("ZZZZ: description tag found")
                     if description_attribute.text is not None:
-                        logger.error("ZZZZ: description text found")
                         description = re.sub(r"[\n\t]*", "", description_attribute.text)
-                        logger.error("ZZZZ:" + description)
 
                 cid = cid_attribute.split(":")[1]
                 logger.error("ZZZZ Found CID:" + cid)
