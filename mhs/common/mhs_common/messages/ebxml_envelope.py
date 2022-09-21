@@ -1,6 +1,6 @@
 """This module defines the envelope used to wrap asynchronous messages to be sent to a remote MHS."""
 import copy
-from typing import Dict, Tuple, Any, Optional, NamedTuple
+from typing import Dict, Tuple, Any, Optional, NamedTuple, re
 from xml.etree.ElementTree import Element
 
 import utilities.message_utilities as message_utilities
@@ -163,9 +163,13 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
                 description = ""
+                logger.error("ZZZZ: Description set to empty")
                 if description_attribute is not None:
+                    logger.error("ZZZZ: description tag found")
                     if description_attribute.text is not None:
-                        description = description_attribute.text
+                        logger.error("ZZZZ: description text found")
+                        description = re.sub(r"[\n\t]*", "", description_attribute.text)
+                        logger.error("ZZZZ:" + description)
 
                 cid = cid_attribute.split(":")[1]
 
@@ -219,12 +223,12 @@ class EbxmlEnvelope(envelope.Envelope):
                 description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
                 if description_attribute is not None:
-                    description = description_attribute.text;
+                    description = re.sub(r"[\n\t]*", "", description_attribute.text)
                     variables = description.strip().split(" ")
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
-                        filename = description_variables["Filename"]
+                        filename = description_variables["Filename"].replace('\"', '')
                     
                     mid = mid_attribute.split(":")[1]
                     external_attachment =  { 
