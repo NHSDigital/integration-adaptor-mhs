@@ -7,6 +7,7 @@ import copy
 import email
 import email.message
 import email.policy
+import gzip
 from typing import Dict, Tuple, Union, List, Sequence, Generator
 from xml.etree.ElementTree import Element
 
@@ -266,6 +267,8 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     @staticmethod
     def _convert_message_part_to_str(message_part: email.message.EmailMessage) -> Tuple[str, bool]:
         content: Union[str, bytes] = message_part.get_content()
+
+        logger.error(str(message_part))
         content_type = message_part.get_content_type()
         content_transfer_encoding = message_part['Content-Transfer-Encoding']
         logger_dict = {'ContentType': content_type, 'ContentTransferEncoding': content_transfer_encoding}
@@ -273,13 +276,34 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         if isinstance(content, str):
             logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} as string',
                         fparams=logger_dict)
+
             return content, False
         try:
-            if content_type == 'application/xml':
-                decoded_content = content.decode()
-                logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} '
-                            'as a string', fparams=logger_dict)
-                return decoded_content, False
+
+            charset = message_part.get_param('charset', 'UTF-8')
+            if content_type == 'application/xml' or 'text' in content_type:
+                try:
+                    content = gzip.decompress(content)
+                    logger.info('Successfully decompressed message part with {ContentType} {ContentTransferEncoding} '
+                                'as a string', fparams=logger_dict)
+                    content = content.decode(charset)
+                    return content, False
+                except:
+
+                    if content_type == 'application/xml':
+                        decoded_content = content.decode(charset)
+                        logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} '
+                                    'as a string', fparams=logger_dict)
+                        return decoded_content, False
+
+                    # turn the data back to a base64 string, we cannot process it as required so let the reciever manage it.
+                    decoded_content = base64.b64encode(content).decode()
+                    logger.info(
+                        'Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
+                        'a base64 string', fparams=logger_dict)
+                    return decoded_content, True
+
+            # turn the data back to a base64 string, we cannot process it as required so let the reciever manage it.
             decoded_content = base64.b64encode(content).decode()
             logger.info('Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
                         'a base64 string', fparams=logger_dict)
