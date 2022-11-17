@@ -280,6 +280,9 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         content_transfer_encoding = message_part['Content-Transfer-Encoding']
         logger_dict = {'ContentType': content_type, 'ContentTransferEncoding': content_transfer_encoding}
 
+        # reset content_type now we have managed the data
+        message_part.set_type(content_type)
+
         if isinstance(content, str):
             logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} as string',
                         fparams=logger_dict)
