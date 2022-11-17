@@ -3,7 +3,6 @@ import copy
 import re
 from typing import Dict, Tuple, Any, Optional, NamedTuple
 from xml.etree.ElementTree import Element
-import gzip
 
 import utilities.message_utilities as message_utilities
 from utilities import integration_adaptors_logger as log
@@ -246,7 +245,7 @@ class EbxmlEnvelope(envelope.Envelope):
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
-                        filename = description_variables["Filename"].replace('\\', '')
+                        filename = description_variables["Filename"]
                     
                     mid = mid_attribute.split(":")[1]
                     external_attachment =  { 
