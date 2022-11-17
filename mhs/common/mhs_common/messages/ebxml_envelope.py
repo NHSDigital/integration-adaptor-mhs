@@ -168,7 +168,6 @@ class EbxmlEnvelope(envelope.Envelope):
                     if description_attribute.text is not None:
                         description = re.sub(r"[\n\t]*", "", description_attribute.text)
 
-
                 cid = cid_attribute.split(":")[1]
                 # grab the existing payload item by cid
                 foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
@@ -178,6 +177,8 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 # We may have already decompressed a compressed payload or converted from base64, if so,
                 # update the payload description fields with the correct details and form our attachment
+                # All this to add the description field :)
+
                 if (foundPayload is not None):
 
                     if description is not None:
@@ -241,11 +242,13 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 if description_attribute is not None:
                     description = re.sub(r"[\n\t]*", "", description_attribute.text)
+
                     variables = descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
+
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
-                        filename = description_variables["Filename"]
+                        filename = description_variables["Filename"].replace('\\', '')
                     
                     mid = mid_attribute.split(":")[1]
                     external_attachment =  { 
