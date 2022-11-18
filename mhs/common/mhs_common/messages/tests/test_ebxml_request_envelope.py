@@ -318,14 +318,14 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
             self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
-        with self.subTest("A valid request containing one compressed textual attachment with no description provided"):
-            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_application_xml_content_compressed')
+        with self.subTest("A valid request containing one compressed textual attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_text_plain_content_compressed')
             attachments = [{
-                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'H4sIAAAAAAAA/3WSzW7sIAyF9zyFd7PJS0xX7aaq1JG6ZsAJdAiOwBlu3v4eyGwrRVGCfzjfsW+B"C9O6V6U7U5WV6RGzJ5mp2YNkV7XUc8y3jZ40MP3KgwupjB8NkWdz6xmXikNBLxfISZ73GiWbD3I2"X5QWVspChVMvMG+IZq6VVs5T73SQLzE/aD2oIWK+kjTEyMeln7EtGsynZEY4JUr85ESSh4jUCz7l"Lh6K5xlaPIVYqUnx5p2PCQSHQQaut7UXydDD/1xU9l3+CdITB386qG7gPMnIdo9sPuj8WyUvtFfz"E4Rmhg4NVqFiZsKt913JDpdAqRPtYRpnh+xkYe3HRI0vT4bh3PUX2ZcwWphr7hajB54sCvsLzVZh"voBYcSdVlY3UJqi8IJYqQ2uWNiACCjAGsGmExITSF/t7f11hnE1dfHetWXVBpXExX7DecaUHbzpi"z8gNeDGBNqUzXfo4nMWGdIrGWc0bjJkFQiuXp81ap74C5odTOrmxPzV62HIOyknymGhVi+vMtY/S"O1jnsVpLkZbMrWFIqCiY3vB624pYF4DzcqcvAD7uvNgxyICyF+SffH9G/gMaqXG6/wIAAA==',
-                ebxml_request_envelope.ATTACHMENT_BASE64: True,
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'There must be some kind of way outta here\nSaid the joker to the thief\nThere\'s too much confusion\nI can\'t get no relief\n\nBusiness men, they drink my wine\nPlowmen dig my earth\nNone will level on the line\nNobody offered his word\nHey, hey\n\nNo reason to get excited\nThe thief, he kindly spoke\nThere are many here among us\nWho feel that life is but a joke\nBut, uh, but you and I, we\'ve been through that\nAnd this is not our fate\nSo let us stop talkin\' falsely now\nThe hour\'s getting late, hey\n\nHey\n\nAll along the watchtower\nPrinces kept the view\nWhile all the women came and went\nBarefoot servants, too\nWell, uh, outside in the cold distance\nA wildcat did growl\nTwo riders were approaching\nAnd the wind began to howl, hey\n\nAll along the watchtower\n\nAll along the watchtower',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
                 ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
                 ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
-                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=Yes LargeAttachment=No OriginalBase64=Yes'
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=No LargeAttachment=No OriginalBase64=No'
             }]
 
             expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
@@ -333,6 +333,27 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
             parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
 
+            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
+
+        with self.subTest("A valid request containing one compressed application/xml attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_application_xml_content_compressed')
+            attachments = [{
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'There must be some kind of way outta here\nSaid the joker to the thief\nThere\'s too much confusion\nI can\'t get no relief\n\nBusiness men, they drink my wine\nPlowmen dig my earth\nNone will level on the line\nNobody offered his word\nHey, hey\n\nNo reason to get excited\nThe thief, he kindly spoke\nThere are many here among us\nWho feel that life is but a joke\nBut, uh, but you and I, we\'ve been through that\nAnd this is not our fate\nSo let us stop talkin\' falsely now\nThe hour\'s getting late, hey\n\nHey\n\nAll along the watchtower\nPrinces kept the view\nWhile all the women came and went\nBarefoot servants, too\nWell, uh, outside in the cold distance\nA wildcat did growl\nTwo riders were approaching\nAnd the wind began to howl, hey\n\nAll along the watchtower\n\nAll along the watchtower',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'application/xml',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=No LargeAttachment=No OriginalBase64=No'
+            }]
+
+            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
+                                                           attachments=attachments)
+
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+
+            print("ahhhhhhhh")
+            print(expected_values_with_payload)
+            print("ahhhhhhhh2")
+            print(parsed_message.message_dictionary)
             self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
         with self.subTest("A valid request containing one external attachment"):

@@ -267,9 +267,9 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     @staticmethod
     def _convert_message_part_to_str(message_part: email.message.EmailMessage) -> Tuple[str, bool]:
 
-        # Due to the compression stratergy, we can never pass a text field into our content manager as it will always
-        # attempt to convert the final string to a utf-8 string. If a text data type has been recievd in a compressed
-        # format, we will lose data and lose the abality to decompress it. The content_type bypass below allows us
+        # Due to the compression strategy, we can never pass a text field into our content manager as it will always
+        # attempt to convert the final string to a utf-8 string. If a text data type has been received in a compressed
+        # format, we will lose data and lose the ability to decompress it. The content_type bypass below allows us
         # to treat text as a byte string and manage it manually here.
 
         content_type = message_part.get_content_type()
@@ -280,7 +280,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         content_transfer_encoding = message_part['Content-Transfer-Encoding']
         logger_dict = {'ContentType': content_type, 'ContentTransferEncoding': content_transfer_encoding}
 
-        # reset content_type now we have managed the data
+        # reset content_type now we have aquired the content
         message_part.set_type(content_type)
 
         if isinstance(content, str):
