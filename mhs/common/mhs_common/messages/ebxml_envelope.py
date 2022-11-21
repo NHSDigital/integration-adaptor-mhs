@@ -162,6 +162,7 @@ class EbxmlEnvelope(envelope.Envelope):
                 description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
                 # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
+                # however, we will take one if we have it
                 description = ""
                 if description_attribute is not None:
                     if description_attribute.text is not None:
@@ -174,8 +175,31 @@ class EbxmlEnvelope(envelope.Envelope):
                 for item in attachment_payloads:
                     logger.error("Attachment IDs:" + item[ATTACHMENT_CONTENT_ID])
 
+                # We may have already decompressed a compressed payload or converted from base64, if so,
+                # update the payload description fields with the correct details and form our attachment
                 # All this to add the description field :)
+
                 if (foundPayload is not None):
+
+                    if description is not None:
+                        descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
+                        for index, param in enumerate(descriptionParams):
+                            paramParts = param.split("=")
+                            if paramParts[0] == 'OriginalBase64':
+                                if not foundPayload[ATTACHMENT_BASE64]:
+                                    descriptionParams[index] = paramParts[0] + "=No"
+                                else:
+                                    descriptionParams[index] = paramParts[0] + "=Yes"
+
+                            if paramParts[0] == "Compressed":
+                                if (paramParts[1] == "Yes"):
+                                    # if a compressed message is still in base64 then it has not been decompressed
+                                    if not foundPayload[ATTACHMENT_BASE64]:
+                                        descriptionParams[index] = paramParts[0] + "=No"
+                                    else:
+                                        descriptionParams[index] = paramParts[0] + "=Yes"
+
+                        description = " ".join(descriptionParams)
 
                     attachment = {
                         ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
@@ -222,7 +246,9 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 if description_attribute is not None:
                     description = re.sub(r"[\n\t]*", "", description_attribute.text)
-                    variables = description.strip().split(" ")
+
+                    variables = descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
+
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:

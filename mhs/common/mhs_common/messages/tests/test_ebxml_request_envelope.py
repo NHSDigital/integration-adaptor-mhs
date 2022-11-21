@@ -318,6 +318,44 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
             self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
+        with self.subTest("A valid request containing one compressed textual attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_text_plain_content_compressed')
+            attachments = [{
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'There must be some kind of way outta here\nSaid the joker to the thief\nThere\'s too much confusion\nI can\'t get no relief\n\nBusiness men, they drink my wine\nPlowmen dig my earth\nNone will level on the line\nNobody offered his word\nHey, hey\n\nNo reason to get excited\nThe thief, he kindly spoke\nThere are many here among us\nWho feel that life is but a joke\nBut, uh, but you and I, we\'ve been through that\nAnd this is not our fate\nSo let us stop talkin\' falsely now\nThe hour\'s getting late, hey\n\nHey\n\nAll along the watchtower\nPrinces kept the view\nWhile all the women came and went\nBarefoot servants, too\nWell, uh, outside in the cold distance\nA wildcat did growl\nTwo riders were approaching\nAnd the wind began to howl, hey\n\nAll along the watchtower\n\nAll along the watchtower',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=No LargeAttachment=No OriginalBase64=No'
+            }]
+
+            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
+                                                           attachments=attachments)
+
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+
+            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
+
+        with self.subTest("A valid request containing one compressed application/xml attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_application_xml_content_compressed')
+            attachments = [{
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'There must be some kind of way outta here\nSaid the joker to the thief\nThere\'s too much confusion\nI can\'t get no relief\n\nBusiness men, they drink my wine\nPlowmen dig my earth\nNone will level on the line\nNobody offered his word\nHey, hey\n\nNo reason to get excited\nThe thief, he kindly spoke\nThere are many here among us\nWho feel that life is but a joke\nBut, uh, but you and I, we\'ve been through that\nAnd this is not our fate\nSo let us stop talkin\' falsely now\nThe hour\'s getting late, hey\n\nHey\n\nAll along the watchtower\nPrinces kept the view\nWhile all the women came and went\nBarefoot servants, too\nWell, uh, outside in the cold distance\nA wildcat did growl\nTwo riders were approaching\nAnd the wind began to howl, hey\n\nAll along the watchtower\n\nAll along the watchtower',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'application/xml',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=No LargeAttachment=No OriginalBase64=No'
+            }]
+
+            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
+                                                           attachments=attachments)
+
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+
+            print("ahhhhhhhh")
+            print(expected_values_with_payload)
+            print("ahhhhhhhh2")
+            print(parsed_message.message_dictionary)
+            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
+
         with self.subTest("A valid request containing one external attachment"):
             message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_external_attachment')
             external_attachments = [{
@@ -334,30 +372,6 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
 
-        with self.subTest("A valid request containing one textual and one base64 attachment"):
-            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_multiple_attachments')
-            attachments = [
-                {
-                    ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
-                    ebxml_request_envelope.ATTACHMENT_BASE64: False,
-                    ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
-                    ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
-                    ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description'
-                },
-                {
-                    ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR'
-                                                               '42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
-                    ebxml_request_envelope.ATTACHMENT_BASE64: True,
-                    ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '64A73E03-30BD-4231-9959-0C4B54400345@spine.nhs.uk',
-                    ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'image/png',
-                    ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Another description'
-                }]
-            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
-                                                           attachments=attachments)
-
-            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
-
-            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
     def test_from_string_errors_on_invalid_request(self):
         with self.subTest("A message that is not a multi-part MIME message"):
