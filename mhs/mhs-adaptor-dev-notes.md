@@ -12,7 +12,7 @@ See [Setup an OpenTest connection](../setup-opentest.md) for details.
 Finally, ensure you have [Pipenv](https://docs.pipenv.org/en/latest/) installed and on your path, then within each of
 the subfolders `common`, `inbound` and `outbound` in this directory, run:
 ```
-pigit 
+pipenv install
 ```
 
 ### Developer Setup
