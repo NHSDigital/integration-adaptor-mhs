@@ -128,7 +128,7 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             ebxml_request_envelope.ATTACHMENT_BASE64: False,
             ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
             ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
-            ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: 'some-document-id'
+            ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: '_some-document-id'
         }]
         message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS] = []
         envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
