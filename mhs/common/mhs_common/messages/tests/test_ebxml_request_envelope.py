@@ -322,10 +322,10 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_text_plain_content_compressed')
             attachments = [{
                 ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'H4sIAAAAAAAA/3WSzW7sIAyF9zyFd7PJS0xX7aaq1JG6ZsAJdAiOwBlu3v4eyGwrRVGCfzjfsW+BC9O6V6U7U5WV6RGzJ5mp2YNkV7XUc8y3jZ40MP3KgwupjB8NkWdz6xmXikNBLxfISZ73GiWbD3I2X5QWVspChVMvMG+IZq6VVs5T73SQLzE/aD2oIWK+kjTEyMeln7EtGsynZEY4JUr85ESSh4jUCz7lLh6K5xlaPIVYqUnx5p2PCQSHQQaut7UXydDD/1xU9l3+CdITB386qG7gPMnIdo9sPuj8WyUvtFfzE4Rmhg4NVqFiZsKt913JDpdAqRPtYRpnh+xkYe3HRI0vT4bh3PUX2ZcwWphr7hajB54sCvsLzVZhvoBYcSdVlY3UJqi8IJYqQ2uWNiACCjAGsGmExITSF/t7f11hnE1dfHetWXVBpXExX7DecaUHbzpiz8gNeDGBNqUzXfo4nMWGdIrGWc0bjJkFQiuXp81ap74C5odTOrmxPzV62HIOyknymGhVi+vMtY/SO1jnsVpLkZbMrWFIqCiY3vB624pYF4DzcqcvAD7uvNgxyICyF+SffH9G/gMaqXG6/wIAAA==',
-                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_BASE64: True,
                 ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
                 ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
-                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=No LargeAttachment=No OriginalBase64=No'
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=Yes LargeAttachment=No OriginalBase64=Yes'
             }]
 
             expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
@@ -339,21 +339,16 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_application_xml_content_compressed')
             attachments = [{
                 ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'H4sIAAAAAAAA/3WSzW7sIAyF9zyFd7PJS0xX7aaq1JG6ZsAJdAiOwBlu3v4eyGwrRVGCfzjfsW+BC9O6V6U7U5WV6RGzJ5mp2YNkV7XUc8y3jZ40MP3KgwupjB8NkWdz6xmXikNBLxfISZ73GiWbD3I2X5QWVspChVMvMG+IZq6VVs5T73SQLzE/aD2oIWK+kjTEyMeln7EtGsynZEY4JUr85ESSh4jUCz7lLh6K5xlaPIVYqUnx5p2PCQSHQQaut7UXydDD/1xU9l3+CdITB386qG7gPMnIdo9sPuj8WyUvtFfzE4Rmhg4NVqFiZsKt913JDpdAqRPtYRpnh+xkYe3HRI0vT4bh3PUX2ZcwWphr7hajB54sCvsLzVZhvoBYcSdVlY3UJqi8IJYqQ2uWNiACCjAGsGmExITSF/t7f11hnE1dfHetWXVBpXExX7DecaUHbzpiz8gNeDGBNqUzXfo4nMWGdIrGWc0bjJkFQiuXp81ap74C5odTOrmxPzV62HIOyknymGhVi+vMtY/SO1jnsVpLkZbMrWFIqCiY3vB624pYF4DzcqcvAD7uvNgxyICyF+SffH9G/gMaqXG6/wIAAA==',
-                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_BASE64: True,
                 ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
                 ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'application/xml',
-                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=No LargeAttachment=No OriginalBase64=No'
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Filename="277F29F1-FEAB-4D38-8266-FEB7A1E6227D_LICENSE.txt" ContentType=text/plain Compressed=Yes LargeAttachment=No OriginalBase64=Yes'
             }]
 
             expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
                                                            attachments=attachments)
 
             parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
-
-            print("ahhhhhhhh")
-            print(expected_values_with_payload)
-            print("ahhhhhhhh2")
-            print(parsed_message.message_dictionary)
             self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
         with self.subTest("A valid request containing one external attachment"):
