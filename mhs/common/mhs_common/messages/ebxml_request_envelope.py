@@ -7,7 +7,6 @@ import copy
 import email
 import email.message
 import email.policy
-import gzip
 from typing import Dict, Tuple, Union, List, Sequence, Generator
 from xml.etree.ElementTree import Element
 
@@ -142,7 +141,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
         # parts not a breakdown
         xml_tree: Element = ElementTree.fromstring(ebxml_part)
-       
+
         extracted_values = super().parse_message(xml_tree)
         cls._extract_more_values_from_xml_tree(xml_tree, extracted_values)
 
@@ -266,67 +265,21 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
     @staticmethod
     def _convert_message_part_to_str(message_part: email.message.EmailMessage) -> Tuple[str, bool]:
-
-        # Due to the compression strategy, we can never pass a text field into our content manager as it will always
-        # attempt to convert the final string to a utf-8 string. If a text data type has been received in a compressed
-        # format, we will lose data and lose the ability to decompress it. The content_type bypass below allows us
-        # to treat text as a byte string and manage it manually here.
-
-        content_type = message_part.get_content_type()
-        if "text" in content_type:
-            message_part.set_type("application/text-bypass")
-
         content: Union[str, bytes] = message_part.get_content()
+        content_type = message_part.get_content_type()
         content_transfer_encoding = message_part['Content-Transfer-Encoding']
         logger_dict = {'ContentType': content_type, 'ContentTransferEncoding': content_transfer_encoding}
-
-        # reset content_type now we have aquired the content
-        message_part.set_type(content_type)
 
         if isinstance(content, str):
             logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} as string',
                         fparams=logger_dict)
-
             return content, False
         try:
-
-            charset = message_part.get_param('charset', 'UTF-8')
-
-            if 'text' in content_type:
-
-                # if we can decode a text item in strict mode, we know it's a string, this is the original contentmanager
-                # behaviour except in strict mode not replace mode where data loss can occur
-                try:
-                    decodedText = content.decode(charset, 'strict')
-                    return decodedText, False
-                except:
-                    # If we can't decode, we're likly working with a compressed string
-                    try:
-                        content = gzip.decompress(content)
-                        logger.info('Successfully decompressed message part with {ContentType} {ContentTransferEncoding} '
-                                    'as a string', fparams=logger_dict)
-                        content = content.decode(charset)
-                        return content, False
-                    except:
-                        # If we can't decompress then we shall use replace mode decoding, this is the original behaviour
-                        decodedText = content.decode(charset, 'replace')
-                        return decodedText, False
-
             if content_type == 'application/xml':
-                try:
-                    content = gzip.decompress(content)
-                    logger.info('Successfully decompressed message part with {ContentType} {ContentTransferEncoding} '
-                                'as a string', fparams=logger_dict)
-                    content = content.decode(charset)
-                    return content, False
-                except:
-                    if content_type == 'application/xml':
-                        decoded_content = content.decode(charset)
-                        logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} '
-                                    'as a string', fparams=logger_dict)
-                        return decoded_content, False
-
-            # turn the data back to a base64 string, we cannot process it as required so let the reciever manage it.
+                decoded_content = content.decode()
+                logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} '
+                            'as a string', fparams=logger_dict)
+                return decoded_content, False
             decoded_content = base64.b64encode(content).decode()
             logger.info('Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
                         'a base64 string', fparams=logger_dict)

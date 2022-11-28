@@ -162,7 +162,6 @@ class EbxmlEnvelope(envelope.Envelope):
                 description_attribute = child.find(xpath_description, namespaces=NAMESPACES)
 
                 # it is possible that an attachment does not have a description like in the case of a COPC attachment index file part
-                # however, we will take one if we have it
                 description = ""
                 if description_attribute is not None:
                     if description_attribute.text is not None:
@@ -175,31 +174,8 @@ class EbxmlEnvelope(envelope.Envelope):
                 for item in attachment_payloads:
                     logger.error("Attachment IDs:" + item[ATTACHMENT_CONTENT_ID])
 
-                # We may have already decompressed a compressed payload or converted from base64, if so,
-                # update the payload description fields with the correct details and form our attachment
                 # All this to add the description field :)
-
                 if (foundPayload is not None):
-
-                    if description is not None:
-                        descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
-                        for index, param in enumerate(descriptionParams):
-                            paramParts = param.split("=")
-                            if paramParts[0] == 'OriginalBase64':
-                                if not foundPayload[ATTACHMENT_BASE64]:
-                                    descriptionParams[index] = paramParts[0] + "=No"
-                                else:
-                                    descriptionParams[index] = paramParts[0] + "=Yes"
-
-                            if paramParts[0] == "Compressed":
-                                if (paramParts[1] == "Yes"):
-                                    # if a compressed message is still in base64 then it has not been decompressed
-                                    if not foundPayload[ATTACHMENT_BASE64]:
-                                        descriptionParams[index] = paramParts[0] + "=No"
-                                    else:
-                                        descriptionParams[index] = paramParts[0] + "=Yes"
-
-                        description = " ".join(descriptionParams)
 
                     attachment = {
                         ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
@@ -231,7 +207,7 @@ class EbxmlEnvelope(envelope.Envelope):
 
             mid_attribute = None
             document_id_attribute = None
-            xpath_description = None 
+            xpath_description = None
             description_attribute = None
 
             if '{'+ NAMESPACES[XLINK_NAMESPACE]+ '}href' in child.attrib:
@@ -246,27 +222,25 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 if description_attribute is not None:
                     description = re.sub(r"[\n\t]*", "", description_attribute.text)
-
-                    variables = descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
-
+                    variables = description.strip().split(" ")
                     filename = None
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
                         filename = description_variables["Filename"].replace('\\', '')
-                    
+
                     mid = mid_attribute.split(":")[1]
-                    external_attachment =  { 
-                        EXTERNAL_ATTACHMENT_DOCUMENT_ID :document_id_attribute, 
-                        EXTERNAL_ATTACHMENT_MESSAGE_ID :mid_attribute.split(":")[1], 
-                        EXTERNAL_ATTACHMENT_DESCRIPTION: description, 
-                        EXTERNAL_ATTACHMENT_TITLE: filename 
+                    external_attachment =  {
+                        EXTERNAL_ATTACHMENT_DOCUMENT_ID :document_id_attribute,
+                        EXTERNAL_ATTACHMENT_MESSAGE_ID :mid_attribute.split(":")[1],
+                        EXTERNAL_ATTACHMENT_DESCRIPTION: description,
+                        EXTERNAL_ATTACHMENT_TITLE: filename
                     }
 
                     external_attachments.append(external_attachment)
 
         EbxmlEnvelope._add_if_present(extracted_values, EXTERNAL_ATTACHMENTS, external_attachments)
         return extracted_values
-    
+
     @staticmethod
     def _path_to_ebxml_element(name: str, parent: str = None) -> str:
         path = ".//"
@@ -284,13 +258,13 @@ class EbxmlEnvelope(envelope.Envelope):
         xpath = EbxmlEnvelope._path_to_ebxml_element(element_name, parent=parent)
 
         value = xml_tree.find(xpath, namespaces=NAMESPACES)
-            
+
         if value is None and required:
             logger.error("Weren't able to find required element {xpath} during parsing of EbXML message.",
                          fparams={'xpath': xpath})
             raise EbXmlParsingError(f"Weren't able to find required element {xpath} during parsing of EbXML message")
         return value
-   
+
     @staticmethod
     def _extract_ebxml_text_value(xml_tree: Element, element_name: str, parent: str = None,
                                   required: bool = False) -> Optional[str]:
