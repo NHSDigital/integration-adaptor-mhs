@@ -1,4 +1,6 @@
 # National Integration Adaptors - MHS SETUP
+REBUILD TEST 1
+
 ___
 **Note:** Setup for Windows would differ only in commands and keyboard shortcuts used
 ___
