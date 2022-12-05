@@ -101,7 +101,8 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
             ebxml_request_envelope.ATTACHMENT_BASE64: False,
             ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
-            ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
+            ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
+            ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: []
         }]
         message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS] = []
         envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
@@ -109,6 +110,33 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
         message_id, http_headers, message = envelope.serialize()
 
         normalized_expected_message = self._get_expected_file_string('ebxml_request_one_attachment.xml')
+        normalized_message = file_utilities.normalize_line_endings(message)
+
+        self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
+        self.assertEqual(EXPECTED_HTTP_HEADERS, http_headers)
+        self.assertEqual(normalized_expected_message, normalized_message)
+
+    @patch.object(message_utilities, "get_timestamp")
+    @patch.object(message_utilities, "get_uuid")
+    def test_serialize_with_one_attachment_with_document_id(self, mock_get_uuid, mock_get_timestamp):
+        mock_get_uuid.side_effect = ["8F1D7DE1-02AB-48D7-A797-A947B09F347F", test_ebxml_envelope.MOCK_UUID]
+        mock_get_timestamp.return_value = test_ebxml_envelope.MOCK_TIMESTAMP
+
+        message_dictionary = get_test_message_dictionary()
+        message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [{
+            ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+            ebxml_request_envelope.ATTACHMENT_BASE64: False,
+            ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
+            ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
+            ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: '_some-document-id'
+        }]
+        message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS] = []
+        envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)
+
+        message_id, http_headers, message = envelope.serialize()
+
+        normalized_expected_message = self._get_expected_file_string(
+            'ebxml_request_one_attachment_with_document_id.xml')
         normalized_message = file_utilities.normalize_line_endings(message)
 
         self.assertEqual(test_ebxml_envelope.MOCK_UUID, message_id)
@@ -130,13 +158,15 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
                 ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
                 ebxml_request_envelope.ATTACHMENT_BASE64: False,
                 ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
-                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload'
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
+                ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: []
             },
             {
                 ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'image/png',
                 ebxml_request_envelope.ATTACHMENT_BASE64: True,
                 ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Another description',
-                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'QW5vdGhlciBwYXlsb2Fk'
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'QW5vdGhlciBwYXlsb2Fk',
+                ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: []
             }
         ]
         envelope = ebxml_request_envelope.EbxmlRequestEnvelope(message_dictionary)

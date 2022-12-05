@@ -39,6 +39,7 @@ ATTACHMENT_CONTENT_TYPE = 'content_type'
 ATTACHMENT_BASE64 = 'is_base64'
 ATTACHMENT_CONTENT_TRANSFER_ENCODING = 'content_transfer_encoding'
 ATTACHMENT_PAYLOAD = 'payload'
+ATTACHMENT_DOCUMENT_ID = 'document_id'
 ATTACHMENT_DESCRIPTION = 'description'
 
 EBXML_CONTENT_TYPE_VALUE = 'multipart/related; boundary="--=_MIME-Boundary"; type=text/xml; ' \
