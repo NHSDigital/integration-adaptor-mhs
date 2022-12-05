@@ -39,7 +39,7 @@ Content-Transfer-Encoding: 8bit
             <eb:Description xml:lang="en">HL7 payload</eb:Description>
             <hl7ebxml:Payload style="HL7" encoding="XML" version="3.0"/>
         </eb:Reference>{{#attachments}}
-        <eb:Reference xlink:href="cid:{{content_id}}">
+        <eb:Reference{{#document_id}} eb:id="{{document_id}}"{{/document_id}} xlink:href="cid:{{content_id}}">
             <eb:Description xml:lang="en">{{{description}}}</eb:Description>
         </eb:Reference>{{/attachments}}{{#external_attachments}}
         <eb:Reference{{#document_id}} eb:id="{{document_id}}"{{/document_id}} xlink:href="mid:{{message_id}}">
