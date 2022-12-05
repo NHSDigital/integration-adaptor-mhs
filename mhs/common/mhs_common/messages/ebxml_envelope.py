@@ -181,26 +181,6 @@ class EbxmlEnvelope(envelope.Envelope):
 
                 if (foundPayload is not None):
 
-                    if description is not None:
-                        descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
-                        for index, param in enumerate(descriptionParams):
-                            paramParts = param.split("=")
-                            if paramParts[0] == 'OriginalBase64':
-                                if not foundPayload[ATTACHMENT_BASE64]:
-                                    descriptionParams[index] = paramParts[0] + "=No"
-                                else:
-                                    descriptionParams[index] = paramParts[0] + "=Yes"
-
-                            if paramParts[0] == "Compressed":
-                                if (paramParts[1] == "Yes"):
-                                    # if a compressed message is still in base64 then it has not been decompressed
-                                    if not foundPayload[ATTACHMENT_BASE64]:
-                                        descriptionParams[index] = paramParts[0] + "=No"
-                                    else:
-                                        descriptionParams[index] = paramParts[0] + "=Yes"
-
-                        description = " ".join(descriptionParams)
-
                     attachment = {
                         ATTACHMENT_PAYLOAD: foundPayload[ATTACHMENT_PAYLOAD],
                         ATTACHMENT_BASE64: foundPayload[ATTACHMENT_BASE64],

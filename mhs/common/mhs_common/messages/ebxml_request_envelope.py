@@ -303,11 +303,19 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
                 except:
                     # If we can't decode, we're likly working with a compressed string
                     try:
-                        content = gzip.decompress(content)
-                        logger.info('Successfully decompressed message part with {ContentType} {ContentTransferEncoding} '
-                                    'as a string', fparams=logger_dict)
-                        content = content.decode(charset)
-                        return content, False
+                        contentDecompressed = gzip.decompress(content)
+                        logger.info(
+                            'Successfully decompressed file with {ContentType} {ContentTransferEncoding}, '
+                            'this will be encoded again as a base64 string', fparams=logger_dict)
+                        # Due to the nature of COPC messages and that they may not contain a description to update,
+                        # and the compression details are likly to have been on a previous RMCR message
+                        # we cannot pass back a decompressed file with an updated description
+                        # Rebuild the base64 string for the reciever to handle
+                        encoded_content = base64.b64encode(content).decode()
+                        logger.info(
+                            'Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
+                            'a base64 string', fparams=logger_dict)
+                        return encoded_content, True
                     except:
                         # If we can't decompress then we shall use replace mode decoding, this is the original behaviour
                         decodedText = content.decode(charset, 'replace')
@@ -315,11 +323,20 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
             if content_type == 'application/xml':
                 try:
-                    content = gzip.decompress(content)
-                    logger.info('Successfully decompressed message part with {ContentType} {ContentTransferEncoding} '
-                                'as a string', fparams=logger_dict)
-                    content = content.decode(charset)
-                    return content, False
+                    contentDecompressed = gzip.decompress(content)
+                    logger.info(
+                        'Successfully decompressed file with {ContentType} {ContentTransferEncoding}, '
+                        'this will be encoded again as a base64 string', fparams=logger_dict)
+                    # Due to the nature of COPC messages and that they may not contain a description to update,
+                    # and the compression details are likly to have been on a previous RMCR message
+                    # we cannot pass back a decompressed file with an updated description
+                    # Rebuild the base64 string for the reciever to handle
+                    encoded_content = base64.b64encode(content).decode()
+                    logger.info(
+                        'Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
+                        'a base64 string', fparams=logger_dict)
+                    return encoded_content, True
+
                 except:
                     if content_type == 'application/xml':
                         decoded_content = content.decode(charset)
@@ -332,6 +349,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
             logger.info('Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
                         'a base64 string', fparams=logger_dict)
             return decoded_content, True
+
         except UnicodeDecodeError as e:
             logger.error('Failed to decode ebXML message part with {ContentType} {ContentTransferEncoding}.',
                          fparams=logger_dict)
