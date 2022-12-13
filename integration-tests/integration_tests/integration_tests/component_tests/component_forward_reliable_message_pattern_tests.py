@@ -311,7 +311,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
 
         # attachment with content type that is not permitted
         attachments = [{
-            'content_type': 'application/zip',
+            'content_type': 'application/tar',
             'is_base64': False,
             'description': 'Some description',
             'payload': 'Some payload'
