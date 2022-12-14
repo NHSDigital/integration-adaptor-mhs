@@ -45,61 +45,61 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
     def _assert_gp_summary_upload_success_detail_is_present(self, hl7_xml_assertor: Hl7XmlResponseAssertor):
         hl7_xml_assertor.assert_element_exists_with_value('.//requestSuccessDetail//detail', 'GP Summary upload successful')
 
-    def test_should_return_successful_response_from_spine_to_message_queue(self):
-        # Arrange
-        message, message_id = build_message('REPC_IN150016UK05', '9446245796')
-        correlation_id = str(uuid.uuid4())
-        # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='REPC_IN150016UK05',
-                          message_id=message_id,
-                          wait_for_response=False,
-                          correlation_id=correlation_id) \
-            .with_body(message) \
-            .execute_post_expecting_success()
+    # def test_should_return_successful_response_from_spine_to_message_queue(self):
+    #     # Arrange
+    #     message, message_id = build_message('REPC_IN150016UK05', '9446245796')
+    #     correlation_id = str(uuid.uuid4())
+    #     # Act
+    #     MhsHttpRequestBuilder() \
+    #         .with_headers(interaction_id='REPC_IN150016UK05',
+    #                       message_id=message_id,
+    #                       wait_for_response=False,
+    #                       correlation_id=correlation_id) \
+    #         .with_body(message) \
+    #         .execute_post_expecting_success()
+    #
+    #     # Assert
+    #     amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
+    #     self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
+    #     hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
+    #     self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
 
-        # Assert
-        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
-        self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
-        hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
-        self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
+    # def test_should_record_asynchronous_reliable_message_status_as_successful(self):
+    #     # Arrange
+    #     message, message_id = build_message('REPC_IN150016UK05', '9446245796')
+    #
+    #     # Act
+    #     MhsHttpRequestBuilder() \
+    #         .with_headers(interaction_id='REPC_IN150016UK05',
+    #                       message_id=message_id,
+    #                       wait_for_response=False,
+    #                       correlation_id=str(uuid.uuid4())) \
+    #         .with_body(message) \
+    #         .execute_post_expecting_success()
+    #
+    #     # Assert
+    #     hl7_xml_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())\
+    #         .assertor_for_hl7_xml_message()
+    #     self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
+    #
+    #     AssertWithRetries(retry_count=10) \
+    #         .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
+    #
+    #     dynamo_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
+    #     self.assertions.message_status_recorded_as_successfully_processed(dynamo_assertor, message_id)
 
-    def test_should_record_asynchronous_reliable_message_status_as_successful(self):
-        # Arrange
-        message, message_id = build_message('REPC_IN150016UK05', '9446245796')
-
-        # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='REPC_IN150016UK05',
-                          message_id=message_id,
-                          wait_for_response=False,
-                          correlation_id=str(uuid.uuid4())) \
-            .with_body(message) \
-            .execute_post_expecting_success()
-
-        # Assert
-        hl7_xml_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())\
-            .assertor_for_hl7_xml_message()
-        self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
-
-        AssertWithRetries(retry_count=10) \
-            .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
-
-        dynamo_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
-        self.assertions.message_status_recorded_as_successfully_processed(dynamo_assertor, message_id)
-
-    def test_should_return_successful_response_and_record_spline_reply_in_resync_table_if_wait_for_response_requested(self):
-        # Arrange
-        messages = [build_message('REPC_IN150016UK05', '9446245796') for i in range(1)]
-
-        # Act
-        responses = send_messages_concurrently(messages, interaction_id='REPC_IN150016UK05', wait_for_response=True)
-
-        # Assert
-        all_sync_async_states = MHS_SYNC_ASYNC_TABLE_WRAPPER.get_all_records_in_table()
-        assert_all_messages_succeeded(responses)
-        sync_async_state_assertor = SyncAsyncMhsTableStateAssertor(all_sync_async_states)
-        for message, message_id in messages:
-            hl7_xml_assertor = sync_async_state_assertor \
-                .assert_single_item_exists_with_key(message_id)
-            self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
+    # def test_should_return_successful_response_and_record_spline_reply_in_resync_table_if_wait_for_response_requested(self):
+    #     # Arrange
+    #     messages = [build_message('REPC_IN150016UK05', '9446245796') for i in range(1)]
+    #
+    #     # Act
+    #     responses = send_messages_concurrently(messages, interaction_id='REPC_IN150016UK05', wait_for_response=True)
+    #
+    #     # Assert
+    #     all_sync_async_states = MHS_SYNC_ASYNC_TABLE_WRAPPER.get_all_records_in_table()
+    #     assert_all_messages_succeeded(responses)
+    #     sync_async_state_assertor = SyncAsyncMhsTableStateAssertor(all_sync_async_states)
+    #     for message, message_id in messages:
+    #         hl7_xml_assertor = sync_async_state_assertor \
+    #             .assert_single_item_exists_with_key(message_id)
+    #         self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
