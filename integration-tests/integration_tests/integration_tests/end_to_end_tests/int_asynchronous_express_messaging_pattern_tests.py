@@ -40,42 +40,42 @@ class AsynchronousExpressMessagingPatternTests(TestCase):
         MHS_INBOUND_QUEUE.drain()
         self.assertions = CommonAssertions('async-express')
 
-    def test_should_return_successful_response_from_spine_to_message_queue(self):
-        # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9691035456')
-        correlation_id = str(uuid.uuid4())
+    # def test_should_return_successful_response_from_spine_to_message_queue(self):
+    #     # Arrange
+    #     message, message_id = build_message('QUPC_IN160101UK05', '9691035456')
+    #     correlation_id = str(uuid.uuid4())
+    #
+    #     # Act
+    #     MhsHttpRequestBuilder() \
+    #         .with_headers(interaction_id='QUPC_IN160101UK05',
+    #                       message_id=message_id,
+    #                       wait_for_response=False,
+    #                       correlation_id=correlation_id) \
+    #         .with_body(message) \
+    #         .execute_post_expecting_success()
+    #
+    #     AssertWithRetries(retry_count=10) \
+    #         .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
+    #
+    #     amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
+    #     state_table_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
+    #
+    #     self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
+    #     hl7_xml_message_assertor = amq_assertor.assertor_for_hl7_xml_message()
+    #     self.assertions.hl7_xml_contains_response_code_and_patient_id(hl7_xml_message_assertor)
+    #     self.assertions.message_status_recorded_as_successfully_processed(state_table_assertor, message_id)
 
-        # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05',
-                          message_id=message_id,
-                          wait_for_response=False,
-                          correlation_id=correlation_id) \
-            .with_body(message) \
-            .execute_post_expecting_success()
-
-        AssertWithRetries(retry_count=10) \
-            .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
-
-        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
-        state_table_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
-
-        self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
-        hl7_xml_message_assertor = amq_assertor.assertor_for_hl7_xml_message()
-        self.assertions.hl7_xml_contains_response_code_and_patient_id(hl7_xml_message_assertor)
-        self.assertions.message_status_recorded_as_successfully_processed(state_table_assertor, message_id)
-
-    def test_should_return_successful_response_and_record_spine_reply_in_resync_table_if_wait_for_response_requested(self):
-        # Arrange
-        messages = [build_message('QUPC_IN160101UK05', '9691035456') for _ in range(1)]
-
-        # Act
-        responses = send_messages_concurrently(messages, interaction_id='QUPC_IN160101UK05', wait_for_response=True)
-
-        # Assert
-        all_sync_async_states = MHS_SYNC_ASYNC_TABLE_WRAPPER.get_all_records_in_table()
-        assert_all_messages_succeeded(responses)
-        sync_async_state_assertor = SyncAsyncMhsTableStateAssertor(all_sync_async_states)
-        for message, message_id in messages:
-            hl7_xml_message_assertor = sync_async_state_assertor.assert_single_item_exists_with_key(message_id)
-            self.assertions.hl7_xml_contains_response_code_and_patient_id(hl7_xml_message_assertor)
+    # def test_should_return_successful_response_and_record_spine_reply_in_resync_table_if_wait_for_response_requested(self):
+    #     # Arrange
+    #     messages = [build_message('QUPC_IN160101UK05', '9691035456') for _ in range(1)]
+    #
+    #     # Act
+    #     responses = send_messages_concurrently(messages, interaction_id='QUPC_IN160101UK05', wait_for_response=True)
+    #
+    #     # Assert
+    #     all_sync_async_states = MHS_SYNC_ASYNC_TABLE_WRAPPER.get_all_records_in_table()
+    #     assert_all_messages_succeeded(responses)
+    #     sync_async_state_assertor = SyncAsyncMhsTableStateAssertor(all_sync_async_states)
+    #     for message, message_id in messages:
+    #         hl7_xml_message_assertor = sync_async_state_assertor.assert_single_item_exists_with_key(message_id)
+    #         self.assertions.hl7_xml_contains_response_code_and_patient_id(hl7_xml_message_assertor)
