@@ -15,8 +15,15 @@ import os
 from typing import List
 
 import marshmallow.validate
+import utilities.integration_adaptors_logger as log
 
-_ATTACHMENT_ALLOWED_CONTENT_TYPES = (os.environ['SUPPORTED_FILE_TYPES'])
+logger = log.IntegrationAdaptorsLogger(__name__)
+
+try:
+    _ATTACHMENT_ALLOWED_CONTENT_TYPES = (os.environ['SUPPORTED_FILE_TYPES'])
+except KeyError:
+    logger.error("SUPPORTED_FILE_TYPES not set, please set the SUPPORTED_FILE_TYPES environment variable.")
+
 
 @dataclasses.dataclass
 class Attachment:
