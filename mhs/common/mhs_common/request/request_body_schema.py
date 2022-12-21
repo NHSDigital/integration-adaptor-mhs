@@ -19,7 +19,7 @@ import utilities.integration_adaptors_logger as log
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
-_ATTACHMENT_ALLOWED_CONTENT_TYPES = (os.environ.get('SUPPORTED_FILE_TYPES'))
+_ATTACHMENT_ALLOWED_CONTENT_TYPES = (os.environ.get('SUPPORTED_FILE_TYPES').split(","))
 
 if _ATTACHMENT_ALLOWED_CONTENT_TYPES is None:
     logger.error("SUPPORTED_FILE_TYPES not set, please set the SUPPORTED_FILE_TYPES environment variable.")
