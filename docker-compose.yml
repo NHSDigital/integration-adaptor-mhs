@@ -2,7 +2,7 @@ version: '3'
 
 services:
   inbound:
-    image: local/mhs-inbound-sa:${BUILD_TAG}
+    image: local/mhs-inbound:${BUILD_TAG}
     ports:
       - "443"
       - "80"
@@ -24,7 +24,7 @@ services:
       # when connecting to local DynamoDB
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
-      - MHS_INBOUND_USE_SSL=False
+      - MHS_INBOUND_USE_SSL=True
       - TCP_PORTS=443
       - SERVICE_PORTS=443,80
   outbound:
