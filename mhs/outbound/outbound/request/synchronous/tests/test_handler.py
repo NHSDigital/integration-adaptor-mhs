@@ -106,7 +106,7 @@ class TestSynchronousHandler(BaseHandlerTest):
     def test_post_message_works_correctly_when_attachment_is_a_valid_content_type(self):
         textual_content_types = ['text/plain', 'text/html', 'text/xml', 'application/xml', 'text/rtf']
         binary_content_types = ['application/pdf', 'audio/basic', 'audio/mpeg', 'image/png', 'image/gif', 'image/jpeg',
-                                'image/tiff', 'video/mpeg', 'application/msword', 'application/octet-stream']
+                                'image/tiff', 'video/mpeg', 'application/msword']
         textual_sub_tests = [(False, content_type, 'test') for content_type in textual_content_types]
         binary_sub_tests = [(True, content_type, 'iVBORw0KGgoAAA==') for content_type in binary_content_types]
         for is_base64, content_type, payload in textual_sub_tests + binary_sub_tests:
