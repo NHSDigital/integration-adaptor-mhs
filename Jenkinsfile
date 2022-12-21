@@ -511,7 +511,6 @@ pipeline {
 }
 
 void executeUnitTestsWithCoverage() {
-    sh label: 'Getting file type variable', script: 'source supported-files.sh'
     sh label: 'Running unit tests', script: 'pipenv run unittests-cov'
     sh label: 'Displaying code coverage report', script: 'pipenv run coverage-report'
     sh label: 'Exporting code coverage report', script: 'pipenv run coverage-report-xml'
