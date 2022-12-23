@@ -218,6 +218,7 @@ pipeline {
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
                                         --env "SCR_ADDRESS=http://scradaptor" \
+                                        --env "SUPPORTED_FILE_TYPES=${SUPPORTED_FILE_TYPES}" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
                             }
