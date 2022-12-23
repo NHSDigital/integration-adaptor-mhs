@@ -558,7 +558,7 @@ class TestSynchronousHandlerRequestBodyValidation(BaseHandlerTest):
         request_body = {"payload": "test",
                         "attachments": [{
                             "is_base64": False,
-                            "content_type": "application/zip",
+                            "content_type": "application/zip-not-allowed",
                             "payload": "blah",
                             "description": "some description"}]}
         response_body = self._make_request_and_check_invalid_request_response(
