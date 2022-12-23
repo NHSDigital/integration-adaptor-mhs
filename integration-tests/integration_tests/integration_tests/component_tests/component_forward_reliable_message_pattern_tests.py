@@ -365,4 +365,4 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
                                         "application/json, application/x-pkcs10, application/pkix-cert, "
                                         "application/x-pkcs12, application/x-pkcs7-mime, application/pkcs10, "
                                         "application/x-x509-ca-cert, application/pkcs-12, application/pkcs7-signature, "
-                                        "application/x-pkcs7-signature, application/pkcs7-mime']}}}")
+                                        "application/x-pkcs7-signature, application/pkcs7-mime.']}}}")
