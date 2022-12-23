@@ -162,7 +162,7 @@ pipeline {
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
                                         --env "SCR_ADDRESS=http://scradaptor" \
-                                        --env "SUPPORTED_FILE_TYPES="text/plain,test/xml" \
+                                        --env "SUPPORTED_FILE_TYPES=text/plain,test/xml \
                                         --name "${BUILD_TAG_LOWER}_component_test" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
