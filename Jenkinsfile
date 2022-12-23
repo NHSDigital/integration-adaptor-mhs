@@ -1,7 +1,7 @@
 pipeline {
     agent{
         label 'jenkins-workers'
-
+    }
 
     environment {
         BUILD_TAG = sh label: 'Generating build tag', returnStdout: true, script: 'python3 pipeline/scripts/tag.py ${GIT_BRANCH} ${BUILD_NUMBER} ${GIT_COMMIT}'
@@ -342,30 +342,30 @@ pipeline {
                             }
                         }
 
-                        stage('Integration Tests (SpineRouteLookup)') {
-                            steps {
-                                dir('integration-tests/integration_tests') {
-                                    sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'
-                                    // Wait for MHS load balancers to have healthy targets
-                                    dir('../../pipeline/scripts/check-target-group-health') {
-                                        sh script: 'pipenv install'
-
-                                        timeout(13) {
-                                            waitUntil {
-                                                script {
-                                                    def r = sh script: 'sleep 10; AWS_DEFAULT_REGION=eu-west-2 pipenv run main ${MHS_OUTBOUND_TARGET_GROUP} ${MHS_INBOUND_TARGET_GROUP}  ${MHS_ROUTE_TARGET_GROUP}', returnStatus: true
-                                                    return (r == 0);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    sh label: 'Running integration tests', script: """
-                                        export SKIP_FORWARD_RELIABLE_INT_TEST=true
-                                        pipenv run inttests
-                                    """
-                                }
-                            }
-                        }
+//                         stage('Integration Tests (SpineRouteLookup)') {
+//                             steps {
+//                                 dir('integration-tests/integration_tests') {
+//                                     sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'
+//                                     // Wait for MHS load balancers to have healthy targets
+//                                     dir('../../pipeline/scripts/check-target-group-health') {
+//                                         sh script: 'pipenv install'
+//
+//                                         timeout(13) {
+//                                             waitUntil {
+//                                                 script {
+//                                                     def r = sh script: 'sleep 10; AWS_DEFAULT_REGION=eu-west-2 pipenv run main ${MHS_OUTBOUND_TARGET_GROUP} ${MHS_INBOUND_TARGET_GROUP}  ${MHS_ROUTE_TARGET_GROUP}', returnStatus: true
+//                                                     return (r == 0);
+//                                                 }
+//                                             }
+//                                         }
+//                                     }
+//                                     sh label: 'Running integration tests', script: """
+//                                         export SKIP_FORWARD_RELIABLE_INT_TEST=true
+//                                         pipenv run inttests
+//                                     """
+//                                 }
+//                             }
+//                         }
                     }
                 }
                 stage('Run Integration Tests (SDS API)') {
