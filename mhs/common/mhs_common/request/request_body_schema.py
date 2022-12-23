@@ -19,10 +19,8 @@ import utilities.integration_adaptors_logger as log
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
-# _ATTACHMENT_ALLOWED_CONTENT_TYPES = tuple(os.environ.get('SUPPORTED_FILE_TYPES').split(","))
-# These allowed content types for attachments are taken from the EIS part 2.5.4.2
-
-_ATTACHMENT_ALLOWED_CONTENT_TYPES = ('text/plain', 'text/html', 'application/pdf', 'text/xml', 'application/xml', 'text/rtf', 'audio/basic',
+_ATTACHMENT_ALLOWED_CONTENT_TYPES_TEST = (
+    'text/plain', 'text/html', 'application/pdf', 'text/xml', 'application/xml', 'text/rtf', 'audio/basic',
     'audio/mpeg', 'image/png', 'image/gif', 'image/jpeg', 'image/tiff', 'video/mpeg', 'application/msword',
     'application/octet-stream', 'application/vnd.ms-excel.addin.macroEnabled.12',
     'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'application/vnd.ms-excel.sheet.macroEnabled.12',
@@ -48,15 +46,24 @@ _ATTACHMENT_ALLOWED_CONTENT_TYPES = ('text/plain', 'text/html', 'application/pdf
     'application/hl7-v2+xml', 'application/vnd.openxmlformats-package.relationships+xml', 'video/x-ms-vob',
     'application/x-gzip', 'audio/x-pn-wav', 'application/msoutlook', 'video/3gpp', 'application/cdf',
     'application/EDIFACT', 'application/x-cdf', 'application/x-pgp-plugin', 'audio/x-au', 'application/dicom',
-    'application/EDI-Consent', 'application/zip', 'application/json', 'application/x-pkcs10', 'application/pkix-cert',
+    'application/EDI-Consent', 'application/zip', 'application/json, ' 'application/x-pkcs10', 'application/pkix-cert',
     'application/x-pkcs12', 'application/x-pkcs7-mime', 'application/pkcs10', 'application/x-x509-ca-cert',
-    'application/pkcs-12', 'application/pkcs7-signature', 'application/x-pkcs7-signature', 'application/pkcs7-mime')
+    'application/pkcs-12', 'application/pkcs7-signature', 'application/x-pkcs7-signature', 'application/pkcs7-mime'
+)
+
+_ATTACHMENT_ALLOWED_CONTENT_TYPES = tuple(os.environ.get('SUPPORTED_FILE_TYPES').split(","))
+# These allowed content types for attachments are taken from the EIS part 2.5.4.2
+
 
 if _ATTACHMENT_ALLOWED_CONTENT_TYPES is None:
     logger.error("SUPPORTED_FILE_TYPES not set, please set the SUPPORTED_FILE_TYPES environment variable.")
     _ATTACHMENT_ALLOWED_CONTENT_TYPES = ''
 
-
+if _ATTACHMENT_ALLOWED_CONTENT_TYPES == _ATTACHMENT_ALLOWED_CONTENT_TYPES_TEST:
+    logger.error("YTP: URGENT NO MATCH")
+    logger.error(''.join(_ATTACHMENT_ALLOWED_CONTENT_TYPES))
+    logger.error('_______________________')
+    logger.error(''.join(_ATTACHMENT_ALLOWED_CONTENT_TYPES_TEST))
 @dataclasses.dataclass
 class Attachment:
     """
