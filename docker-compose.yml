@@ -27,6 +27,7 @@ services:
       - MHS_INBOUND_USE_SSL=True
       - TCP_PORTS=443
       - SERVICE_PORTS=443,80
+      - SUPPORTED_FILE_TYPES
   outbound:
     image: local/mhs-outbound:${BUILD_TAG}
     ports:
