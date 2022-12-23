@@ -51,9 +51,11 @@ _ATTACHMENT_ALLOWED_CONTENT_TYPES_TEST = (
     'application/pkcs-12', 'application/pkcs7-signature', 'application/x-pkcs7-signature', 'application/pkcs7-mime'
 )
 
-_ATTACHMENT_ALLOWED_CONTENT_TYPES = tuple(os.environ.get('SUPPORTED_FILE_TYPES').split(","))
-# These allowed content types for attachments are taken from the EIS part 2.5.4.2
+_ALLOWED_CONTENT_TYPES_ENV = os.environ.get('SUPPORTED_FILE_TYPES')
+logger.error(_ALLOWED_CONTENT_TYPES_ENV)
 
+_ATTACHMENT_ALLOWED_CONTENT_TYPES = tuple(_ALLOWED_CONTENT_TYPES_ENV.split(","))
+# These allowed content types for attachments are taken from the EIS part 2.5.4.2
 
 if _ATTACHMENT_ALLOWED_CONTENT_TYPES is None:
     logger.error("SUPPORTED_FILE_TYPES not set, please set the SUPPORTED_FILE_TYPES environment variable.")
