@@ -325,9 +325,9 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
 
         # Assert
         self.assertEqual(response.text, "400: Invalid request. Validation errors: {'attachments': {0: "
-                                        "{'content_type': ['text/plain, text/html, application/pdf, text/xml, "
-                                        "application/xml, text/rtf, audio/basic, audio/mpeg, image/png, image/gif, "
-                                        "image/jpeg, image/tiff, video/mpeg, application/msword, "
+                                        "{'content_type': ['Must be one of: text/plain, text/html, application/pdf, "
+                                        "text/xml, application/xml, text/rtf, audio/basic, audio/mpeg, image/png, "
+                                        "image/gif, image/jpeg, image/tiff, video/mpeg, application/msword, "
                                         "application/octet-stream, application/vnd.ms-excel.addin.macroEnabled.12, "
                                         "application/vnd.ms-excel.sheet.binary.macroEnabled.12, "
                                         "application/vnd.ms-excel.sheet.macroEnabled.12, "
