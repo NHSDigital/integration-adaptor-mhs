@@ -305,6 +305,7 @@ pipeline {
                                             -var mhs_outbound_routing_lookup_method="SPINE_ROUTE_LOOKUP" \
                                             -var mhs_sds_api_url="" \
                                             -var mhs_sds_api_key_arn=${MHS_SDS_API_KEY_ARN} \
+                                            -var supported_file_types=${SUPPORTED_FILE_TYPES} \
                                         """
                                     script {
                                         env.MHS_ADDRESS = sh (
