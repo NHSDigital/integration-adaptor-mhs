@@ -1,6 +1,5 @@
 # National Integration Adaptors
 
-Testing rebuild
 The NHS are introducing a number of client-side adaptors to complement the existing API technologies on offer to accelerate integration with national NHS systems. These adaptors hide the complexity of integration with the interfaces provided by the current set of national systems by implementing a client side adaptor layer. The integrating supplier sees only a simplified and standardised set of interfaces presented by the adaptor layer. The adaptor layer is responsible for interacting with the legacy NHS Digital interface estate.
 
 NHS Digital are providing adaptors shown as the "Adaptor Layer". This list of adaptors shown here is only an illustrative example. A full list and roadmap of adaptors and when they will be available will be published in due course.
