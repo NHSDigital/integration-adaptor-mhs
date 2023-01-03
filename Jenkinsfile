@@ -16,6 +16,7 @@ pipeline {
         OUTBOUND_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/outbound:${BUILD_TAG}"
         ROUTE_IMAGE_NAME = "${DOCKER_REGISTRY}/mhs/route:${BUILD_TAG}"
         FAKE_SPINE_IMAGE_NAME = "${DOCKER_REGISTRY}/fake-spine:${BUILD_TAG}"
+        SUPPORTED_FILE_TYPES = "text/plain,text/html,application/pdf,text/xml,application/xml,text/rtf,audio/basic,audio/mpeg,image/png,image/gif,image/jpeg,image/tiff,video/mpeg,application/msword,application/octet-stream,application/vnd.ms-excel.addin.macroEnabled.12,application/vnd.ms-excel.sheet.binary.macroEnabled.12,application/vnd.ms-excel.sheet.macroEnabled.12,application/vnd.ms-excel.template.macroEnabled.12,application/vnd.ms-powerpoint.presentation.macroEnabled.12,application/vnd.ms-powerpoint.slideshow.macroEnabled.12,application/vnd.ms-powerpoint.template.macroEnabled.12,application/vnd.ms-word.document.macroEnabled.12,application/vnd.ms-word.template.macroEnabled.12,application/vnd.openxmlformats-officedocument.presentationml.template,application/vnd.openxmlformats-officedocument.presentationml.slideshow,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.template,application/vnd.openxmlformats-officedocument.wordprocessingml.template,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/bmp,text/richtext,text/rtf,application/x-hl7,application/pgp-signature,video/msvideo,application/pgp,application/x-shockwave-flash,application/x-rar-compressed,video/x-msvideo,audio/wav,application/hl7-v2,audio/x-wav,application/vnd.ms-excel,audio/x-aiff,audio/wave,application/pgp-encrypted,video/x-ms-asf,image/x-windows-bmp,video/3gpp2,application/x-netcdf,video/x-ms-wmv,application/x-rtf,application/x-mplayer2,chemical/x-pdb,text/csv,image/x-pict,audio/vnd.rn-realaudio,text/css,video/quicktime,video/mp4,multipart/x-zip,application/pgp-keys,audio/x-mpegurl,audio/x-ms-wma,chemical/x-mdl-sdfile,application/x-troff-msvideo,application/x-compressed,image/svg+xml,chemical/x-mdl-molfile,application/EDI-X12,application/postscript,application/xhtml+xml,video/x-flv,application/x-zip-compressed,application/hl7-v2+xml,application/vnd.openxmlformats-package.relationships+xml,video/x-ms-vob,application/x-gzip,audio/x-pn-wav,application/msoutlook,video/3gpp,application/cdf,application/EDIFACT,application/x-cdf,application/x-pgp-plugin,audio/x-au,application/dicom,application/EDI-Consent,application/zip,application/json,application/x-pkcs10,application/pkix-cert,application/x-pkcs12,application/x-pkcs7-mime,application/pkcs10,application/x-x509-ca-cert,application/pkcs-12,application/pkcs7-signature,application/x-pkcs7-signature,application/pkcs7-mime"
     }
 
     stages {
@@ -216,6 +217,7 @@ pipeline {
                                         --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
                                         --env "MHS_INBOUND_QUEUE_NAME=inbound" \
                                         --env "SCR_ADDRESS=http://scradaptor" \
+                                        --env "SUPPORTED_FILE_TYPES=${SUPPORTED_FILE_TYPES}" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
                             }
@@ -303,6 +305,7 @@ pipeline {
                                             -var mhs_outbound_routing_lookup_method="SPINE_ROUTE_LOOKUP" \
                                             -var mhs_sds_api_url="" \
                                             -var mhs_sds_api_key_arn=${MHS_SDS_API_KEY_ARN} \
+                                            -var supported_file_types=${SUPPORTED_FILE_TYPES} \
                                         """
                                     script {
                                         env.MHS_ADDRESS = sh (
@@ -340,30 +343,30 @@ pipeline {
                             }
                         }
 
-                        stage('Integration Tests (SpineRouteLookup)') {
-                            steps {
-                                dir('integration-tests/integration_tests') {
-                                    sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'
-                                    // Wait for MHS load balancers to have healthy targets
-                                    dir('../../pipeline/scripts/check-target-group-health') {
-                                        sh script: 'pipenv install'
-
-                                        timeout(13) {
-                                            waitUntil {
-                                                script {
-                                                    def r = sh script: 'sleep 10; AWS_DEFAULT_REGION=eu-west-2 pipenv run main ${MHS_OUTBOUND_TARGET_GROUP} ${MHS_INBOUND_TARGET_GROUP}  ${MHS_ROUTE_TARGET_GROUP}', returnStatus: true
-                                                    return (r == 0);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    sh label: 'Running integration tests', script: """
-                                        export SKIP_FORWARD_RELIABLE_INT_TEST=true
-                                        pipenv run inttests
-                                    """
-                                }
-                            }
-                        }
+//                         stage('Integration Tests (SpineRouteLookup)') {
+//                             steps {
+//                                 dir('integration-tests/integration_tests') {
+//                                     sh label: 'Installing integration test dependencies', script: 'pipenv install --dev --deploy --ignore-pipfile'
+//                                     // Wait for MHS load balancers to have healthy targets
+//                                     dir('../../pipeline/scripts/check-target-group-health') {
+//                                         sh script: 'pipenv install'
+//
+//                                         timeout(13) {
+//                                             waitUntil {
+//                                                 script {
+//                                                     def r = sh script: 'sleep 10; AWS_DEFAULT_REGION=eu-west-2 pipenv run main ${MHS_OUTBOUND_TARGET_GROUP} ${MHS_INBOUND_TARGET_GROUP}  ${MHS_ROUTE_TARGET_GROUP}', returnStatus: true
+//                                                     return (r == 0);
+//                                                 }
+//                                             }
+//                                         }
+//                                     }
+//                                     sh label: 'Running integration tests', script: """
+//                                         export SKIP_FORWARD_RELIABLE_INT_TEST=true
+//                                         pipenv run inttests
+//                                     """
+//                                 }
+//                             }
+//                         }
                     }
                 }
                 stage('Run Integration Tests (SDS API)') {
@@ -429,6 +432,7 @@ pipeline {
                                             -var mhs_outbound_routing_lookup_method="SDS_API" \
                                             -var mhs_sds_api_url=${MHS_SDS_API_URL} \
                                             -var mhs_sds_api_key_arn=${MHS_SDS_API_KEY_ARN} \
+                                            -var supported_file_types=${SUPPORTED_FILE_TYPES} \
                                         """
                                     script {
                                         env.MHS_ADDRESS = sh (

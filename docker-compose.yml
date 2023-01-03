@@ -27,6 +27,7 @@ services:
       - MHS_INBOUND_USE_SSL=True
       - TCP_PORTS=443
       - SERVICE_PORTS=443,80
+      - SUPPORTED_FILE_TYPES
   outbound:
     image: local/mhs-outbound:${BUILD_TAG}
     ports:
@@ -55,6 +56,7 @@ services:
       - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD
       - MHS_SDS_API_URL
       - MHS_SDS_API_KEY
+      - SUPPORTED_FILE_TYPES
   route:
     image: local/mhs-route:${BUILD_TAG}
     ports:
