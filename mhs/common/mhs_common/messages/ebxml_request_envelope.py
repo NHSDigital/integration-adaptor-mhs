@@ -339,7 +339,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
                 except:
                     if content_type == 'application/xml':
-                        decoded_content = content.decode(charset)
+                        decoded_content = content.decode(charset, "replace")
                         logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} '
                                     'as a string', fparams=logger_dict)
                         return decoded_content, False
