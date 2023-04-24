@@ -48,7 +48,7 @@ EBXML_CONTENT_TYPE_VALUE = 'multipart/related; boundary="--=_MIME-Boundary"; typ
 
 _ATTACHMENT_DECODING_DISABLED = os.environ.get('DISABLE_ATTACHEMENT_DECODING')
 if (_ATTACHMENT_DECODING_DISABLED is None):
-    _ATTACHMENT_DECODING_DISABLED = FALSE;
+    _ATTACHMENT_DECODING_DISABLED = False;
 
 class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     """An envelope that contains a request to be sent asynchronously to a remote MHS."""
