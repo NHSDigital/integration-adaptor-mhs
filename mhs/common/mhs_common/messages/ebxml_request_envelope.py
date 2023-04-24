@@ -48,7 +48,7 @@ EBXML_CONTENT_TYPE_VALUE = 'multipart/related; boundary="--=_MIME-Boundary"; typ
 
 _ATTACHMENT_DECODING_DISABLED = os.environ.get('DISABLE_ATTACHEMENT_DECODING')
 if (_ATTACHMENT_DECODING_DISABLED is None):
-    _ATTACHMENT_DECODING_DISABLED = True;
+    _ATTACHMENT_DECODING_DISABLED = FALSE;
 
 class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     """An envelope that contains a request to be sent asynchronously to a remote MHS."""
@@ -302,6 +302,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
                 # if we can decode a text item in strict mode, we know it's a string, this is the original contentmanager
                 # behaviour except in strict mode not replace mode where data loss can occur
                 try:
+                    logger.info(decode)
                     if decode:
                         decodedText = content.decode(charset, 'strict')
                         return decodedText, False
