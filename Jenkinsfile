@@ -165,10 +165,6 @@ pipeline {
                                         --name "${BUILD_TAG_LOWER}_component_test" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
-                                sh label: 'Check Mongo Logs', script'''
-                                    docker ps --filter "name=mongo"
-                                    docker logs --tail
-                                '''
                             }
                         }
                     }
