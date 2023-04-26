@@ -165,6 +165,10 @@ pipeline {
                                         --name "${BUILD_TAG_LOWER}_component_test" \
                                         local/mhs-componenttest:$BUILD_TAG
                                 '''
+                                sh label: 'Check Mongo Logs', script'''
+                                    docker ps --filter "name=mongo"
+                                    docker logs --tail
+                                '''
                             }
                         }
                     }
@@ -180,6 +184,7 @@ pipeline {
                                 docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_1.log
                                 docker logs ${BUILD_TAG_LOWER}_redis_1 > logs/redis_1.log
                                 docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_1.log
+                                docker logs ${BUILD_TAG_LOWER}_mongo_1 > logs/dynamodb_1.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
