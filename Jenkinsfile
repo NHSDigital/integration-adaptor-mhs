@@ -180,6 +180,7 @@ pipeline {
                                 docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_1.log
                                 docker logs ${BUILD_TAG_LOWER}_redis_1 > logs/redis_1.log
                                 docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_1.log
+                                docker logs ${BUILD_TAG_LOWER}_mongodb_1 > logs/mongodb_1.log
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
@@ -235,6 +236,7 @@ pipeline {
                                 docker logs ${BUILD_TAG_LOWER}_rabbitmq_1 > logs/rabbitmq_2.log
                                 docker logs ${BUILD_TAG_LOWER}_dynamodb_1 > logs/dynamodb_2.log
                                 docker logs ${BUILD_TAG_LOWER}_sds-api-mock_1 > logs/sdsapimock_2.log
+
                             '''
                             archiveArtifacts artifacts: 'logs/*.log', fingerprint: true
                             sh label: 'Docker compose down', script: 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${BUILD_TAG_LOWER} down -v'

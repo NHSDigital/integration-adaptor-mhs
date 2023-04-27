@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import base64
 import copy
 import email
@@ -45,6 +46,9 @@ ATTACHMENT_DESCRIPTION = 'description'
 EBXML_CONTENT_TYPE_VALUE = 'multipart/related; boundary="--=_MIME-Boundary"; type=text/xml; ' \
                            'start=ebXMLHeader@spine.nhs.uk'
 
+_ATTACHMENT_DECODING_DISABLED = os.environ.get('DISABLE_ATTACHEMENT_DECODING')
+if (_ATTACHMENT_DECODING_DISABLED is None):
+    _ATTACHMENT_DECODING_DISABLED = False;
 
 class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     """An envelope that contains a request to be sent asynchronously to a remote MHS."""
@@ -255,7 +259,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     def _extract_additional_attachments_parts(message_parts: Sequence[email.message.EmailMessage]) \
             -> Generator[Dict[Union[str, bool]]]:
         for attachment_message in message_parts:
-            payload, is_base64 = EbxmlRequestEnvelope._convert_message_part_to_str(attachment_message)
+            payload, is_base64 = EbxmlRequestEnvelope._convert_message_part_to_str(attachment_message, not _ATTACHMENT_DECODING_DISABLED)
             attachment = {
                 ATTACHMENT_PAYLOAD: payload,
                 ATTACHMENT_BASE64: is_base64,
@@ -266,7 +270,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
             yield attachment
 
     @staticmethod
-    def _convert_message_part_to_str(message_part: email.message.EmailMessage) -> Tuple[str, bool]:
+    def _convert_message_part_to_str(message_part: email.message.EmailMessage, decode : bool = True) -> Tuple[str, bool]:
 
         # Due to the compression strategy, we can never pass a text field into our content manager as it will always
         # attempt to convert the final string to a utf-8 string. If a text data type has been received in a compressed
@@ -298,8 +302,10 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
                 # if we can decode a text item in strict mode, we know it's a string, this is the original contentmanager
                 # behaviour except in strict mode not replace mode where data loss can occur
                 try:
-                    decodedText = content.decode(charset, 'strict')
-                    return decodedText, False
+                    logger.info(decode)
+                    if decode:
+                        decodedText = content.decode(charset, 'strict')
+                        return decodedText, False
                 except:
                     # If we can't decode, we're likly working with a compressed string
                     try:

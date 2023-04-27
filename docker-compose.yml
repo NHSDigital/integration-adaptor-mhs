@@ -73,7 +73,7 @@ services:
     ports:
       - "8000:8000"
   mongodb:
-    image: mongo
+    image: mongo:5.0.16
     ports:
       - "27017:27017"
   rabbitmq:
