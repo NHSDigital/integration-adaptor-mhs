@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.7-slim-bullseye
 RUN apt-get update
 RUN apt-get install build-essential git -y
 RUN mkdir -p /usr/src/app/mhs/fakespine
