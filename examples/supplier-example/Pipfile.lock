@@ -54,7 +54,7 @@
         },
         "integration-adaptors-common": {
             "editable": true,
-            "path": "./../common"
+            "path": "../../common"
         },
         "itsdangerous": {
             "hashes": [
@@ -150,7 +150,7 @@
         },
         "scr": {
             "editable": true,
-            "path": "./../SCR"
+            "path": "../../SCR"
         },
         "urllib3": {
             "hashes": [
