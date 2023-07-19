@@ -124,7 +124,7 @@ class RequestBodySchema(marshmallow.Schema):
                     'for interactions that support sending attachments.',
         # EIS 2.5.4.2 says that the max number of attachments is 100, including
         # the ebXML MIME part. And there is also the HL7 payload, so 100 - 2 = 98
-        validate=marshmallow.validate.Length(max=98))
+        validate=marshmallow.validate.Length(max=int(os.environ.get('MAXIMUM_NUMBER_OF_EXTERNAL_ATTACHMENTS', '1000'))))
 
     @marshmallow.post_load
     def make_request_body(self, data, **kwargs):
