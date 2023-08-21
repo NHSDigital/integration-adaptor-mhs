@@ -20,6 +20,7 @@ class BlockingQueueAdaptor(object):
         """
         connection = BlockingConnection(self.queue_url, user=self.username, password=self.password)
         receiver = connection.create_receiver(self.queue_name)
+
         message = receiver.receive(timeout=240)
         receiver.accept()
         connection.close()
