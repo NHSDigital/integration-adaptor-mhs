@@ -20,7 +20,11 @@ def send_messages_concurrently(messages: List[MhsMessage], interaction_id, wait_
     """
     request_threads = []
     for message_body, message_id in messages:
-        request_thread = OutboundRequestThread(message_body, message_id, interaction_id, wait_for_response=wait_for_response)
+        conversation_id = str(uuid.uuid4())
+        print()
+        print("conversation_id: " + conversation_id)
+        request_thread = OutboundRequestThread(message_body, message_id, interaction_id, correlation_id=conversation_id,
+                                               wait_for_response=wait_for_response)
         request_thread.start()
         request_threads.append(request_thread)
 
