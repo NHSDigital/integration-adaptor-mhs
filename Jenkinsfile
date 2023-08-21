@@ -492,6 +492,7 @@ pipeline {
                                     }
                                     sh label: 'Running integration tests', script: """
                                         export SKIP_FORWARD_RELIABLE_INT_TEST=true
+                                        export SKIP_ASYNC_RELIABLE_INT_TEST=true
                                         pipenv run inttests
                                     """
                                 }

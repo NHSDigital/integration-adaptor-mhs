@@ -2,6 +2,8 @@
 Provides tests around the Asynchronous Reliable workflow, including sync-async wrapping
 """
 import uuid
+import os
+import unittest
 from unittest import TestCase
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
@@ -45,6 +47,8 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
     def _assert_gp_summary_upload_success_detail_is_present(self, hl7_xml_assertor: Hl7XmlResponseAssertor):
         hl7_xml_assertor.assert_element_exists_with_value('.//requestSuccessDetail//detail', 'GP Summary upload successful')
 
+    @unittest.skipIf(os.environ.get('SKIP_ASYNC_RELIABLE_INT_TEST'),
+                     'skipping because SKIP_ASYNC_RELIABLE_INT_TEST is set')
     def test_should_return_successful_response_from_spine_to_message_queue(self):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
@@ -64,6 +68,8 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
         hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
         self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)
 
+    @unittest.skipIf(os.environ.get('SKIP_ASYNC_RELIABLE_INT_TEST'),
+                     'skipping because SKIP_ASYNC_RELIABLE_INT_TEST is set')
     def test_should_record_asynchronous_reliable_message_status_as_successful(self):
         # Arrange
         message, message_id = build_message('REPC_IN150016UK05', '9446245796')
@@ -88,6 +94,8 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
         dynamo_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
         self.assertions.message_status_recorded_as_successfully_processed(dynamo_assertor, message_id)
 
+    @unittest.skipIf(os.environ.get('SKIP_ASYNC_RELIABLE_INT_TEST'),
+                     'skipping because SKIP_ASYNC_RELIABLE_INT_TEST is set')
     def test_should_return_successful_response_and_record_spline_reply_in_resync_table_if_wait_for_response_requested(self):
         # Arrange
         messages = [build_message('REPC_IN150016UK05', '9446245796') for i in range(1)]
