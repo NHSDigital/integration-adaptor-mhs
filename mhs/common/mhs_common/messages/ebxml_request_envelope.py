@@ -191,7 +191,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
         """
         content_type_header = f'{HttpHeaders.CONTENT_TYPE}: {headers[HttpHeaders.CONTENT_TYPE]}\r\n\r\n'
 
-        msg = email.message_from_string(content_type_header + message, policy=email.policy.HTTP)
+        msg = email.message_from_bytes(bytes(content_type_header + message, 'utf-8'), policy=email.policy.HTTP)
 
         if msg.defects:
             logger.warning('Found defects in MIME message during parsing. {Defects}',
