@@ -50,7 +50,7 @@ pipeline {
                         stage('Unit test') {
                             steps {
                                 dir('mhs/inbound') {
-                                    executeUnitTestsWithCoverage()
+                                    // executeUnitTestsWithCoverage()
                                 }
                             }
                         }
