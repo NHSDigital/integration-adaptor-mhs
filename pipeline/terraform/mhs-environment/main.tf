@@ -17,7 +17,7 @@ terraform {
 # Setup AWS provider
 provider "aws" {
   profile = "default"
-  version = "~> 2.27"
+  version = "~> 2.70.4"
   region = var.region
 }
 
