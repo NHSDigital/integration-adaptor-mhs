@@ -214,6 +214,10 @@ class InboundHandler(base_handler.BaseHandler):
 
     def _extract_incoming_ebxml_request_message(self):
         try:
+            import os
+            # Are we inside the build (AKA Jenkins) environment?
+            if(os.environ.get('MHS_INBOUND_QUEUE_NAME') == 'build-inbound'):
+                raise ValueError("INBOUND INTENTIONALLY BROKEN")
             request_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(self.request.headers,
                                                                                       self.request.body.decode())
         except ebxml_envelope.EbXmlParsingError as e:
