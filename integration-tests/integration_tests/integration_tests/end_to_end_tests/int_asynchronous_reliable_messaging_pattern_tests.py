@@ -2,7 +2,8 @@
 Provides tests around the Asynchronous Reliable workflow, including sync-async wrapping
 """
 import uuid
-from unittest import TestCase
+from datetime import datetime
+from unittest import TestCase, skipIf
 
 from integration_tests.amq.amq_message_assertor import AMQMessageAssertor
 from integration_tests.amq.mhs_inbound_queue import MHS_INBOUND_QUEUE
@@ -17,7 +18,7 @@ from integration_tests.helpers.concurrent_requests import send_messages_concurre
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
 from integration_tests.xml.hl7_xml_assertor import Hl7XmlResponseAssertor
 
-
+@skipIf(datetime.now() < datetime(2023, 9, 27), "Skipped for 3 weeks while we investigate their flakiness as part of NIAD-2764")
 class AsynchronousReliableMessagingPatternTests(TestCase):
     """
      These tests show an asynchronous reliable response from Spine via the MHS for the example message interaction of
