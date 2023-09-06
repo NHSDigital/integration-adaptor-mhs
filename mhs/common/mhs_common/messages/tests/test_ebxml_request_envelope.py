@@ -331,6 +331,12 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
             self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
 
+        with self.subTest("A valid request containing multibyte UTF8 characters within HL7 XML"):
+            # Regression test for NIAD-2822
+            message, _ = message_utilities.load_test_data(self.message_dir, 'ebxml_request_multibyte_character')
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+            self.assertEquals(parsed_message.message_dictionary['hl7_message'], "<xml>¬ ❤️ 🧸</xml>")
+
         with self.subTest("A valid request containing one textual attachment with no description provided"):
             message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment_application_xml_content_type_no_description')
             attachments = [{
