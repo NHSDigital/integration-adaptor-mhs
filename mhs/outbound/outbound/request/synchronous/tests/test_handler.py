@@ -683,3 +683,17 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
 
         self.assertEqual(response.code, 200)
         self.assertEqual(response.headers["Correlation-Id"], CORRELATION_ID)
+
+    def test_request_with_10_000_doesnt_error(self):
+        expected_response = SYNC_RESPONSE
+        result = test_utilities.awaitable((200, expected_response, None))
+
+        self.workflow.handle_outbound_message.return_value = result
+        self.config_manager.get_interaction_details.return_value = {'sync_async': False, 'workflow': WORKFLOW_NAME}
+
+        response = self.call_handler(body=json.dumps({"payload": "test",
+            "external_attachments": [{
+                "message_id": "200",
+                "description": "some description"}] * 10_000}))
+
+        self.assertEqual(response.code, 200)
