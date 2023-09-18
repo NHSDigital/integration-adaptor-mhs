@@ -160,6 +160,8 @@ Any content POSTed to `/` on port 80 will result in the request configuration fo
 
 ## Creating a release
 
+### Releasing the main images
+
 First identify which is the most recent commit within GitHub which contains only changes which are marked as Done within Jira.
 You can also review what commits have gone in by using the git log command or IDE.
 
@@ -178,3 +180,9 @@ Go to AWS Management Console > Service Manager then find the option 'retrieve ke
 Execute `./release.sh`.
 
 Log out of DockerHub.
+
+### Releasing the base images
+
+There exists three base images, within the folder `dockers/mhs-base`.
+
+Releasing these requires you to be logged into Dockerhub as per above, and then within each folder runnning the respective `release.sh` script.

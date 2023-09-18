@@ -8,10 +8,6 @@ IMAGE=nia-mhs-outbound-base
 docker run --rm -v "$PWD":/app treeder/bump patch
 version=`cat VERSION`
 echo "version: $version"
-# run build
-docker build -t $USERNAME/$IMAGE:latest -f Dockerfile .
-# tag it
-docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$version
-# push it
-docker push $USERNAME/$IMAGE:latest
-docker push $USERNAME/$IMAGE:$version
+
+# Build, tag, push
+docker buildx build -f Dockerfile . --platform linux/arm64/v8,linux/amd64 --tag $USERNAME/$IMAGE:latest --tag $USERNAME/$IMAGE:$version --push
