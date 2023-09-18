@@ -157,3 +157,24 @@ https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-fire
 Any content POSTed to `/` on port 80 will result in the request configuration for the `Interaction-Id` header in
 `data/interactions.json` being loaded and the content sent as the body of the request to Spine. Adding entries to
 `interactions.json` will allow you to define new supported interactions.
+
+## Creating a release
+
+First identify which is the most recent commit within GitHub which contains only changes which are marked as Done within Jira.
+You can also review what commits have gone in by using the git log command or IDE.
+
+Make a note of the most recent Release within GitHub, and identify what the next version number to use will be.
+
+Create a new release within GitHub, specifying the tag as the version to use (e.g. 1.2.7), and the target being the commit you identified.
+Click on the "Generate release notes" button and this will list all the current changes from the recent commit.
+
+From the root of this repository, update the `/release.sh`, changing the `BUILD_TAG` value to match the release created above.
+Update the `CHANGELOG.md` file, copying the release information within the GitHub release.
+Raise a PR for your changes.
+
+Once your changes have been merged, log into DockerHub using the credentials stored within our AWS accounts Secrets Manager, secret name `nhsdev-dockerhub-credentials` in London region.
+Go to AWS Management Console > Service Manager then find the option 'retrieve keys'. 
+
+Execute `./release.sh`.
+
+Log out of DockerHub.
