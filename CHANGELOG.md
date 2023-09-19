@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.7] - 2023-09-18
+
+### Fixed
+
+Fix issue where inbound messages containing multibyte UTF-8 characters are mangled.
+
 ## [1.2.2] - 2022-04-21
 
 ### Changed

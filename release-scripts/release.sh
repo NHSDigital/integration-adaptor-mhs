@@ -1,28 +1,16 @@
-#!/bin/bash 
+#!/bin/bash
 
-export BUILD_TAG=1.2.2
+set -e
+
+export BUILD_TAG=1.2.7
+
+git fetch
+git checkout $BUILD_TAG
 
 cd ..
 
-./build.sh
-
-docker tag local/mhs-inbound:${BUILD_TAG} nhsdev/nia-mhs-inbound:${BUILD_TAG}
-docker tag local/mhs-outbound:${BUILD_TAG} nhsdev/nia-mhs-outbound:${BUILD_TAG}
-docker tag local/mhs-route:${BUILD_TAG} nhsdev/nia-mhs-route:${BUILD_TAG}
-
-if [ "$1" == "-y" ];
-then
-
-    BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    if [[ "$BRANCH" != "develop" ]]; then
-        echo 'Can only run this on the develop branch';
-        exit 1;
-    fi
-
-    echo "Tagging and pushing Docker image and git tag"
-    docker push nhsdev/nia-mhs-inbound:${BUILD_TAG}
-    docker push nhsdev/nia-mhs-outbound:${BUILD_TAG}
-    docker push nhsdev/nia-mhs-route:${BUILD_TAG}
-    git tag -a ${BUILD_TAG} -m "Release ${BUILD_TAG}"
-    git push origin ${BUILD_TAG}
-fi
+# These are buildx versions of what is inside of `build.sh`
+BASE_IMAGE_TAG="${BASE_IMAGE_TAG:-latest}"
+docker buildx build --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG  -f mhs/inbound/Dockerfile . --platform linux/arm64/v8,linux/amd64 --tag nhsdev/nia-mhs-inbound:${BUILD_TAG} --push
+docker buildx build --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG  -f mhs/outbound/Dockerfile . --platform linux/arm64/v8,linux/amd64 --tag nhsdev/nia-mhs-outbound:${BUILD_TAG} --push
+docker buildx build --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG  -f mhs/spineroutelookup/Dockerfile . --platform linux/arm64/v8,linux/amd64 --tag nhsdev/nia-mhs-route:${BUILD_TAG} --push
