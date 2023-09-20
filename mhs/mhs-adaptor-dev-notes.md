@@ -175,7 +175,9 @@ Update the `CHANGELOG.md` file, copying the release information within the GitHu
 Raise a PR for your changes.
 
 Once your changes have been merged, log into DockerHub using the credentials stored within our AWS accounts Secrets Manager, secret name `nhsdev-dockerhub-credentials` in London region.
-Go to AWS Management Console > Service Manager then find the option 'retrieve keys'. 
+Go to AWS Management Console > Secrets Manager then find the option 'retrieve keys'. 
+
+If you have not created a release before then you will first need to create a new docker builder instance using `docker buildx create --use`. 
 
 Execute `./release.sh`.
 
