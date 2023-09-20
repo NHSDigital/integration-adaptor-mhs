@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.8] - 2023-09-20
+
+### Fixed
+
+Fix issue where MHS adaptor does not accept more than 98 external attachments
+
 ## [1.2.7] - 2023-09-18
 
 ### Fixed
