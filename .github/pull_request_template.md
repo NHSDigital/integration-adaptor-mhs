@@ -1,6 +1,6 @@
 ## What
 
-Please inlcude a summary of the changes and the related issue
+Please include a summary of the changes and the related issue
 
 ## Why
 
