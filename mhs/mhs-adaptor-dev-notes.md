@@ -149,7 +149,7 @@ Ensure sonar-scanner is on your path, and configured for the sonarqube host with
 NOTE: Coverage will not show in the analysis unless you have already generated the xml report (as per above.)
 
 ## Running Integration Tests
-See the [integration tests README](../integration-tests/README.md).
+See the [integration tests README](../integration-tests/integration_tests/README.adoc).
 
 Timeouts received whilst waiting for a response from Spine on a Windows machine could be due to the machine rejecting incoming connections on port 443. In order to open the port, follow these instructions:
 https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-firewall/create-an-inbound-port-rule
@@ -175,7 +175,9 @@ Update the `CHANGELOG.md` file, copying the release information within the GitHu
 Raise a PR for your changes.
 
 Once your changes have been merged, log into DockerHub using the credentials stored within our AWS accounts Secrets Manager, secret name `nhsdev-dockerhub-credentials` in London region.
-Go to AWS Management Console > Service Manager then find the option 'retrieve keys'. 
+Go to AWS Management Console > Secrets Manager then find the option 'retrieve keys'. 
+
+If you have not created a release before then you will first need to create a new docker builder instance using `docker buildx create --use`. 
 
 Execute `./release.sh`.
 
