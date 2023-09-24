@@ -13,19 +13,14 @@ Schema definition for the request body that MHS accepts. To use this module, sim
 import dataclasses
 from typing import List
 
-import os
 import marshmallow.validate
-import utilities.integration_adaptors_logger as log
 
-logger = log.IntegrationAdaptorsLogger(__name__)
-
-_ATTACHMENT_ALLOWED_CONTENT_TYPES_ENV = os.environ.get('SUPPORTED_FILE_TYPES')
-_ATTACHMENT_ALLOWED_CONTENT_TYPES = tuple(_ATTACHMENT_ALLOWED_CONTENT_TYPES_ENV.split(","))
 # These allowed content types for attachments are taken from the EIS part 2.5.4.2
-
-if _ATTACHMENT_ALLOWED_CONTENT_TYPES is None:
-    logger.error("SUPPORTED_FILE_TYPES not set, please set the SUPPORTED_FILE_TYPES environment variable.")
-    _ATTACHMENT_ALLOWED_CONTENT_TYPES = ''
+_ATTACHMENT_ALLOWED_CONTENT_TYPES = (
+    'text/plain', 'text/html', 'application/pdf', 'text/xml', 'application/xml', 'text/rtf', 'audio/basic',
+    'audio/mpeg', 'image/png', 'image/gif', 'image/jpeg', 'image/tiff', 'video/mpeg', 'application/msword',
+    'application/octet-stream'
+)
 
 @dataclasses.dataclass
 class Attachment:

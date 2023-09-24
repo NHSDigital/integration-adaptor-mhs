@@ -94,10 +94,6 @@ locals {
     {
       name = "MHS_SDS_API_URL"
       value = var.mhs_sds_api_url
-    },
-    {
-      name = "SUPPORTED_FILE_TYPES"
-      value = var.supported_file_types
     }
   ]
   mhs_outbound_base_secrets = [
@@ -210,10 +206,6 @@ resource "aws_ecs_task_definition" "mhs_inbound_task" {
         {
           name = "MHS_INBOUND_QUEUE_NAME"
           value = var.inbound_queue_name
-        },
-        {
-          name = "SUPPORTED_FILE_TYPES"
-          value = var.supported_file_types
         }
       ]
       secrets = [

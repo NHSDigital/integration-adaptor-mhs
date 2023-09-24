@@ -278,7 +278,3 @@ variable "mhs_sds_api_url" {
 variable "mhs_sds_api_key_arn" {
   type = string
 }
-
-variable "supported_file_types" {
-    type = string
-}
