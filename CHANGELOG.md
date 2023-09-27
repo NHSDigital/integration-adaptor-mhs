@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed 
+
+Remove the SUPPORTED_FILE_TYPES environment variable. As the allowed types are fixed by the Spine External Interface 
+Specification. 
+
 ## [1.2.8] - 2023-09-20
 
 ### Fixed
