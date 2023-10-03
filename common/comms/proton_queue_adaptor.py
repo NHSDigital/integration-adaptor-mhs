@@ -92,6 +92,7 @@ class ProtonQueueAdaptor(comms.queue_adaptor.QueueAdaptor):
                               content_type='application/json',
                               body=json.dumps(message),
                               properties=properties,
+                              durable=True,
                               ttl=self.ttl_in_seconds)
 
     async def __try_sending_to_all_in_sequence(self, message: proton.Message) -> None:
