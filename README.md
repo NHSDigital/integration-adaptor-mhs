@@ -42,7 +42,7 @@ a step-by-step guide on how to set this up.
 The [MHS Adaptor](https://digital.nhs.uk/developer/api-catalogue/mhs) page within the NHS Digital Developer Portal should be your first point of call for all information relating to this adaptor.  This page covers everything from Onboarding, testing, implementation and integration and other considerations and best practices.
 
 ### Spine External Interface Specification
-This adaptor supports a number of patterns. More information on these patterns can be found in the Spines [External Interface Specification](https://digital.nhs.uk/developer/api-specifications/spine-external-interface-specification) (EIS) and in particular, Part 3 - Message Interaction Map.  The EIS is a complete set of technical documents with information on how to connect to the Spine national services via HL7 V3 APIs. 
+This adaptor supports a number of patterns. More information on these patterns can be found in the Spines [External Interface Specification](https://digital.nhs.uk/developer/guides-and-documentation/spine-external-interface-specification) (EIS) and in particular, Part 3 - Message Interaction Map.  The EIS is a complete set of technical documents with information on how to connect to the Spine national services via HL7 V3 APIs. 
 
 ### Outbound Service Open API Specification
 An [Open API spec](mhs/MHS-Outbound.yaml) has been created specifically for the MHS adaptors outbound service.
