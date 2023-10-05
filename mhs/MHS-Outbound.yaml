@@ -7,7 +7,7 @@ info:
     The MHS Outbound service is responsible for listening for requests from the wider local system context and transmitting these to Spine.
 
     The MHS adaptor supports a number of patterns. For more information on these patterns then you may find it beneficial to familarise yourself with Spines EIS and in particular, Part 3 - Message Interaction Map.  
-    The [EIS](https://digital.nhs.uk/developer/api-specifications/spine-external-interface-specification) is a complete set of technical documents with the necessary information to connect to the Spine national services via HL7 V3 APIs.
+    The [EIS](https://digital.nhs.uk/developer/guides-and-documentation/spine-external-interface-specification#:~:text=The%20Spine%20EIS%20(External%20Interface,services%20via%20HL7%20V3%20APIs.) is a complete set of technical documents with the necessary information to connect to the Spine national services via HL7 V3 APIs.
     
     For more information about MHS then please visit the NHS Digital Developer portal.
 
