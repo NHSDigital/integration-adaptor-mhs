@@ -60,7 +60,8 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
             .execute_post_expecting_success()
 
         # Assert
-        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
+        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
+            .assert_durable_is(True)
         self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
         hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
         self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)

@@ -6,6 +6,8 @@ from __future__ import annotations
 import json
 import unittest
 
+from proton import Message
+
 from integration_tests.xml.hl7_xml_assertor import Hl7XmlResponseAssertor
 
 
@@ -14,7 +16,7 @@ class AMQMessageAssertor(object):
     Provides the ability to assert properties of an AMQ message
     """
 
-    def __init__(self, message):
+    def __init__(self, message: Message):
         self.message = message
         self.assertor = unittest.TestCase('__init__')
 
@@ -28,6 +30,10 @@ class AMQMessageAssertor(object):
         property_value = self.message.properties[property_name]
         self.assertor.assertEqual(property_value, expected_value, "Property of message does not equal expected value")
 
+        return self
+    
+    def assert_durable_is(self, expected_value: bool) -> AMQMessageAssertor:
+        self.assertor.assertEqual(self.message.durable, expected_value)
         return self
 
     def assert_json_content_type(self) -> AMQMessageAssertor:

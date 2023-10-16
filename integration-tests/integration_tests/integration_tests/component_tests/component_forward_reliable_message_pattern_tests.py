@@ -39,6 +39,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         # Assert
         AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
             .assert_property('message-id', message_id)\
+            .assert_durable_is(True)\
             .assertor_for_hl7_xml_message()\
             .assert_element_attribute(".//ControlActEvent//code", "displayName", "GP2GP Large Message Attachment Information")
 
