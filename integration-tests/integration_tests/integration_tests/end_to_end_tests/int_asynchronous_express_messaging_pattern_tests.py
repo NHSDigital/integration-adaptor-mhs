@@ -57,7 +57,8 @@ class AsynchronousExpressMessagingPatternTests(TestCase):
         AssertWithRetries(retry_count=10) \
             .assert_condition_met(lambda: MhsTableStateAssertor.wait_for_inbound_response_processed(message_id))
 
-        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
+        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
+            .assert_durable_is(True)
         state_table_assertor = MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table())
 
         self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)

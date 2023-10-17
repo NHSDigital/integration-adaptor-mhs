@@ -1,5 +1,6 @@
 from proton import Message, Timeout
 from proton.utils import BlockingConnection
+from proton.reactor import DurableSubscription
 
 
 class BlockingQueueAdaptor(object):
@@ -19,7 +20,7 @@ class BlockingQueueAdaptor(object):
         :return: Message read from queue
         """
         connection = BlockingConnection(self.queue_url, user=self.username, password=self.password)
-        receiver = connection.create_receiver(self.queue_name)
+        receiver = connection.create_receiver(self.queue_name, options=DurableSubscription())
         message = receiver.receive(timeout=30)
         receiver.accept()
         connection.close()
@@ -31,7 +32,7 @@ class BlockingQueueAdaptor(object):
         Drain the queue to prevent test failures caused by previous failing tests not ack'ing all of their messages
         """
         connection = BlockingConnection(self.queue_url, user=self.username, password=self.password)
-        receiver = connection.create_receiver(self.queue_name)
+        receiver = connection.create_receiver(self.queue_name, options=DurableSubscription())
         try:
             while True:
                 receiver.receive(timeout=1)
