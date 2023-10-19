@@ -6,11 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.9] - 2023-10-19
+
 ### Changed 
 
 - Remove the SUPPORTED_FILE_TYPES environment variable.
   As the allowed types are fixed by the Spine External Interface Specification. 
 
+### Fixed
 - Messages sent to the inbound AMQP are configured with durability enabled.
   This should cause the broker to try its hardest to keep the message, e.g. in the event of a reboot.
   Some brokers (e.g. RabbitMQ) will need to have the existing non-durable queue deleted before a durable version can be created.
