@@ -249,6 +249,11 @@
     "workflow": "forward-reliable",
     "sync_async": false
   },
+  "RCMR_IN030000UK07": {
+    "service": "urn:nhs:names:services:gp2gp",
+    "workflow": "forward-reliable",
+    "sync_async": false
+  },
   "QUPC_IN160103UK05": {
     "service": "urn:nhs:names:services:psisquery",
     "workflow": "async-express",
