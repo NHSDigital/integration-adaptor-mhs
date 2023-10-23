@@ -51,15 +51,6 @@ Note: If you have ``pyenv`` already installed, ``pipenv`` will get the global se
   pipenv --python 3.7
 ```
 
-___
-### 3.1 If you're getting a `Pystache 0.5.4` error
-For each module:
-* Open shell using `pipenv shell`
-* Uninstall `setuptools` `pip uninstall -y setuptools`
-* Install `setuptools 57.5.0` `pip install -Iv setuptools==57.5.0`
-* Exit virtual environment shell with `exit`
-* Try installing dependencies again `pipenv install --dev`
-
 ---
 ### 3.2 For MacOS users
 * Go to terminal window where you have ``mhs/outbound`` directory open
