@@ -92,6 +92,7 @@ class ProtonQueueAdaptor(comms.queue_adaptor.QueueAdaptor):
                               content_type='application/json',
                               body=json.dumps(message),
                               properties=properties,
+                              durable=True,
                               ttl=self.ttl_in_seconds)
 
     async def __try_sending_to_all_in_sequence(self, message: proton.Message) -> None:
@@ -134,6 +135,12 @@ class ProtonQueueAdaptor(comms.queue_adaptor.QueueAdaptor):
             raise MaxRetriesExceeded('The max number of retries to put a message onto the inbound queue has '
                                      'been exceeded') from result.exception
 
+class ProtonDurableSender(proton.reactor.SenderOption):
+    """Proton LinkOption which configures durably held configuration and durably held delivery state"""
+
+    def apply(self, sender: 'proton.Sender') -> None:
+        sender.target.durability = proton.Terminus.DELIVERIES
+        
 
 class ProtonMessagingHandler(proton.handlers.MessagingHandler):
     """Implementation of a Proton MessagingHandler which will send a single message. Note that this class will raise
@@ -162,7 +169,7 @@ class ProtonMessagingHandler(proton.handlers.MessagingHandler):
         """
         logger.info('Establishing connection to {url} for sending messages.', fparams={'url': self._url})
         conn = event.container.connect(url=self._url, user=self._username, password=self._password, reconnect=False)
-        event.container.create_sender(conn, target=self._queue)
+        event.container.create_sender(conn, target=self._queue, options=ProtonDurableSender())
 
     def on_sendable(self, event: proton.Event) -> None:
         """Called when the link is ready for sending messages.

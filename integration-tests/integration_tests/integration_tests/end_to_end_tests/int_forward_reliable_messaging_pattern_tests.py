@@ -70,6 +70,7 @@ class ForwardReliableMessagingPatternTests(TestCase):
 
         # Assert
         AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
+            .assert_durable_is(True) \
             .assert_property('message-id', message_id) \
             .assert_property('correlation-id', message_id) \
             .assert_json_content_type() \

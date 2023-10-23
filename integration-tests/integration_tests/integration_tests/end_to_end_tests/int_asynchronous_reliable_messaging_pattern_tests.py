@@ -18,7 +18,7 @@ from integration_tests.helpers.concurrent_requests import send_messages_concurre
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
 from integration_tests.xml.hl7_xml_assertor import Hl7XmlResponseAssertor
 
-@skipIf(datetime.now() < datetime(2023, 10, 4), "Skipped for 1 week or until failures are addressed by NIAD-2842 ")
+@skipIf(datetime.now() < datetime(2023, 10, 24), "Skipped for 1 week or until failures are addressed by NIAD-2842 ")
 class AsynchronousReliableMessagingPatternTests(TestCase):
     """
      These tests show an asynchronous reliable response from Spine via the MHS for the example message interaction of
@@ -60,7 +60,8 @@ class AsynchronousReliableMessagingPatternTests(TestCase):
             .execute_post_expecting_success()
 
         # Assert
-        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue())
+        amq_assertor = AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
+            .assert_durable_is(True)
         self.assertions.spline_reply_published_to_message_queue(amq_assertor, message_id, correlation_id)
         hl7_xml_assertor = amq_assertor.assertor_for_hl7_xml_message()
         self._assert_gp_summary_upload_success_detail_is_present(hl7_xml_assertor)

@@ -208,7 +208,13 @@ class TestProtonMessagingHandler(unittest.TestCase):
             user=TEST_QUEUE_USERNAME,
             password=TEST_QUEUE_PASSWORD,
             reconnect=False)
-        mock_event.container.create_sender.assert_called_once_with(conn_mock, target=TEST_QUEUE_NAME)
+        mock_event.container.create_sender.assert_called_once_with(conn_mock, target=TEST_QUEUE_NAME, options=unittest.mock.ANY)
+
+        # Connects with the ProtonDurableSender which marks the queue as durable
+        self.assertIsInstance(
+            mock_event.container.create_sender.call_args[1]['options'],
+            comms.proton_queue_adaptor.ProtonDurableSender
+        )
 
     def test_on_start_error(self):
         """Test error condition when creating a message sender."""

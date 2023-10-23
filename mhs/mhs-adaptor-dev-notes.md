@@ -167,10 +167,10 @@ You can also review what commits have gone in by using the git log command or ID
 
 Make a note of the most recent Release within GitHub, and identify what the next version number to use will be.
 
-Create a new release within GitHub, specifying the tag as the version to use (e.g. 1.2.7), and the target being the commit you identified.
+Create a new release within GitHub, specifying the tag as the version to use (e.g. 1.2.9), and the target being the commit you identified.
 Click on the "Generate release notes" button and this will list all the current changes from the recent commit.
 
-From the root of this repository, update the `/release.sh`, changing the `BUILD_TAG` value to match the release created above.
+CD into `released scripts` folder and update the `/release.sh`, changing the `BUILD_TAG` value to match the release created above.
 Update the `CHANGELOG.md` file, copying the release information within the GitHub release.
 Raise a PR for your changes.
 
