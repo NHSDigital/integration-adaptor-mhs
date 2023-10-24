@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2023-10-23
+
 ### Added
 
 - Added support for new GP2GP interaction RCMR_IN030000UK07
