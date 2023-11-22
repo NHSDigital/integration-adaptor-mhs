@@ -95,7 +95,26 @@ The logs produced by the MHS Adaptor application components have one of the foll
 
 The MHS Adaptor components have specifically chosen INFO as the lowest log level, rather than DEBUG. The principle here is that all information logged is potentially useful for diagnosing live issues, and so should be available in Production. It is not recommended to enable DEBUG level logging in production, so it is important that the lowest level of logs emitted from the MHS Adaptor components to facilitate diagnostics is INFO.
 
-**The third party libraries used by the MHS Adaptor will likely emit logs at DEBUG if this level is configured on, however suppliers should be aware that DEBUG level logs from components involved in I/O are highly likely to include the entire message payload which in the context of the MHS Adaptor is likely to contain Patient Identifying Information and other sensitive data. As such it is strongly recommended that DEBUG log level never be configured on in Production environments, to ensure that real patient data does not leak into log files.**
+> [!WARNING]
+> The third party libraries used by the MHS Adaptor will likely emit logs at DEBUG if this level is
+> configured on, however suppliers should be aware that DEBUG level logs from components involved in
+> I/O are highly likely to include the entire message payload which in the context of the MHS Adaptor
+> is likely to contain Patient Identifying Information and other sensitive data.
+> As such it is strongly recommended that DEBUG log level never be configured on in Production
+> environments, to ensure that real patient data does not leak into log files.
+> 
+> The performance of the Inbound adaptor has also demonstrated to be adversely affected when DEBUG
+> mode is enabled when using AWS ECS, CloudWatch and the aws-logs driver.
+> When the large (~5MB) request body is printed out to the console in DEBUG, this data can take several
+> seconds to be ingested by CloudWatch, during which the inbound adaptor is unresponsive.
+> During a large GP2GP transfer where multiple incoming requests are made at once this unresponsiveness can
+> cause spine requests to fail.
+> 
+> In a non-production environment, one workaround for the AWS CloudWatch issue is to use the
+> [non-blocking mode][cloudwatch-config-options].
+
+
+[cloudwatch-config-options]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html?icmpid=docs_ecs_hp-task-definition#create_awslogs_logdriver_options
 
 ### Audit Messages
 
