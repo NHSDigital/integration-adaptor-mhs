@@ -67,9 +67,6 @@ class InboundHandler(base_handler.BaseHandler):
                                    request_message.message_dictionary[ebxml_request_envelope.ATTACHMENTS],
                                    request_message.message_dictionary[ebxml_request_envelope.EXTERNAL_ATTACHMENTS])
 
-        logger.error("ZAQWSX:")
-        logger.error(str(message_data))
-
         if ref_to_message_id:
             logger.info(f'RefToMessageId on inbound reply: handling as an referenced reply message')
             await self._handle_referenced_reply_message(ref_to_message_id, correlation_id, message_data)
