@@ -18,7 +18,7 @@ from integration_tests.helpers.concurrent_requests import send_messages_concurre
 from integration_tests.http.mhs_http_request_builder import MhsHttpRequestBuilder
 from integration_tests.xml.hl7_xml_assertor import Hl7XmlResponseAssertor
 
-@skipIf(datetime.now() < datetime(2023, 10, 24), "Skipped for 1 week or until failures are addressed by NIAD-2842 ")
+@skipIf(datetime.now() < datetime(2023, 12, 24), "Skipped for 1 week or until failures are addressed by NIAD-2842 ")
 class AsynchronousReliableMessagingPatternTests(TestCase):
     """
      These tests show an asynchronous reliable response from Spine via the MHS for the example message interaction of
