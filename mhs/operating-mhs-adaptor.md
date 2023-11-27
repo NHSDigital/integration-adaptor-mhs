@@ -103,12 +103,12 @@ The MHS Adaptor components have specifically chosen INFO as the lowest log level
 > As such it is strongly recommended that DEBUG log level never be configured on in Production
 > environments, to ensure that real patient data does not leak into log files.
 > 
-> The performance of the Inbound adaptor has also demonstrated to be adversely affected when DEBUG
-> mode is enabled when using AWS ECS, CloudWatch and the aws-logs driver.
-> When the large (~5MB) request body is printed out to the console in DEBUG, this data can take several
-> seconds to be ingested by CloudWatch, during which the inbound adaptor is unresponsive.
-> During a large GP2GP transfer where multiple incoming requests are made at once this unresponsiveness can
-> cause spine requests to fail.
+> The performance of the Inbound and Outbound adaptors are adversely affected when DEBUG mode is
+> enabled when using AWS ECS, CloudWatch and the aws-logs driver.
+> When a large (~5MB) request body is printed out to the console in DEBUG, this data can take several
+> seconds to be ingested by CloudWatch, during which the respective adaptor is unresponsive.
+> During a large GP2GP transfer where multiple incoming or outgoing requests are made at once this
+> unresponsiveness can cause spine requests to fail.
 > 
 > In a non-production environment, one workaround for the AWS CloudWatch issue is to use the
 > [non-blocking mode][cloudwatch-config-options].
