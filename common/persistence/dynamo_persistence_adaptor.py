@@ -139,7 +139,8 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         Creates a connection to the table referenced by this instance.
         :return: The table to be used by this instance.
         """
-        async with aioboto3.resource('dynamodb',
+        session = aioboto3.Session()
+        async with session.resource('dynamodb',
                                      region_name=self.region_name,
                                      endpoint_url=self.endpoint_url) as dynamo_resource:
             logger.info('Establishing connection to DynamoDB')
