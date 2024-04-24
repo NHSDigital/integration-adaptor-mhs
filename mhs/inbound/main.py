@@ -2,21 +2,21 @@ import pathlib
 import ssl
 from typing import Dict
 
-import definitions
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+
+import definitions
+import inbound.request.handler as async_request_handler
 import utilities.config as config
 import utilities.integration_adaptors_logger as log
-from comms import proton_queue_adaptor
+from comms import pika_queue_adaptor
+from handlers import healthcheck_handler
 from mhs_common import workflow
 from mhs_common.configuration import configuration_manager
-from handlers import healthcheck_handler
 from persistence import persistence_adaptor
 from persistence.persistence_adaptor_factory import get_persistence_adaptor
 from utilities import secrets, certs
-
-import inbound.request.handler as async_request_handler
 from utilities.string_utilities import str2bool
 
 logger = log.IntegrationAdaptorsLogger(__name__)
@@ -92,7 +92,8 @@ def start_inbound_server(local_certs_file: str, ca_certs_file: str, key_file: st
 
 
 def create_queue_adaptor():
-    return proton_queue_adaptor.ProtonQueueAdaptor(
+
+    return pika_queue_adaptor.PikaQueueAdaptor(
         urls=config.get_config('INBOUND_QUEUE_BROKERS').split(','),
         queue=config.get_config('INBOUND_QUEUE_NAME'),
         username=secrets.get_secret_config('INBOUND_QUEUE_USERNAME', default=None),
