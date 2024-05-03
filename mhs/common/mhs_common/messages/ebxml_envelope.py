@@ -172,9 +172,6 @@ class EbxmlEnvelope(envelope.Envelope):
                 # grab the existing payload item by cid
                 foundPayload = next((item for item in attachment_payloads if item[ATTACHMENT_CONTENT_ID] == cid), None)
 
-                for item in attachment_payloads:
-                    logger.error("Attachment IDs:" + item[ATTACHMENT_CONTENT_ID])
-
                 # We may have already decompressed a compressed payload or converted from base64, if so,
                 # update the payload description fields with the correct details and form our attachment
                 # All this to add the description field :)
