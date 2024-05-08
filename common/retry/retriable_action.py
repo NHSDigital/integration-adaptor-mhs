@@ -103,9 +103,9 @@ class RetriableAction(object):
             logger.info("{action} was successful. Retry not required.", fparams={"action": self.action})
             retry_required = False
 
-        if not self._exception_is_retriable(action_result.exception):
-            logger.info("{action} raised a non-retriable exception. Retry not required.",
-                        fparams={"action": self.action})
+        if action_result.exception is not None and not self._exception_is_retriable(action_result.exception):
+            logger.info("{action} raised a non-retriable exception: {ex}. Retry not required.",
+                        fparams={"action": self.action, "ex": action_result.exception})
             retry_required = False
 
         logger.info("{retry_required} for {action}", fparams={"retry_required": retry_required, "action": self.action})
