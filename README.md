@@ -36,10 +36,6 @@ Each directory contains its own README.md file which provides more details.
 It may be useful to run this adaptors in a local environment. Please refer to [running the MHS adaptor locally](mhs/running-mhs-adaptor-locally.md) 
 a step-by-step guide on how to set this up.
 
-## MHS Adaptor resource allocation
-The recommended heap space for the PS Adaptor Translator is 4 GB. Also, it should be run on (at least) two CPUs for better performance.
-
-
 ## Resources
 ### NHS Digital Developer Portal
 The [MHS Adaptor](https://digital.nhs.uk/developer/api-catalogue/mhs) page within the NHS Digital Developer Portal should be your first point of call for all information relating to this adaptor.  This page covers everything from Onboarding, testing, implementation and integration and other considerations and best practices.
