@@ -40,6 +40,9 @@ Key requirements that should be prioritised when choosing a service for log inde
 - Ability to raise alerts that notify subscribed users immediately upon certain events happening such as presence of specific types of log, or breach of thresholds.
 - Ability to highlight and alert on the absence of log data from an expected component, indicating a component silently failing.
 
+## MHS Adaptor resource allocation
+The recommended memory for the PS Adaptor Translator is 4 GB. Also, it should be run on (at least) two CPUs for better performance.
+
 ### Audit consumption
 
 Audit logs are emitted through the same channel as other log messages, via the standard I/O streams captured and forwarded by Docker. Audit log messages have a log level of AUDIT which is used to differentiate them from other logs. Due to the potential sensitivity of the data held in AUDIT logs and the need to ensure that AUDIT logs have stronger controls around them to prevent the possibility of tampering, it is strongly advised that the log indexing tooling chosen should be configured to filter AUDIT logs out of the main log bucket and divert them into their own audit log bucket, which can be stored and controlled separately.
