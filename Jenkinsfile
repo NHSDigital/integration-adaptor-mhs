@@ -250,8 +250,11 @@ pipeline {
                         stage('Deploy MHS (SpineRouteLookup)') {
                             steps {
                                 dir('pipeline/terraform/mhs-environment') {
+                                    script {
+                                        terraformBinPath = tfEnv()
+                                    }
                                     sh label: 'Initialising Terraform', script: """
-                                            terraform init \
+                                            ${terraformBinPath} init \
                                             -backend-config="bucket=${TF_STATE_BUCKET}" \
                                             -backend-config="region=${TF_STATE_BUCKET_REGION}" \
                                             -backend-config="key=${ENVIRONMENT_ID}-mhs.tfstate" \
@@ -259,7 +262,7 @@ pipeline {
                                             -input=false -no-color
                                         """
                                     sh label: 'Applying Terraform configuration', script: """
-                                            terraform apply -no-color -auto-approve \
+                                            ${terraformBinPath} apply -no-color -auto-approve \
                                             -var environment_id=${ENVIRONMENT_ID} \
                                             -var build_id=${BUILD_TAG} \
                                             -var supplier_vpc_id=${SUPPLIER_VPC_ID} \
@@ -310,32 +313,32 @@ pipeline {
                                         env.MHS_ADDRESS = sh (
                                             label: 'Obtaining outbound LB DNS name',
                                             returnStdout: true,
-                                            script: "echo \"https://\$(terraform output outbound_lb_domain_name)\""
+                                            script: "echo \"https://\$(${terraformBinPath} output outbound_lb_domain_name)\""
                                         ).trim()
                                         env.MHS_OUTBOUND_TARGET_GROUP = sh (
                                             label: 'Obtaining outbound LB target group ARN',
                                             returnStdout: true,
-                                            script: "terraform output outbound_lb_target_group_arn"
+                                            script: "${terraformBinPath} output outbound_lb_target_group_arn"
                                         ).trim()
                                         env.MHS_INBOUND_TARGET_GROUP = sh (
                                             label: 'Obtaining inbound LB target group ARN',
                                             returnStdout: true,
-                                            script: "terraform output inbound_lb_target_group_arn"
+                                            script: "${terraformBinPath} output inbound_lb_target_group_arn"
                                         ).trim()
                                         env.MHS_ROUTE_TARGET_GROUP = sh (
                                             label: 'Obtaining route LB target group ARN',
                                             returnStdout: true,
-                                            script: "terraform output route_lb_target_group_arn"
+                                            script: "${terraformBinPath} output route_lb_target_group_arn"
                                         ).trim()
                                         env.MHS_STATE_TABLE_NAME = sh (
                                             label: 'Obtaining the table name used for the MHS state',
                                             returnStdout: true,
-                                            script: "terraform output mhs_state_table_name"
+                                            script: "${terraformBinPath} output mhs_state_table_name"
                                         ).trim()
                                         env.MHS_SYNC_ASYNC_TABLE_NAME = sh (
                                             label: 'Obtaining the table name used for the MHS sync/async state',
                                             returnStdout: true,
-                                            script: "terraform output mhs_sync_async_table_name"
+                                            script: "${terraformBinPath} output mhs_sync_async_table_name"
                                         ).trim()
                                     }
                                 }
@@ -376,8 +379,11 @@ pipeline {
                         stage('Deploy MHS (SDS API)') {
                             steps {
                                 dir('pipeline/terraform/mhs-environment') {
+                                    script {
+                                        terraformBinPath = tfEnv()
+                                    }
                                     sh label: 'Initialising Terraform', script: """
-                                            terraform init \
+                                            ${terraformBinPath} init \
                                             -backend-config="bucket=${TF_STATE_BUCKET}" \
                                             -backend-config="region=${TF_STATE_BUCKET_REGION}" \
                                             -backend-config="key=${ENVIRONMENT_ID}-mhs.tfstate" \
@@ -385,7 +391,7 @@ pipeline {
                                             -input=false -no-color
                                         """
                                     sh label: 'Applying Terraform configuration', script: """
-                                            terraform apply -no-color -auto-approve \
+                                            ${terraformBinPath} apply -no-color -auto-approve \
                                             -var environment_id=${ENVIRONMENT_ID} \
                                             -var build_id=${BUILD_TAG} \
                                             -var supplier_vpc_id=${SUPPLIER_VPC_ID} \
@@ -436,32 +442,32 @@ pipeline {
                                         env.MHS_ADDRESS = sh (
                                             label: 'Obtaining outbound LB DNS name',
                                             returnStdout: true,
-                                            script: "echo \"https://\$(terraform output outbound_lb_domain_name)\""
+                                            script: "echo \"https://\$(${terraformBinPath} output outbound_lb_domain_name)\""
                                         ).trim()
                                         env.MHS_OUTBOUND_TARGET_GROUP = sh (
                                             label: 'Obtaining outbound LB target group ARN',
                                             returnStdout: true,
-                                            script: "terraform output outbound_lb_target_group_arn"
+                                            script: "${terraformBinPath} output outbound_lb_target_group_arn"
                                         ).trim()
                                         env.MHS_INBOUND_TARGET_GROUP = sh (
                                             label: 'Obtaining inbound LB target group ARN',
                                             returnStdout: true,
-                                            script: "terraform output inbound_lb_target_group_arn"
+                                            script: "${terraformBinPath} output inbound_lb_target_group_arn"
                                         ).trim()
                                         env.MHS_ROUTE_TARGET_GROUP = sh (
                                             label: 'Obtaining route LB target group ARN',
                                             returnStdout: true,
-                                            script: "terraform output route_lb_target_group_arn"
+                                            script: "${terraformBinPath} output route_lb_target_group_arn"
                                         ).trim()
                                         env.MHS_STATE_TABLE_NAME = sh (
                                             label: 'Obtaining the table name used for the MHS state',
                                             returnStdout: true,
-                                            script: "terraform output mhs_state_table_name"
+                                            script: "${terraformBinPath} output mhs_state_table_name"
                                         ).trim()
                                         env.MHS_SYNC_ASYNC_TABLE_NAME = sh (
                                             label: 'Obtaining the table name used for the MHS sync/async state',
                                             returnStdout: true,
-                                            script: "terraform output mhs_sync_async_table_name"
+                                            script: "${terraformBinPath} output mhs_sync_async_table_name"
                                         ).trim()
                                     }
                                 }
@@ -509,6 +515,12 @@ pipeline {
             sh 'docker image rm -f $(docker images "*/*:*${BUILD_TAG}" -q) $(docker images "*/*/*:*${BUILD_TAG}" -q) || true'
         }
     }
+}
+
+String tfEnv(String tfEnvRepo="https://github.com/tfutils/tfenv.git", String tfEnvPath="~/.tfenv") {
+  sh(label: "Get tfenv" ,  script: "git clone ${tfEnvRepo} ${tfEnvPath}", returnStatus: true)
+  sh(label: "Install TF",  script: "${tfEnvPath}/bin/tfenv install"     , returnStatus: true)
+  return "${tfEnvPath}/bin/terraform"
 }
 
 void executeUnitTestsWithCoverage() {
