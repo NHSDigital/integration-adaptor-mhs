@@ -1,4 +1,4 @@
-FROM python:3.7-slim-bullseye
+FROM python:3.8-slim-bullseye
 RUN apt-get update
 RUN apt-get install build-essential git -y
 RUN mkdir -p /usr/src/app/mhs/fakespine
@@ -9,7 +9,7 @@ WORKDIR /usr/src/app/mhs/fakespine
 COPY integration-tests/fake_spine/Pipfile /usr/src/app
 COPY integration-tests/fake_spine/Pipfile.lock /usr/src/app
 
-RUN pipenv --python 3.7
+RUN pipenv --python 3.8
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
