@@ -21,10 +21,13 @@ pipeline {
     stages {
        stage('Build & test Common') {
             steps {
-                sh 'apt-get install python3'
-                sh 'curl -O https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py'
-                sh 'if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-                            if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+                sh 'apt-get install software-properties-common'
+                sh 'add-apt-repository ppa:deadsnakes/ppa -y'
+                sh 'apt-get install python3.8'
+                sh 'python3.8 --version'
+                sh 'curl -O https://bootstrap.pypa.io/get-pip.py && python3.8 get-pip.py'
+                sh 'if [ ! -e /usr/bin/pip ]; then ln -s pip3.8 /usr/bin/pip ; fi && \
+                            if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3.8 /usr/bin/python; fi && \
                             rm -r /root/.cache '
                 dir('common') {
                     buildModules('Installing common dependencies')
