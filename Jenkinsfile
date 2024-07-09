@@ -24,6 +24,8 @@ pipeline {
                 // Install pyenv and Python 3.8
                 sh '''
                     curl https://pyenv.run | bash
+                    echo -e '\n# Load pyenv automatically\nexport PYENV_ROOT="$HOME/.pyenv"\n[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"\neval "$(pyenv init -)"' >> ~/.bash_profile
+                    exec "$SHELL"
                     pyenv install 3.8.17
                     pyenv global 3.8.17
                     pyenv rehash
