@@ -21,7 +21,7 @@ pipeline {
     stages {
        stage('Build & test Common') {
             steps {
-                sh 'apt update && apt install python3'
+                sh 'sudo apt-get install python3'
                 sh 'curl -O https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py'
                 sh 'if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
                             if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
