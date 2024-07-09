@@ -21,24 +21,23 @@ pipeline {
     stages {
        stage('Build & test Common') {
             steps {
-                //  Prepare installation of pyenv
-                //  Install dependencies
-                sh 'apt install -y make build-essential libssl-dev zlib1g-dev  libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git'
-                //  Clone PyEnv repo
-                sh 'git clone https://github.com/pyenv/pyenv.git ~/.pyenv'
-                //  Configure environment
-                sh 'echo \'export PYENV_ROOT="$HOME/.pyenv"\' >> ~/.bashrc'
-                sh 'echo \'export PATH="$PYENV_ROOT/bin:$PATH"\' >> ~/.bashrc'
-                sh 'echo -e \'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi\' >> ~/.bashrc'
-                // Start using pyenv
-                sh 'exec "$SHELL"'
-                // Install our desired python version
-                sh 'pyenv install 3.8.17'
-                // Verify our python version
-                sh 'pyenv versions'
-                // Set our newly install python version to be the global version
-                sh 'pyenv global 3.8.17'
-                sh 'python --version'
+                // Install pyenv and Python 3.8
+                sh '''
+                    apt-get update
+                    apt-get install -y make build-essential libssl-dev zlib1g-dev \
+                        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+                        libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
+                        liblzma-dev python-openssl git
+                    git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+                    export PYENV_ROOT="$HOME/.pyenv"
+                    export PATH="$PYENV_ROOT/bin:$PATH"
+                    eval "$(pyenv init --path)"
+                    eval "$(pyenv init -)"
+                    pyenv install 3.8.17
+                    pyenv global 3.8.17
+                    pyenv rehash
+                    python --version
+                '''
 
                 dir('common') {
                     buildModules('Installing common dependencies')
