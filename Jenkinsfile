@@ -21,14 +21,26 @@ pipeline {
     stages {
        stage('Build & test Common') {
             steps {
-                sh 'apt-get install software-properties-common'
-                sh 'add-apt-repository ppa:deadsnakes/ppa -y'
-                sh 'apt-get install python3.8'
-                sh 'python3.8 --version'
-                sh 'curl -O https://bootstrap.pypa.io/get-pip.py && python3.8 get-pip.py'
-                sh 'if [ ! -e /usr/bin/pip ]; then ln -s pip3.8 /usr/bin/pip ; fi && \
-                            if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3.8 /usr/bin/python; fi && \
-                            rm -r /root/.cache '
+                //  Prepare installation of pyenv
+                sh 'apt-get update -y'
+                //  Install dependencies
+                sh 'apt install -y make build-essential libssl-dev zlib1g-dev  libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git'
+                //  Clone PyEnv repo
+                sh 'git clone https://github.com/pyenv/pyenv.git ~/.pyenv'
+                //  Configure environment
+                sh 'echo \'export PYENV_ROOT="$HOME/.pyenv"\' >> ~/.bashrc'
+                sh 'echo \'export PATH="$PYENV_ROOT/bin:$PATH"\' >> ~/.bashrc'
+                sh 'echo -e \'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi\' >> ~/.bashrc'
+                // Start using pyenv
+                sh 'exec "$SHELL"'
+                // Install our desired python version
+                sh 'pyenv install 3.8.17'
+                // Verify our python version
+                sh 'pyenv versions'
+                // Set our newly install python version to be the global version
+                sh 'pyenv global 3.8.17'
+                sh 'python --version'
+
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
