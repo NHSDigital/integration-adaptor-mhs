@@ -1,8 +1,6 @@
 pipeline {
     agent { 
-        docker { 
-            image 'python:3.8.19-slim-bullseye' 
-        }
+        label 'jenkins-workers'
     }
 
     environment {
@@ -23,6 +21,11 @@ pipeline {
     stages {
        stage('Build & test Common') {
             steps {
+                sh 'apt update && apt install python3'
+                sh 'curl -O https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py'
+                sh 'if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+                            if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+                            rm -r /root/.cache '
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
