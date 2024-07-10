@@ -23,8 +23,19 @@ pipeline {
             steps {
                 // Install pyenv and Python 3.8
                 sh '''
-                    apt update -y
-                    apt install -y build-essential libssl-dev zlib1g-dev \
+                    # Update sources list to use archived repositories
+                    cat <<EOF > /etc/apt/sources.list
+                    deb http://archive.debian.org/debian stretch main contrib non-free
+                    deb http://archive.debian.org/debian stretch-updates main contrib non-free
+                    deb http://archive.debian.org/debian-security stretch/updates main contrib non-free
+                    EOF
+                    
+                    # Disable checking of valid repositories (as these are archived)
+                    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99archive
+                    
+                    # Update and install prerequisites
+                    sudo apt update -y
+                    sudo apt install -y build-essential libssl-dev zlib1g-dev \
                     libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
                     libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
                     liblzma-dev python-openssl git
