@@ -23,13 +23,38 @@ pipeline {
             steps {
                 // Install pyenv and Python 3.8
                 sh '''
-                    apt-get update
-                    apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
-                    curl https://pyenv.run | bash
+                    apt update -y
+                    apt install -y build-essential libssl-dev zlib1g-dev \
+                    libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+                    libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
+                    liblzma-dev python-openssl git
+                    
+                    # Install pyenv if not already installed
+                    if [ -z "$(command -v pyenv)" ]; then
+                      curl https://pyenv.run | bash
+                    fi
+                    
+                    # Add pyenv to bashrc if not already present
+                    if ! grep -q 'export PYENV_ROOT="$HOME/.pyenv"' ~/.bashrc; then
+                      echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+                      echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+                      echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+                      echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+                      echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+                    fi
+                    
+                    # Reload bashrc to apply changes
+                    export PYENV_ROOT="$HOME/.pyenv"
+                    export PATH="$PYENV_ROOT/bin:$PATH"
+                    eval "$(pyenv init --path)"
+                    eval "$(pyenv init -)"
+                    eval "$(pyenv virtualenv-init -)"
+                    
+                    # Install Python 3.8.17 using pyenv
                     pyenv install 3.8.17
+                    
+                    # Set Python 3.8.17 as the global version
                     pyenv global 3.8.17
-                    pyenv rehash
-                    python --version
                 '''
 
                 dir('common') {
