@@ -22,8 +22,7 @@ pipeline {
        stage('Test ability to execute Python') {
             steps {
                 withPythonEnv('/usr/bin/python3.8') {
-                    sh 'echo "Displaying the current Python version"'
-                    sh 'python --version'
+                    sh label: 'Displaying the current Python version', script: 'python --version'
                 }
             }
        }
