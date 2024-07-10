@@ -25,12 +25,12 @@ pipeline {
                 sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev | echo'
                 sh 'cd /usr/src'
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
-                sh 'tar xzf Python-3.8.17.tgz'
+                sh 'tar -xvzf Python-3.8.17.tgz'
                 sh 'cd Python-3.8.17'
                 sh './configure --enable-optimizations'
                 sh 'make altinstall'
                 sh 'echo PYTHON VERSION'
-                sh 'python3.9 --version'
+                sh 'python3.8 --version'
             }
        }
        stage('Build & test Common') {
