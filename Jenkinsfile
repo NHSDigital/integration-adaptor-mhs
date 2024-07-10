@@ -27,13 +27,20 @@ pipeline {
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
                 sh 'tar -xvzf Python-3.8.17.tgz'
                 sh 'ls -halt'
-                sh 'cd Python-3.8.17'
-                sh 'ls -halt'
-                sh './configure --enable-optimizations'
-                sh 'make altinstall'
-                sh 'echo PYTHON VERSION'
-                sh 'python3.8 --version'
             }
+       }
+       stages {
+              stage('Test ability to execute Python PART 2') {
+                   steps {
+                        dir('Python-3.8.17') {
+                            sh 'ls -halt'
+                            sh './configure --enable-optimizations'
+                            sh 'make altinstall'
+                            sh 'echo PYTHON VERSION'
+                            sh 'python3.8 --version'
+                        }
+                   }
+              }
        }
        stage('Build & test Common') {
             steps {                
