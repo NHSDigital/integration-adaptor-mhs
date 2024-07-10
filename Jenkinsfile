@@ -21,53 +21,16 @@ pipeline {
     stages {
        stage('Build & test Common') {
             steps {
-                // Install pyenv and Python 3.8
-                sh '''
-                    # Update sources list to use archived repositories
-                    cat <<EOF > /etc/apt/sources.list
-                    deb http://archive.debian.org/debian stretch main contrib non-free
-                    deb http://archive.debian.org/debian stretch-updates main contrib non-free
-                    deb http://archive.debian.org/debian-security stretch/updates main contrib non-free
-                    EOF
-                    
-                    # Disable checking of valid repositories (as these are archived)
-                    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99archive
-                    
-                    # Update and install prerequisites
-                    sudo apt update -y
-                    sudo apt install -y build-essential libssl-dev zlib1g-dev \
-                    libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
-                    libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
-                    liblzma-dev python-openssl git
-                    
-                    # Install pyenv
-                    curl https://pyenv.run | bash
-                    
-                    # Add pyenv to bashrc if not already present
-                    if ! grep -q 'export PYENV_ROOT="$HOME/.pyenv"' ~/.bashrc; then
-                      echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-                      echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-                      echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
-                      echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-                      echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-                    fi
-                    
-                    # Source the updated bashrc
-                    source ~/.bashrc
-                    
-                    # Install Python 3.8.17 using pyenv
-                    pyenv install 3.8.17
-                    
-                    # Set Python 3.8.17 as the global version
-                    pyenv global 3.8.17
-                    
-                    # Verify the installation
-                    python --version
-                    
-                    # Install dependencies using pipenv
-                    pipenv install --dev --deploy --ignore-pipfile
-                '''
-
+                sh 'apt-get update'
+                sh 'apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget'
+                sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tar.xz'
+                sh 'tar -xf Python-3.8.17.tar.xz'
+                sh 'cd Python-3.8.17'
+                sh './configure --enable-optimizations'
+                sh 'make -j 4'
+                sh 'make altinstall'
+                sh 'python3.8 --version'
+                
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
