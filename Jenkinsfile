@@ -22,8 +22,8 @@ pipeline {
        stage('Test ability to execute Python') {
             steps {
                 withPythonEnv('python3') {
-                    sh 'python --version'
-                    sh label: 'Displaying the current Python version', script: 'python --version'
+                    sh label: 'Displaying the current Python version', script: 'python3 --version'
+                    sh 'python3 --version'
                 }
             }
        }
