@@ -29,19 +29,17 @@ pipeline {
                 sh 'ls -halt'
             }
        }
-       stages {
-              stage('Test ability to execute Python PART 2') {
-                   steps {
-                        dir('Python-3.8.17') {
-                            sh 'ls -halt'
-                            sh './configure --enable-optimizations'
-                            sh 'make altinstall'
-                            sh 'echo PYTHON VERSION'
-                            sh 'python3.8 --version'
-                        }
-                   }
-              }
-       }
+      stage('Test ability to execute Python PART 2') {
+           steps {
+                dir('Python-3.8.17') {
+                    sh 'ls -halt'
+                    sh './configure --enable-optimizations'
+                    sh 'make altinstall'
+                    sh 'echo PYTHON VERSION'
+                    sh 'python3.8 --version'
+                }
+           }
+      }
        stage('Build & test Common') {
             steps {                
                 dir('common') {
