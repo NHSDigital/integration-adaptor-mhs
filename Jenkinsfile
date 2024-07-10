@@ -23,9 +23,8 @@ pipeline {
             steps {
                 // Install pyenv and Python 3.8
                 sh '''
+                    sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
                     curl https://pyenv.run | bash
-                    echo -e '\n# Load pyenv automatically\nexport PYENV_ROOT="$HOME/.pyenv"\n[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"\neval "$(pyenv init -)"' >> ~/.bash_profile
-                    exec "$SHELL"
                     pyenv install 3.8.17
                     pyenv global 3.8.17
                     pyenv rehash
