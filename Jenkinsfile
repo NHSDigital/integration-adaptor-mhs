@@ -19,21 +19,19 @@ pipeline {
     }
 
     stages {
-       stage('Build & test Common') {
+       stage('Test ability to execute Python') {
             steps {
-                sh 'apt-get update'
-                sh 'apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget'
-                sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tar.xz'
-                sh 'tar -xf Python-3.8.17.tar.xz'
-                sh 'cd Python-3.8.17'
-                sh './configure --enable-optimizations'
-                sh 'make -j 4'
-                sh 'make altinstall'
-                sh 'python3.8 --version'
-                
+                withPythonEnv('/usr/bin/python3.8') {
+                    sh 'echo "Displaying the current Python version"'
+                    sh 'python --version'
+                }
+            }
+       }
+       stage('Build & test Common') {
+            steps {                
                 dir('common') {
-                    buildModules('Installing common dependencies')
-                    executeUnitTestsWithCoverage()
+                        buildModules('Installing common dependencies')
+                        executeUnitTestsWithCoverage()
                 }
             }
        }
