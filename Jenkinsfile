@@ -23,7 +23,9 @@ pipeline {
             steps {
                 withPythonEnv('python3') {
                     sh label: 'Displaying the current Python version', script: 'python3 --version'
+                    sh 'echo PYTHON VERSION'
                     sh 'python3 --version'
+                    sh 'pip3 --version'
                 }
             }
        }
