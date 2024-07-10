@@ -40,10 +40,8 @@ pipeline {
                     libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
                     liblzma-dev python-openssl git
                     
-                    # Install pyenv if not already installed
-                    if [ -z "$(command -v pyenv)" ]; then
-                      curl https://pyenv.run | bash
-                    fi
+                    # Install pyenv
+                    curl https://pyenv.run | bash
                     
                     # Add pyenv to bashrc if not already present
                     if ! grep -q 'export PYENV_ROOT="$HOME/.pyenv"' ~/.bashrc; then
@@ -54,18 +52,20 @@ pipeline {
                       echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
                     fi
                     
-                    # Reload bashrc to apply changes
-                    export PYENV_ROOT="$HOME/.pyenv"
-                    export PATH="$PYENV_ROOT/bin:$PATH"
-                    eval "$(pyenv init --path)"
-                    eval "$(pyenv init -)"
-                    eval "$(pyenv virtualenv-init -)"
+                    # Source the updated bashrc
+                    source ~/.bashrc
                     
                     # Install Python 3.8.17 using pyenv
                     pyenv install 3.8.17
                     
                     # Set Python 3.8.17 as the global version
                     pyenv global 3.8.17
+                    
+                    # Verify the installation
+                    python --version
+                    
+                    # Install dependencies using pipenv
+                    pipenv install --dev --deploy --ignore-pipfile
                 '''
 
                 dir('common') {
