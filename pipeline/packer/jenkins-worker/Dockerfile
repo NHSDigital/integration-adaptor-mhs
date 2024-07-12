@@ -12,7 +12,7 @@ RUN wget -O packer.zip https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_
         rm packer.zip
 
 # Install Terraform
-RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/0.12.3/terraform_0.12.3_linux_amd64.zip && \
+RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/0.12.31/terraform_0.12.31_linux_amd64.zip && \
         unzip terraform.zip -d /usr/bin/ && \
         rm terraform.zip
 
