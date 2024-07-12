@@ -247,6 +247,15 @@ pipeline {
                         lock('exemplar-test-environment')
                     }
                     stages {
+                        stage('Updating Terraform Binary') {
+                            steps {
+                                sh label: 'Updating Terraform Binary', script: """
+                                            wget -O terraform.zip https://releases.hashicorp.com/terraform/0.12.31/terraform_0.12.31_linux_amd64.zip && \
+                                            unzip terraform.zip -d /usr/bin/ && \
+                                            rm terraform.zip
+                                """
+                            }
+                        }
                         stage('Deploy MHS (SpineRouteLookup)') {
                             steps {
                                 dir('pipeline/terraform/mhs-environment') {
