@@ -507,7 +507,7 @@ resource "aws_ecs_service" "mhs_outbound_service" {
   # Preserve the autoscaled instance count when this service is updated
   lifecycle {
     ignore_changes = [
-      "desired_count"
+      desired_count
     ]
   }
 }
@@ -577,7 +577,7 @@ resource "aws_ecs_service" "mhs_inbound_service" {
   # Preserve the autoscaled instance count when this service is updated
   lifecycle {
     ignore_changes = [
-      "desired_count"
+      desired_count
     ]
   }
 }
@@ -644,7 +644,7 @@ resource "aws_ecs_service" "mhs_route_service" {
   # Preserve the autoscaled instance count when this service is updated
   lifecycle {
     ignore_changes = [
-      "desired_count"
+      desired_count
     ]
   }
 }
@@ -715,7 +715,7 @@ resource "aws_ecs_service" "mhs_fake_spine_service" {
   # Preserve the autoscaled instance count when this service is updated
   lifecycle {
     ignore_changes = [
-      "desired_count"
+      desired_count
     ]
   }
 }
