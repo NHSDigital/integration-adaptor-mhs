@@ -1,6 +1,7 @@
 """Module responsible for building and sending http messages to the SCR Adaptor"""
 from __future__ import annotations
 
+import certifi
 import os
 import unittest
 import uuid
@@ -55,7 +56,7 @@ class ScrHttpRequestBuilder(object):
         Asserts the response is successful.
         :return: Response
         """
-        response = requests.post(self.scr_host, headers=self.headers, data=self.body)
+        response = requests.post(self.scr_host, headers=self.headers, data=self.body, verify=certifi.where())
         self.assertor.assertTrue(
             response.ok,
             f'A non successful error code was returned from server: {response.status_code} {response.text}')
@@ -67,7 +68,7 @@ class ScrHttpRequestBuilder(object):
         Executes a POST request against the SCR Adaptor, asserts the response status code is 400 
         :return: Response
         """
-        response = requests.post(self.scr_host, headers=self.headers, data=self.body)
+        response = requests.post(self.scr_host, headers=self.headers, data=self.body, verify=certifi.where())
         self.assertor.assertTrue(
             response.status_code == 400,
             f'A non 400 error code was returned from server: {response.status_code} {response.text}')
@@ -78,7 +79,7 @@ class ScrHttpRequestBuilder(object):
         Executes a POST request against the SCR Adaptor, asserts the response status code is 500 
         :return: Response
         """
-        response = requests.post(self.scr_host, headers=self.headers, data=self.body)
+        response = requests.post(self.scr_host, headers=self.headers, data=self.body, verify=certifi.where())
         self.assertor.assertTrue(
             response.status_code == 500,
             f'A non 400 error code was returned from server: {response.status_code} {response.text}')

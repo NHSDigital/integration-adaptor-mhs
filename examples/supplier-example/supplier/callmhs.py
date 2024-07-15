@@ -1,4 +1,5 @@
 import requests
+import certifi
 
 
 def call_mhs(mhs_command, hl7payload):
@@ -9,6 +10,6 @@ def call_mhs(mhs_command, hl7payload):
     :return: The response returned by the MHS.
     """
     mhs_url = 'http://localhost/' + mhs_command
-    response = requests.post(mhs_url, data=hl7payload)
+    response = requests.post(mhs_url, data=hl7payload, verify=certifi.where())
 
     return response.text
