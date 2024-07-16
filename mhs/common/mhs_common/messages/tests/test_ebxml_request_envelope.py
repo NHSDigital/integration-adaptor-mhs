@@ -299,10 +299,58 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
 
             self.assertEqual(expected_values_with_no_payload, parsed_message.message_dictionary)
 
-        with self.subTest("A valid request containing one textual attachment"):
-            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_attachment')
+        with self.subTest("A valid request containing one 8-bit encoded textual attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_8bit_attachment')
             attachments = [{
                 ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description'
+            }]
+            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
+                                                           attachments=attachments)
+
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+
+            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
+
+        with self.subTest("A valid request containing one 7-bit encoded textual attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_7bit_attachment')
+            attachments = [{
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some seven bit payload, limited to US-ASCII characters.',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description'
+            }]
+            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
+                                                           attachments=attachments)
+
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+
+            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
+
+        with self.subTest("A valid request containing one binary encoded textual attachment"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_one_binary_attachment')
+            attachments = [{
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload which has a binary encoding.',
+                ebxml_request_envelope.ATTACHMENT_BASE64: False,
+                ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
+                ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
+                ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description'
+            }]
+            expected_values_with_payload = expected_values(ebxml=ebxml, payload=EXPECTED_MESSAGE,
+                                                           attachments=attachments)
+
+            parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
+
+            self.assertEqual(expected_values_with_payload, parsed_message.message_dictionary)
+
+        with self.subTest("A valid request without the Content-Transfer-Encoding header specified"):
+            message, ebxml = message_utilities.load_test_data(self.message_dir, 'ebxml_request_no_encoding')
+            attachments = [{
+                ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'This inbound message has no Content-Transfer-Encoding headers.',
                 ebxml_request_envelope.ATTACHMENT_BASE64: False,
                 ebxml_request_envelope.ATTACHMENT_CONTENT_ID: '8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk',
                 ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
