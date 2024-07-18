@@ -2,11 +2,12 @@ version: '3'
 
 services:
   inbound:
-    image: local/mhs-inbound:${BUILD_TAG}
+    image: nhsdev/nia-mhs-inbound:${BUILD_TAG}
     ports:
       - "443"
       - "80"
     environment:
+      - BUILD_TAG=1.0.3
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SECRET_PARTY_KEY
       - MHS_SECRET_CLIENT_CERT
@@ -29,7 +30,7 @@ services:
       - SERVICE_PORTS=443,80
       - SUPPORTED_FILE_TYPES
   outbound:
-    image: local/mhs-outbound:${BUILD_TAG}
+    image: nhsdev/nia-mhs-outbound:${BUILD_TAG}
     ports:
       - "80"
     environment:
@@ -57,7 +58,7 @@ services:
       - MHS_SDS_API_URL
       - MHS_SDS_API_KEY
   route:
-    image: local/mhs-route:${BUILD_TAG}
+    image: nhsdev/nia-mhs-route:${BUILD_TAG}
     ports:
         - "8080:80"
     environment:
