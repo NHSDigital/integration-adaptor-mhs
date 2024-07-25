@@ -10,12 +10,12 @@ WORKDIR /test
 COPY . .
 
 WORKDIR /test/integration-tests/integration_tests
-ENV PYTHONPATH "${PYTHONPATH}:/test/mhs/common"
-ENV PYTHONPATH "${PYTHONPATH}:/test/common"
+ENV PYTHONPATH="/test/mhs/common"
+ENV PYTHONPATH="${PYTHONPATH}:/test/common"
 
 RUN pipenv --python 3.7
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
 RUN pipenv install --dev --deploy --ignore-pipfile
 
-ENTRYPOINT pipenv run componenttests
+ENTRYPOINT ["pipenv", "run", "componenttests"]
