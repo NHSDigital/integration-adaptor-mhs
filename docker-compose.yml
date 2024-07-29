@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   inbound:
     image: local/mhs-inbound:${BUILD_TAG}

@@ -107,6 +107,7 @@ export MHS_SECRET_CA_CERTS=""
 . To start the containers run the command:
 
 `docker-compose -f docker-compose.yml -f docker-compose.lb.override.yml -f docker-compose.release.image.override.yml up -d --build`
+@todo the docker-compose.lb.override.yml  does not exist
 
 [start=5]
 
@@ -165,8 +166,11 @@ The integration tests can be found in `/integration-tests/integration_tests/inte
 == Running integration tests against fake components
 
 Run `fake_spine` and `fake_spineroutelookup` as if running component tests
-Run `inbound` and `outbound` with the `all_component_test_env.yaml` configuration (same as of running component tests)
+Run `inbound` and `outbound` with the `all_component_test_env.yaml` configuration (same as running component tests)
 Run the integration tests using the `all_component_test_env.yaml` instead of the normal integration test configuration.
+The best suggestion we have for this at the moment is to add these variables to the .env file in the root of the project
+and run `BUILD_TAG=latest docker-compose -f docker-compose.yml -f docker-compose.component.override.yml --env-file .env up`
+to load these environment variables into the appropriate Docker containers, e.g. FakeSpine.
 
 == Fake Spine request / response delays
 

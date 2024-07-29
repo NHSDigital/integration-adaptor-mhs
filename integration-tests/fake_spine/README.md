@@ -33,23 +33,25 @@ scheme used by the outbound request handler.
 
 ## Configuration
 
-The service is configured using environment variables. Variables without a default value are *required* to be provided
-when the service is run.
+The service is configured using environment variables.
+You will find default values for these environment variables in integration-tests/all_component_test_env.yaml file
+@todo Explain where to get the required environment variables from.
 
-| Environment Variable            | Default | Description 
-| --------------------------------|---------|-------------
-| FAKE_SPINE_PRIVATE_KEY          |         | TLS private key for both HTTPS outbound request handler and inbound mutual TLS
-| FAKE_SPINE_CERTIFICATE          |         | TLS certificate for both HTTPS outbound request handler and inbound mutual TLS
-| FAKE_SPINE_CA_STORE             |         | CA certificates for both HTTPS outbound request handler and inbound mutual TLS
-| FAKE_SPINE_PORT                 | 443     | Port on which the outbound request handler receives requests to fake spine
-| INBOUND_PROXY_PORT              | 8888    | Port on which the inbound proxy runs to proxy request made internally to the inbound service
-| FAKE_SPINE_PROXY_VALIDATE_CERT  | True    | If "False" then certificate validation errors on requests made to inbound are ignored
-| INBOUND_SERVER_BASE_URL         |         | The url (including URI scheme) to which the inbound proxy makes requests (example: https://inbound/)
-| FAKE_SPINE_OUTBOUND_DELAY_MS    | 0       | To simulate actual Spine response times, the number of milliseconds to wait before returning an outbound response
-| FAKE_SPINE_INBOUND_DELAY_MS     | 0       | To simulate actual Spine asynchronous response times, the number of milliseconds to wait before sending a reply to the inbound service
-| MHS_SECRET_PARTY_KEY            |         | The party key (recipient) used to make request to inbound. *Must* match the party key used to configure the inbound service
-| FAKE_SPINE_OUTBOUND_SSL_ENABLED | True    | If "False" then the outbound request handler will use HTTP instead of HTTPS
-| MHS_LOG_LEVEL                   |         | The desired logging level
+| Environment Variable            |Required| Default | Description 
+| --------------------------------|--------|---------|-------------
+| FAKE_SPINE_PRIVATE_KEY          |True    |         | TLS private key for both HTTPS outbound request handler and inbound mutual TLS
+| FAKE_SPINE_CERTIFICATE          |True    |         | TLS certificate for both HTTPS outbound request handler and inbound mutual TLS
+| FAKE_SPINE_CA_STORE             |True    |         | CA certificates for both HTTPS outbound request handler and inbound mutual TLS
+| FAKE_SPINE_PORT                 |        | 443     | Port on which the outbound request handler receives requests to fake spine
+| INBOUND_PROXY_PORT              |        | 8888    | Port on which the inbound proxy runs to proxy request made internally to the inbound service
+| FAKE_SPINE_PROXY_VALIDATE_CERT  |        | True    | If "False" then certificate validation errors on requests made to inbound are ignored
+| INBOUND_SERVER_BASE_URL         |True    |         | The url (including URI scheme) to which the inbound proxy makes requests (example: https://inbound/)
+| FAKE_SPINE_OUTBOUND_DELAY_MS    |        | 0       | To simulate actual Spine response times, the number of milliseconds to wait before returning an outbound response
+| FAKE_SPINE_INBOUND_DELAY_MS     |        | 0       | To simulate actual Spine asynchronous response times, the number of milliseconds to wait before sending a reply to the inbound service
+| MHS_SECRET_PARTY_KEY            |True    |         | The party key (recipient) used to make request to inbound. *Must* match the party key used to configure the inbound service
+| FAKE_SPINE_OUTBOUND_SSL_ENABLED |        | True    | If "False" then the outbound request handler will use HTTP instead of HTTPS
+| MHS_LOG_LEVEL                   |True    |         | The desired logging level
+
 
 ## Running
 
