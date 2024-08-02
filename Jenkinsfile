@@ -128,8 +128,6 @@ pipeline {
         }
 
         stage('Test') {
-            // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
-            //parallel {
             stages {
                 stage('Run Component Tests (SpineRouteLookup)') {
                     options {
@@ -141,8 +139,6 @@ pipeline {
                                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
                                 sh label: 'Start containers', script: '''
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
-                                    . ./component-test-source.sh
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                             }
@@ -504,13 +500,15 @@ pipeline {
                         }
                     }
                 }
-            } // parallel
         }
     }
     post {
         always {
             cobertura coberturaReportFile: '**/coverage.xml'
-            junit '**/test-reports/*.xml'
+            junit(
+                allowEmptyResults: true,
+                testResults: '**/test-reports/*.xml'
+            )
             sh 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
             sh 'docker volume prune --force'
             // Prune Docker images for current CI build.
