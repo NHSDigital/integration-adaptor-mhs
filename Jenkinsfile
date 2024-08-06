@@ -23,7 +23,12 @@ pipeline {
             steps {
                 sh 'apt update –fix-missing -y | echo'
                 sh 'apt upgrade -y | echo'
-                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev'
+                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl'
+                sh 'apt install -y llvm '
+                sh 'apt install -y libncurses5-dev '
+                sh 'apt install -y libncursesw5-dev'
+                sh 'apt install -y xz-utils'
+                sh 'apt install -y tk-dev'
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
                 sh 'tar -xvzf Python-3.8.17.tgz'
             }
