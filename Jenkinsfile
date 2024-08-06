@@ -21,29 +21,14 @@ pipeline {
     stages {
        stage('Prepare and download Python 3.8') {
             steps {
-                sh '''
-                    # Backup the original sources.list file
-                    cp /etc/apt/sources.list /etc/apt/sources.list.bak
-
-                    # Update the sources.list file
-                    echo 'deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse' > /etc/apt/sources.list
-                    echo 'deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse' >> /etc/apt/sources.list
-                    echo 'deb http://archive.ubuntu.com/ubuntu focal-backports main restricted universe multiverse' >> /etc/apt/sources.list
-                    echo 'deb http://archive.canonical.com/ubuntu focal partner' >> /etc/apt/sources.list
-                    echo 'deb http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse' >> /etc/apt/sources.list
-
-                    # Add the deadsnakes PPA for Python 3.8
-                    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA6932366A755776
-                    echo 'deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu focal main' > /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list
-
-                    # Update and install dependencies
-                    apt update --fix-missing -y
-                    apt upgrade -y
-                    apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev software-properties-common
-
-                    # Install Python 3.8
-                    apt install -y python3.8 python3.8-venv python3.8-dev
-                '''
+                sh 'apt update –fix-missing -y | echo'
+                sh 'apt upgrade -y | echo'
+                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl'
+                sh 'apt install -y llvm '
+                sh 'apt install -y libncurses5-dev '
+                sh 'apt install -y libncursesw5-dev'
+                sh 'apt install -y xz-utils'
+                sh 'apt install -y tk-dev'
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
                 sh 'tar -xvzf Python-3.8.17.tgz'
             }
