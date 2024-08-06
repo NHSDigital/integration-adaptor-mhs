@@ -21,7 +21,7 @@ pipeline {
     stages {
        stage('Prepare and download Python 3.8') {
             steps {
-                sh 'apt update -y | echo'
+                sh 'apt update –fix-missing -y | echo'
                 sh 'apt upgrade -y | echo'
                 sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev'
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
