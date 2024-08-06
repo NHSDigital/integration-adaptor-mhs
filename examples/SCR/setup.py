@@ -4,11 +4,11 @@ import setuptools
 
 setup(
     name='scr',
-    version='0.1',
+    version='',
     packages=setuptools.find_packages(),
-    url='https://digital.nhs.uk/services/summary-care-records-scr',
-    license='Apache version 2.0',
-    author='Phillip Woods',
+    url='',
+    license='',
+    author='',
     author_email='niasupport@nhs.net',
     description='Artifacts for producing SCR requests.',
 )
