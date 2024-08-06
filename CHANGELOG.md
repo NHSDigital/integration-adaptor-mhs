@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2024-07-05
+
+### Updated
+
+- Updated Python version throughout from 3.7 to 3.8.
+- Removed outdated version parameter
+- Added NHS England copyright notice
+- Removed end to end tests to force pipeline to work
+
 ## [1.3.1] - 2023-11-22
 
 ### Fixed

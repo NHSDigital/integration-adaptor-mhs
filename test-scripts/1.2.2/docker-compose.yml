@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   inbound:
     image:  nhsdev/nia-mhs-inbound:1.2.2
