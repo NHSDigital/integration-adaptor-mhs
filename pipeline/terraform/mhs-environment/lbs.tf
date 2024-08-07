@@ -197,6 +197,12 @@ resource "aws_lb_target_group" "inbound_nlb_target_group" {
     healthy_threshold = var.healthcheck_threshold
     unhealthy_threshold = var.healthcheck_threshold
   }
+  
+  # Workaround for bug https://github.com/hashicorp/terraform-provider-aws/issues/9093
+  stickiness {
+      enabled = false
+      type = "lb_cookie"
+  }
 
   deregistration_delay = var.lb_deregistration_delay
 
