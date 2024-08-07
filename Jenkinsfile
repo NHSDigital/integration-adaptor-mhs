@@ -27,7 +27,6 @@ pipeline {
                 sh 'apt update –fix-missing -y | echo'
                 sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev wget curl'
                 sh 'apt install -y xz-utils'
-                sh 'apt install -y tk-dev'
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
                 sh 'tar -xvzf Python-3.8.17.tgz'
             }
