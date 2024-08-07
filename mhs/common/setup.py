@@ -4,11 +4,11 @@ import setuptools
 
 setup(
     name='mhs-common',
-    version='',
+    version='0.1',
     packages=setuptools.find_packages(),
     url='',
-    license='',
-    author='',
+    license='Apache version 2.0',
+    author='Philip Woods',
     author_email='niasupport@nhs.net',
     description='Common utilities used by the NHS integration adaptors projects.',
     install_requires=[
