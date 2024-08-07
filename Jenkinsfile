@@ -23,7 +23,8 @@ pipeline {
             steps {
                 sh 'apt update –fix-missing -y | echo'
                 sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl'
-                sh 'apt install -y llvm '
+                sh 'apt install -y libreadline-dev'
+                sh 'apt install -y llvm'
                 sh 'apt install -y libncurses5-dev '
                 sh 'apt install -y libncursesw5-dev'
                 sh 'apt install -y xz-utils'
