@@ -21,6 +21,7 @@ pipeline {
     stages {
        stage('Prepare and download Python 3.8') {
             steps {
+                sh 'echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list'
                 sh 'apt update –fix-missing -y | echo'
                 sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl'
                 sh 'apt install -y libreadline-dev'
