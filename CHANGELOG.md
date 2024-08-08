@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix rare issue where GP2GP Large Message compressed fragments were being corrupted by the inbound adaptor.
+
 ## [1.3.1] - 2023-11-22
 
 ### Fixed

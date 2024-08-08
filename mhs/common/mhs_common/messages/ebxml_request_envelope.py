@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import os
 import base64
 import copy
 import email
 import email.message
 import email.policy
-import gzip
 from typing import Dict, Tuple, Union, List, Sequence, Generator
 from xml.etree.ElementTree import Element
 
@@ -45,10 +43,6 @@ ATTACHMENT_DESCRIPTION = 'description'
 
 EBXML_CONTENT_TYPE_VALUE = 'multipart/related; boundary="--=_MIME-Boundary"; type=text/xml; ' \
                            'start=ebXMLHeader@spine.nhs.uk'
-
-_ATTACHMENT_DECODING_DISABLED = os.environ.get('DISABLE_ATTACHEMENT_DECODING')
-if (_ATTACHMENT_DECODING_DISABLED is None):
-    _ATTACHMENT_DECODING_DISABLED = False;
 
 class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     """An envelope that contains a request to be sent asynchronously to a remote MHS."""
@@ -259,7 +253,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
     def _extract_additional_attachments_parts(message_parts: Sequence[email.message.EmailMessage]) \
             -> Generator[Dict[Union[str, bool]]]:
         for attachment_message in message_parts:
-            payload, is_base64 = EbxmlRequestEnvelope._convert_message_part_to_str(attachment_message, not _ATTACHMENT_DECODING_DISABLED)
+            payload, is_base64 = EbxmlRequestEnvelope._convert_message_part_to_str(attachment_message)
             attachment = {
                 ATTACHMENT_PAYLOAD: payload,
                 ATTACHMENT_BASE64: is_base64,
@@ -270,95 +264,25 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
             yield attachment
 
     @staticmethod
-    def _convert_message_part_to_str(message_part: email.message.EmailMessage, decode : bool = True) -> Tuple[str, bool]:
-
-        # Due to the compression strategy, we can never pass a text field into our content manager as it will always
-        # attempt to convert the final string to a utf-8 string. If a text data type has been received in a compressed
-        # format, we will lose data and lose the ability to decompress it. The content_type bypass below allows us
-        # to treat text as a byte string and manage it manually here.
-
+    def _convert_message_part_to_str(message_part: email.message.EmailMessage) -> Tuple[str, bool]:
+        content = message_part.get_payload(decode=True)
         content_type = message_part.get_content_type()
-        if "text" in content_type:
-            message_part.set_type("application/text-bypass")
-
-        content: Union[str, bytes] = message_part.get_content()
         content_transfer_encoding = message_part['Content-Transfer-Encoding']
         logger_dict = {'ContentType': content_type, 'ContentTransferEncoding': content_transfer_encoding}
 
-        # reset content_type now we have aquired the content
-        message_part.set_type(content_type)
+        # External Interface Specification: Part 2 MHS
+        #   "Supported content transfer type values: 7bit, 8bit, binary, base64"
+        #   https://www.w3.org/Protocols/rfc1341/5_Content-Transfer-Encoding.html
+        if content_transfer_encoding and content_transfer_encoding.lower() == 'base64':
+            base64_encoded_content = base64.b64encode(content).decode()
+            logger.info(
+                'Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as a base64 string',
+                fparams=logger_dict
+            )
+            return base64_encoded_content, True
 
-        if isinstance(content, str):
-            logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} as string',
-                        fparams=logger_dict)
-
-            return content, False
-        try:
-
-            charset = message_part.get_param('charset', 'UTF-8')
-
-            if 'text' in content_type:
-
-                # if we can decode a text item in strict mode, we know it's a string, this is the original contentmanager
-                # behaviour except in strict mode not replace mode where data loss can occur
-                try:
-                    logger.info(decode)
-                    if decode:
-                        decodedText = content.decode(charset, 'strict')
-                        return decodedText, False
-                except:
-                    # If we can't decode, we're likly working with a compressed string
-                    try:
-                        contentDecompressed = gzip.decompress(content)
-                        logger.info(
-                            'Successfully decompressed file with {ContentType} {ContentTransferEncoding}, '
-                            'this will be encoded again as a base64 string', fparams=logger_dict)
-                        # Due to the nature of COPC messages and that they may not contain a description to update,
-                        # and the compression details are likly to have been on a previous RMCR message
-                        # we cannot pass back a decompressed file with an updated description
-                        # Rebuild the base64 string for the reciever to handle
-                        encoded_content = base64.b64encode(content).decode()
-                        logger.info(
-                            'Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
-                            'a base64 string', fparams=logger_dict)
-                        return encoded_content, True
-                    except:
-                        # If we can't decompress then we shall use replace mode decoding, this is the original behaviour
-                        decodedText = content.decode(charset, 'replace')
-                        return decodedText, False
-
-            if content_type == 'application/xml':
-                try:
-                    contentDecompressed = gzip.decompress(content)
-                    logger.info(
-                        'Successfully decompressed file with {ContentType} {ContentTransferEncoding}, '
-                        'this will be encoded again as a base64 string', fparams=logger_dict)
-                    # Due to the nature of COPC messages and that they may not contain a description to update,
-                    # and the compression details are likly to have been on a previous RMCR message
-                    # we cannot pass back a decompressed file with an updated description
-                    # Rebuild the base64 string for the reciever to handle
-                    encoded_content = base64.b64encode(content).decode()
-                    logger.info(
-                        'Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
-                        'a base64 string', fparams=logger_dict)
-                    return encoded_content, True
-
-                except:
-                    if content_type == 'application/xml':
-                        decoded_content = content.decode(charset)
-                        logger.info('Successfully decoded message part with {ContentType} {ContentTransferEncoding} '
-                                    'as a string', fparams=logger_dict)
-                        return decoded_content, False
-
-            # turn the data back to a base64 string, we cannot process it as required so let the reciever manage it.
-            decoded_content = base64.b64encode(content).decode()
-            logger.info('Successfully encoded binary message part with {ContentType} {ContentTransferEncoding} as '
-                        'a base64 string', fparams=logger_dict)
-            return decoded_content, True
-
-        except UnicodeDecodeError as e:
-            logger.error('Failed to decode ebXML message part with {ContentType} {ContentTransferEncoding}.',
-                         fparams=logger_dict)
-            raise ebxml_envelope.EbXmlParsingError(f'Failed to decode ebXML message part with '
-                                                   f'Content-Type: {content_type} and '
-                                                   f'Content-Transfer-Encoding: {content_transfer_encoding}') from e
+        logger.info(
+            'Successfully decoded message part with {ContentType} {ContentTransferEncoding} as string',
+            fparams=logger_dict
+        )
+        return content.decode('utf-8'), False
