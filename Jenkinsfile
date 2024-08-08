@@ -1,5 +1,5 @@
 pipeline {
-    agent{
+    agent { 
         label 'jenkins-workers'
     }
 
@@ -19,11 +19,33 @@ pipeline {
     }
 
     stages {
-       stage('Build & test Common') {
+       stage('Prepare and download Python 3.8') {
             steps {
+                sh 'apt update –fix-missing -y | echo'
+                sh 'apt upgrade -y | echo'
+                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl'
+                sh 'apt install -y llvm '
+                sh 'apt install -y libncurses5-dev '
+                sh 'apt install -y libncursesw5-dev'
+                sh 'apt install -y xz-utils'
+                sh 'apt install -y tk-dev'
+                sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
+                sh 'tar -xvzf Python-3.8.17.tgz'
+            }
+       }
+      stage('Compile and install Python 3.8') {
+           steps {
+                dir('Python-3.8.17') {
+                    sh './configure --enable-optimizations'
+                    sh 'make altinstall'
+                }
+           }
+      }
+       stage('Build & test Common') {
+            steps {                
                 dir('common') {
-                    buildModules('Installing common dependencies')
-                    executeUnitTestsWithCoverage()
+                        buildModules('Installing common dependencies')
+                        executeUnitTestsWithCoverage()
                 }
             }
        }
