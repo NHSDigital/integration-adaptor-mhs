@@ -4,7 +4,7 @@ FROM python:3.8-slim-bullseye
 
 RUN apt-get update
 RUN apt-get install -y build-essential libssl-dev swig pkg-config
-RUN pip install pipenv
+RUN pip install pipenv typing_extensions
 
 WORKDIR /test
 COPY . .
