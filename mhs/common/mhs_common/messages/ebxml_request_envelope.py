@@ -265,7 +265,7 @@ class EbxmlRequestEnvelope(ebxml_envelope.EbxmlEnvelope):
 
     @staticmethod
     def _convert_message_part_to_str(message_part: email.message.EmailMessage) -> Tuple[str, bool]:
-        content: bytes = message_part.get_payload(decode=True)
+        content = message_part.get_payload(decode=True)
         content_type = message_part.get_content_type()
         content_transfer_encoding = message_part['Content-Transfer-Encoding']
         logger_dict = {'ContentType': content_type, 'ContentTransferEncoding': content_transfer_encoding}
