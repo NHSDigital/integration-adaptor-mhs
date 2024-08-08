@@ -19,41 +19,47 @@ pipeline {
     }
 
     stages {
-       stage('Prepare and download Python 3.8') {
+        stage('Prepare and download Python 3.8') {
             steps {
                 sh 'echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list'
-                sh 'echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list'
-                sh 'echo "deb http://ftp.debian.org/debian stretch-backports main" > /etc/apt/sources.list'
-                sh 'apt update –fix-missing -y | echo'
-                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev wget curl xz-utils'
+                sh 'echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list'
+                sh '''
+                    apt update --fix-missing -y
+                    apt install -y software-properties-common build-essential checkinstall \
+                                   libssl-dev zlib1g-dev libncurses5-dev libsqlite3-dev libreadline-dev libffi-dev \
+                                   libbz2-dev liblzma-dev libgdbm-dev libdb5.3-dev libexpat1-dev libmpdec-dev \
+                                   libgmp-dev libx11-dev libreadline6-dev libgdbm6 libgdbm-compat-dev uuid-dev tk-dev \
+                                   wget curl xz-utils
+                '''
                 sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
                 sh 'tar -xvzf Python-3.8.17.tgz'
+                sh 'rm Python-3.8.17.tgz'
             }
-       }
-      stage('Compile and install Python 3.8') {
-           steps {
+        }
+        stage('Compile and install Python 3.8') {
+            steps {
                 dir('Python-3.8.17') {
                     sh './configure --enable-optimizations'
                     sh 'make altinstall'
                 }
-           }
-      }
-       stage('Build & test Common') {
+            }
+        }
+        stage('Build & test Common') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-       }
-       stage('Build & test MHS Common') {
+        }
+        stage('Build & test MHS Common') {
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-       }
+        }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
