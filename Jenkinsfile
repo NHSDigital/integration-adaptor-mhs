@@ -21,9 +21,7 @@ pipeline {
     stages {
         stage('Prepare and download Python 3.8') {
             steps {
-                sh 'echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list'
-                sh 'echo "deb http://archive.debian.org/debian stretch-updates main" >> /etc/apt/sources.list'
-                sh 'echo "deb http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list'
+                sh 'echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list'
                 sh '''
                     apt update --fix-missing -y
                     apt install -y build-essential checkinstall \
