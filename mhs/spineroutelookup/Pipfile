@@ -8,15 +8,16 @@ coverage = "~=4.5"
 unittest-xml-reporting = "~=2.5"
 
 [packages]
-tornado = "~=6.0"
-defusedxml = "~=0.6"
+tornado = "*"
+defusedxml = "*"
 ldap3 = "~=2.8.1"
 mhs-common = {editable = true,path = "./../common"}
 redis = "~=3.3"
 integration-adaptors-common = {editable = true, path = "./../../common"}
+typing_extensions = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
 
 [scripts]
 unittests = 'python -m xmlrunner -o test-reports -v'
