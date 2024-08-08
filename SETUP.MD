@@ -29,9 +29,9 @@ ___
 ---
 ### 3. Terminal actions
 
-Install ``Python 3.7``:
+Install ``Python 3.8``:
 ```shell
-  brew install python@3.7
+  brew install python@3.8
   brew install pipenv
 ```
 
@@ -46,9 +46,9 @@ Note: If you have ``pyenv`` already installed, ``pipenv`` will get the global se
     * `mhs/outbound`
 
 
-**Install dependencies for `Python 3.7` for each:**
+**Install dependencies for `Python 3.8` for each:**
 ```shell
-  pipenv --python 3.7
+  pipenv --python 3.8
 ```
 
 ---

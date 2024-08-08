@@ -1,5 +1,5 @@
 pipeline {
-    agent{
+    agent { 
         label 'jenkins-workers'
     }
 
@@ -19,11 +19,30 @@ pipeline {
     }
 
     stages {
-       stage('Build & test Common') {
+       stage('Test ability to execute Python') {
             steps {
+                sh 'apt update -y | echo'
+                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev | echo'
+                sh 'cd /usr/src'
+                sh 'wget https://www.python.org/ftp/python/3.8.17/Python-3.8.17.tgz'
+                sh 'tar -xvzf Python-3.8.17.tgz'
+            }
+       }
+      stage('Test ability to execute Python PART 2') {
+           steps {
+                dir('Python-3.8.17') {
+                    sh './configure --enable-optimizations'
+                    sh 'make altinstall'
+                    sh 'echo PYTHON VERSION'
+                    sh 'python3.8 --version'
+                }
+           }
+      }
+       stage('Build & test Common') {
+            steps {                
                 dir('common') {
-                    buildModules('Installing common dependencies')
-                    executeUnitTestsWithCoverage()
+                        buildModules('Installing common dependencies')
+                        executeUnitTestsWithCoverage()
                 }
             }
        }
