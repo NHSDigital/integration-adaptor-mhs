@@ -1,6 +1,8 @@
 pipeline {
-    agent{
-        label 'jenkins-workers'
+    agent { 
+        docker { 
+            image 'python:3.8.19-slim-bullseye' 
+        }
     }
 
     environment {
