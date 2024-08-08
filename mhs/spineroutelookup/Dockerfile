@@ -22,12 +22,10 @@ RUN apt-get install -y python3-pip && \
     python3.8 -m pip install --upgrade pip
 
 # Install pipenv
-RUN pip install pipenv
+RUN pip install pipenv typing_extensions
 
 COPY mhs/spineroutelookup/Pipfile /usr/src/app
 COPY mhs/spineroutelookup/Pipfile.lock /usr/src/app
-
-RUN pip install pipenv
 
 COPY common/ /usr/src/app/common/
 COPY mhs/common/ /usr/src/app/mhs/common/
