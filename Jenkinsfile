@@ -22,10 +22,11 @@ pipeline {
         stage('Prepare and download Python 3.8') {
             steps {
                 sh 'echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list'
-                sh 'echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list'
+                sh 'echo "deb http://archive.debian.org/debian stretch-updates main" >> /etc/apt/sources.list'
+                sh 'echo "deb http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list'
                 sh '''
                     apt update --fix-missing -y
-                    apt install -y software-properties-common build-essential checkinstall \
+                    apt install -y build-essential checkinstall \
                                    libssl-dev zlib1g-dev libncurses5-dev libsqlite3-dev libreadline-dev libffi-dev \
                                    libbz2-dev liblzma-dev libgdbm-dev libdb5.3-dev libexpat1-dev libmpdec-dev \
                                    libgmp-dev libx11-dev libreadline6-dev libgdbm6 libgdbm-compat-dev uuid-dev tk-dev \
@@ -36,6 +37,7 @@ pipeline {
                 sh 'rm Python-3.8.17.tgz'
             }
         }
+
         stage('Compile and install Python 3.8') {
             steps {
                 dir('Python-3.8.17') {
