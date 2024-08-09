@@ -20,9 +20,11 @@ pipeline {
 
     stages {
         stage('Determine python version') {
-            script {
-                def python_version = sh(script: "python3 --version", returnStdout: true).trim()
-                echo "Current Python version: ${python_version}"
+            steps {
+                script {
+                    def python_version = sh(script: "python3 --version", returnStdout: true).trim()
+                    echo "Current Python version: ${python_version}"
+                }
             }
         }
         stage('Prepare and download Python 3.8') {
