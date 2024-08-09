@@ -1,4 +1,4 @@
-FROM python:3.7-slim-bullseye AS base
+FROM python:3.8-slim-bullseye AS base
 
 RUN apt-get update && \
     apt-get install build-essential libcurl4-openssl-dev libssl-dev -y
@@ -20,7 +20,7 @@ WORKDIR /usr/src/app/mhs/outbound
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/mhs/common"
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
 
-RUN pipenv --python 3.7
+RUN pipenv --python 3.8
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
