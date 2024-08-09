@@ -4,7 +4,6 @@ import setuptools
 
 setup(
     name='mhs-common',
-    version='',
     packages=setuptools.find_packages(),
     url='',
     license='',
