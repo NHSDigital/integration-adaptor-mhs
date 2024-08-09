@@ -397,6 +397,8 @@ resource "aws_ecs_service" "mhs_outbound_service" {
       desired_count
     ]
   }
+
+  wait_for_steady_state = true
 }
 
 # The autoscaling target that configures autoscaling for the MHS outbound ECS service.
@@ -468,6 +470,8 @@ resource "aws_ecs_service" "mhs_inbound_service" {
       desired_count
     ]
   }
+
+  wait_for_steady_state = true
 }
 
 # The autoscaling target that configures autoscaling for the MHS inbound ECS service.
@@ -536,6 +540,8 @@ resource "aws_ecs_service" "mhs_route_service" {
       desired_count
     ]
   }
+
+  wait_for_steady_state = true
 }
 
 # The autoscaling target that configures autoscaling for the MHS route ECS service.
