@@ -13,7 +13,7 @@ WORKDIR /usr/src/app/mhs/inbound
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/mhs/common"
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
 
-RUN pipenv --python 3.7
+RUN pipenv --python 3.8
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
