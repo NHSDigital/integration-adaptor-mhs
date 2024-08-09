@@ -13,8 +13,8 @@ COPY mhs/common/ /usr/src/app/mhs/common/
 COPY mhs/outbound/ /usr/src/app/mhs/outbound
 
 WORKDIR /usr/src/app/mhs/outbound
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/mhs/common"
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
+ENV PYTHONPATH="/usr/src/app/mhs/common"
+ENV PYTHONPATH="${PYTHONPATH}:/usr/src/app/common"
 
 RUN pipenv --python 3.7
 RUN pipenv run uninstall_setuptools
@@ -23,4 +23,4 @@ RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 80
 
-ENTRYPOINT pipenv run start
+ENTRYPOINT ["pipenv", "run", "start"]

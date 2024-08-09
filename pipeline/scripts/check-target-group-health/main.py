@@ -1,8 +1,10 @@
 """A script that checks that AWS load balancers have all healthy targets. For use in CI builds."""
 
 import argparse
-import sys
+import certifi
 import requests
+import sys
+import urllib3
 from typing import List
 
 import boto3
@@ -49,23 +51,35 @@ def _send_outbound_post():
         'https://mhs-outbound.build.nhsredteam.internal.nhs.uk/',
         'https://mhs-outbound.build.nhsredteam.internal.nhs.uk',
     ]
+    
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED',
+        ca_certs=certifi.where()
+    )
+
+    headers = {
+        'Interaction-Id': 'test',
+        'Message-Id': 'test',
+        'Correlation-Id': 'test',
+        'wait-for-response': 'false',
+        'from-asid': 'test',
+        'Content-Type': 'application/json',
+        'ods-code': 'test'
+    }
+
     for url in urls:
         print('Checking: ' + url)
         try:
-            headers = {
-                'Interaction-Id': 'test',
-                'Message-Id': 'test',
-                'Correlation-Id': 'test',
-                'wait-for-response': 'false',
-                'from-asid': 'test',
-                'Content-Type': 'application/json',
-                'ods-code': 'test'
-            }
-            response = requests.post(url, data='test', headers=headers, verify=False, timeout=15)
-            print('{status_code}'.format(status_code=str(response.status_code)))
+            response = http.request(
+                'POST',
+                url,
+                body=json.dumps('test'),
+                headers=headers,
+                timeout=15.0
+            )
+            print('{status_code}'.format(status_code=response.status))
         except Exception as ex:
             print(ex)
-
 
 if __name__ == '__main__':
     args = _parse_arguments()

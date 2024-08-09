@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y build-essential checkinstall libreadlin
         cd .. && rm -rf Python-3.7.3
 
 # Install pipenv
-RUN pip3 install pipenv
+RUN pip3 install pipenv urllib3[secure]
 
 # Install sonar scanner
 RUN wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip && \

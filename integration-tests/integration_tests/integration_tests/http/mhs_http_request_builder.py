@@ -3,13 +3,14 @@ Provides functionality for calling the MHS over HTTP
 """
 from __future__ import annotations
 
+import certifi
 import json
 import os
+import requests
 import unittest
 import uuid
 from typing import Optional
 
-import requests
 
 from comms.http_headers import HttpHeaders
 from integration_tests.helpers.asid_provider import get_asid
@@ -118,4 +119,4 @@ class MhsHttpRequestBuilder(object):
         Execute a POST request against the MHS using the configured body and headers within this class.
         :return: response from MHS
         """
-        return requests.post(self.mhs_host, headers=self.headers, data=self.body, verify=False, timeout=15)
+        return requests.post(self.mhs_host, headers=self.headers, data=self.body, verify=certifi.where(), timeout=15)

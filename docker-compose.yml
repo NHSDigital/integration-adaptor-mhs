@@ -7,6 +7,7 @@ services:
       - "443"
       - "80"
     environment:
+      - BUILD_TAG=1.0.3
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SECRET_PARTY_KEY
       - MHS_SECRET_CLIENT_CERT

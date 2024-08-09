@@ -19,22 +19,22 @@ pipeline {
     }
 
     stages {
-       stage('Build & test Common') {
+        stage('Build & test Common') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-       }
-       stage('Build & test MHS Common') {
+        }
+        stage('Build & test MHS Common') {
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-       }
+        }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
@@ -128,8 +128,6 @@ pipeline {
         }
 
         stage('Test') {
-            // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
-            //parallel {
             stages {
                 stage('Run Component Tests (SpineRouteLookup)') {
                     options {
@@ -141,8 +139,6 @@ pipeline {
                                 sh label: 'Setup component test environment', script: './integration-tests/setup_component_test_env.sh'
                                 sh label: 'Start containers', script: '''
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml down -v
-                                    docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p custom_network down -v
-                                    . ./component-test-source.sh
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
                                     docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d'''
                             }
@@ -453,13 +449,16 @@ pipeline {
                         }
                     }
                 }
-            } // parallel
+            }
         }
     }
     post {
         always {
             cobertura coberturaReportFile: '**/coverage.xml'
-            junit '**/test-reports/*.xml'
+            junit(
+                allowEmptyResults: true,
+                testResults: '**/test-reports/*.xml'
+            )
             sh 'docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v'
             sh 'docker volume prune --force'
             // Prune Docker images for current CI build.
@@ -473,8 +472,6 @@ void executeUnitTestsWithCoverage() {
     sh label: 'Running unit tests', script: 'pipenv run unittests-cov'
     sh label: 'Displaying code coverage report', script: 'pipenv run coverage-report'
     sh label: 'Exporting code coverage report', script: 'pipenv run coverage-report-xml'
-//     SonarQube disabled as atm it's not set up on AWS
-//     sh label: 'Running SonarQube analysis', script: "sonar-scanner -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}"
 }
 
 void buildModules(String action) {
