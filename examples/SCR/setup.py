@@ -4,7 +4,6 @@ import setuptools
 
 setup(
     name='scr',
-    version='',
     packages=setuptools.find_packages(),
     url='',
     license='',

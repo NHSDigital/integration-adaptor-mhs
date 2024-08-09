@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 
 setup(
     name='integration-adaptors-common',
-    version='',
     packages=find_packages(),
     url='https://github.com/nhsconnect/integration-adaptor-common',
     license='',
