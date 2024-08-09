@@ -182,9 +182,3 @@ If you have not created a release before then you will first need to create a ne
 Execute `./release.sh`.
 
 Log out of DockerHub.
-
-### Releasing the base images
-
-There exists three base images, within the folder `dockers/mhs-base`.
-
-Releasing these requires you to be logged into Dockerhub as per above, and then within each folder runnning the respective `release.sh` script.
