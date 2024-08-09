@@ -644,7 +644,7 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
 
         wdo_mock = unittest.mock.MagicMock()
         wdo_mock.set_outbound_status.return_value = test_utilities.awaitable(True)
-        self.workflow.handle_outbound_message.return_value = test_utilities.awaitable((200, SYNC_RESPONSE, wdo_mock))
+        self.workflow.handle_outbound_message.return_value = (200, SYNC_RESPONSE, wdo_mock)
         self.workflow.set_successful_message_response.return_value = test_utilities.awaitable(None)
 
         self.call_handler()
@@ -661,9 +661,8 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
         expected_response = SYNC_RESPONSE
         wdo = unittest.mock.MagicMock()
         wdo.set_outbound_status.return_value = test_utilities.awaitable(True)
-        result = test_utilities.awaitable((200, expected_response, wdo))
 
-        self.workflow.handle_outbound_message.return_value = result
+        self.workflow.handle_outbound_message.return_value = (200, expected_response, wdo)
         self.workflow.set_failure_message_response.return_value = test_utilities.awaitable(None)
 
         self.config_manager.get_interaction_details.return_value = {'sync_async': False, 'workflow': WORKFLOW_NAME}
@@ -674,9 +673,8 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
 
     def test_null_wdo_doesnt_error(self):
         expected_response = SYNC_RESPONSE
-        result = test_utilities.awaitable((200, expected_response, None))
 
-        self.workflow.handle_outbound_message.return_value = result
+        self.workflow.handle_outbound_message.return_value = (200, expected_response, None)
         self.config_manager.get_interaction_details.return_value = {'sync_async': False, 'workflow': WORKFLOW_NAME}
 
         response = self.call_handler()
@@ -686,9 +684,8 @@ class TestSynchronousHandlerSyncMessage(BaseHandlerTest):
 
     def test_request_with_10_000_doesnt_error(self):
         expected_response = SYNC_RESPONSE
-        result = test_utilities.awaitable((200, expected_response, None))
 
-        self.workflow.handle_outbound_message.return_value = result
+        self.workflow.handle_outbound_message.return_value = (200, expected_response, None)
         self.config_manager.get_interaction_details.return_value = {'sync_async': False, 'workflow': WORKFLOW_NAME}
 
         response = self.call_handler(body=json.dumps({"payload": "test",
