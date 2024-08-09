@@ -9,7 +9,7 @@ WORKDIR /usr/src/app/mhs/fakespine
 COPY integration-tests/fake_spine/Pipfile /usr/src/app
 COPY integration-tests/fake_spine/Pipfile.lock /usr/src/app
 
-RUN pipenv --python 3.8
+RUN pipenv --python 3.7
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
