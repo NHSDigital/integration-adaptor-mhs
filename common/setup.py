@@ -15,7 +15,7 @@ setup(
         'python-qpid-proton~=0.28',
         'tornado~=6.0',
         'isodate~=0.6',
-        'aioboto3~=8.0',
+        'aioboto3~=9.6',
         'motor~=2.1'
     ]
 )

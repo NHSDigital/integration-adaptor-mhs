@@ -33,6 +33,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         self.retry_delay = retry_delay
         self.max_retries = max_retries
 
+        self.boto_session = aioboto3.Session()
         self.endpoint_url = config.get_config('DB_ENDPOINT_URL', None)
         self.region_name = config.get_config('CLOUD_REGION', 'eu-west-2')
 
@@ -139,7 +140,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         Creates a connection to the table referenced by this instance.
         :return: The table to be used by this instance.
         """
-        async with aioboto3.resource('dynamodb',
+        async with self.boto_session.resource('dynamodb',
                                      region_name=self.region_name,
                                      endpoint_url=self.endpoint_url) as dynamo_resource:
             logger.info('Establishing connection to DynamoDB')
