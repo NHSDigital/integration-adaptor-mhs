@@ -1,4 +1,3 @@
-import asyncio
 import os
 import pathlib
 import unittest.mock
@@ -72,7 +71,7 @@ class TestInboundHandler(tornado.testing.AsyncHTTPTestCase):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     message_dir = pathlib.Path(current_dir) / MESSAGES_DIR
 
-    def setUp(self):
+    def setup_mocks(self):
         self.state = unittest.mock.MagicMock()
         self.state.get.side_effect = state_return_values
 
@@ -87,9 +86,8 @@ class TestInboundHandler(tornado.testing.AsyncHTTPTestCase):
         }
         self.config_manager = unittest.mock.create_autospec(configuration_manager.ConfigurationManager)
 
-        super().setUp()
-
     def get_app(self):
+        self.setup_mocks()
         return tornado.web.Application([
             (r".*", handler.InboundHandler, dict(workflows=self.mocked_workflows,
                                                  config_manager=self.config_manager,
@@ -280,11 +278,9 @@ class TestInboundHandler(tornado.testing.AsyncHTTPTestCase):
         request_body, _ = message_utilities.load_test_data(self.message_dir, UNSOLICITED_REQUEST_FILE)
         self.config_manager.get_interaction_details.return_value = {'workflow': workflow.FORWARD_RELIABLE}
 
-        error_future = asyncio.Future()
-        error_future.set_exception(Exception())
-        self.mock_forward_reliable_workflow.handle_unsolicited_inbound_message.return_value = error_future
-
+        self.mock_forward_reliable_workflow.handle_unsolicited_inbound_message.side_effect = Exception()
         response = self.fetch("/", method="POST", body=request_body, headers=ASYNC_CONTENT_TYPE_HEADERS)
 
         self.assertEqual(response.code, 500)
         self.assertIn("Exception in workflow", response.body.decode())
+        self.mock_forward_reliable_workflow.handle_unsolicited_inbound_message.assert_awaited_once()

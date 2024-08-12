@@ -1,4 +1,4 @@
-FROM nhsdev/nia-sds-base:latest
+FROM python:3.8-slim-bullseye AS base
 
 WORKDIR /app
 
