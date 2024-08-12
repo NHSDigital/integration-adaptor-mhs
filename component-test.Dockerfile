@@ -3,7 +3,7 @@
 FROM python:3.8-slim-bullseye
 
 RUN apt-get update && \
-    apt-get install -y build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev python3-dev libffi-dev \
+    apt-get install -y build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev python3-dev libffi-dev
 
 RUN pip install --upgrade pip
 RUN pip install pipenv
