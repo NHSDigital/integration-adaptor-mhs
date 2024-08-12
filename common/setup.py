@@ -4,9 +4,9 @@ setup(
     name='integration-adaptors-common',
     packages=find_packages(),
     url='https://github.com/nhsconnect/integration-adaptor-common',
-    license='',
+    license='Apache 2.0',
     author='NIA Development Team',
-    author_email='',
+    author_email='niasupport@nhs.net',
     description='Common utilities used by the NHS integration adaptors projects.',
     install_requires=[
         'pystache~=0.6',
