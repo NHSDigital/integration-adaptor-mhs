@@ -19,22 +19,30 @@ pipeline {
     }
 
     stages {
-       stage('Build & test Common') {
+        stage('Determine python version') {
+            steps {
+                script {
+                    def python_version = sh(script: "python3 --version", returnStdout: true).trim()
+                    echo "Current Python version: ${python_version}"
+                }
+            }
+        }
+        stage('Build & test Common') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-       }
-       stage('Build & test MHS Common') {
+        }
+        stage('Build & test MHS Common') {
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
                     executeUnitTestsWithCoverage()
                 }
             }
-       }
+        }
         stage('Build MHS') {
             parallel {
                 stage('Inbound') {
