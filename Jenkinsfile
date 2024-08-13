@@ -32,10 +32,13 @@ pipeline {
                 script {
                     def python_version = sh(script: "python3.9 --version || echo 'Not installed'", returnStdout: true).trim()
                     if (python_version.contains('Not installed')) {
-                        sh "add-apt-repository ppa:deadsnakes/ppa"
-                        sh "apt-get update"
-                        sh "apt-get install -y software-properties-common build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev python3-dev libffi-dev"
-                        sh "apt-get install -y python3.9"
+                        sh """
+                        sudo apt-get update
+                        echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/buster-backports.list
+                        sudo apt-get update
+                        apt-get install -y software-properties-common build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev libffi-dev
+                        apt-get -t buster-backports install -y python3.9
+                        """
                     } else {
                         echo "Python 3.9 is already installed: ${python_version}"
                     }
