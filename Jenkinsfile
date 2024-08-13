@@ -27,20 +27,20 @@ pipeline {
                 }
             }
         }
-        stage('Install Python 3.9') {
+        stage('Prepare and download Python 3.9') {
             steps {
-                script {
-                    def python_version = sh(script: "python3.9 --version || echo 'Not installed'", returnStdout: true).trim()
-                    if (python_version.contains('Not installed')) {
-                        sh """
-                        apt-get update
-                        echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/buster-backports.list
-                        apt-get update
-                        apt-get install -y software-properties-common build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev libffi-dev
-                        apt-get -t buster-backports install -y python3.9
-                        """
-                    } else {
-                        echo "Python 3.9 is already installed: ${python_version}"
+                sh 'apt update –fix-missing -y | echo'
+                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev wget curl xz-utils'
+                sh 'wget https://www.python.org/ftp/python/3.9.19/Python-3.9.19.tgz'
+                sh 'tar -xvzf Python-3.9.19.tgz'
+            }
+            steps {
+                stage('Compile and install Python 3.9') {
+                    steps {
+                        dir('Python-3.9.19') {
+                            sh './configure --enable-optimizations'
+                            sh 'make altinstall'
+                        }
                     }
                 }
             }
