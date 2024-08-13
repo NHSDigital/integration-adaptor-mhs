@@ -34,14 +34,12 @@ pipeline {
                 sh 'wget https://www.python.org/ftp/python/3.9.19/Python-3.9.19.tgz'
                 sh 'tar -xvzf Python-3.9.19.tgz'
             }
+        }
+        stage('Compile and install Python 3.9') {
             steps {
-                stage('Compile and install Python 3.9') {
-                    steps {
-                        dir('Python-3.9.19') {
-                            sh './configure --enable-optimizations'
-                            sh 'make altinstall'
-                        }
-                    }
+                dir('Python-3.9.19') {
+                    sh './configure --enable-optimizations'
+                    sh 'make altinstall'
                 }
             }
         }
