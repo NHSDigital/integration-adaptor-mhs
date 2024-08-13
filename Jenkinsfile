@@ -27,6 +27,21 @@ pipeline {
                 }
             }
         }
+        stage('Install Python 3.9') {
+            steps {
+                script {
+                    def python_version = sh(script: "python3.9 --version || echo 'Not installed'", returnStdout: true).trim()
+                    if (python_version.contains('Not installed')) {
+                        sh "sudo add-apt-repository ppa:deadsnakes/ppa"
+                        sh "sudo apt-get update"
+                        sh "sudo apt-get install -y software-properties-common build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev python3-dev libffi-dev"
+                        sh "sudo apt-get install -y python3.9"
+                    } else {
+                        echo "Python 3.9 is already installed: ${python_version}"
+                    }
+                }
+            }
+        }
         stage('Build & test Common') {
             steps {
                 dir('common') {
