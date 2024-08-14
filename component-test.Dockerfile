@@ -18,4 +18,4 @@ ENV PYTHONPATH "${PYTHONPATH}:/test/common"
 RUN pipenv --python 3.9
 RUN pipenv install --dev --deploy --ignore-pipfile
 
-ENTRYPOINT pipenv run componenttests
+ENTRYPOINT ["pipenv", "run", "componenttests"]
