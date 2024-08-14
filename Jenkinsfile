@@ -156,9 +156,6 @@ pipeline {
             //parallel {
             stages {
                 stage('Run Component Tests (SpineRouteLookup)') {
-                    options {
-                        lock('local-docker-compose-environment')
-                    }
                     stages {
                         stage('Deploy component locally (SpineRouteLookup)') {
                             steps {
@@ -212,9 +209,6 @@ pipeline {
                 }
 
                 stage('Run Component Tests (SDS API)') {
-                    options {
-                        lock('local-docker-compose-environment')
-                    }
                     stages {
                         stage('Deploy component locally (SDS API)') {
                             steps {
