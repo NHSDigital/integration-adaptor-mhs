@@ -9,12 +9,12 @@ setup(
     author_email='niasupport@nhs.net',
     description='Common utilities used by the NHS integration adaptors projects.',
     install_requires=[
-        'pystache~=0.6',
-        'lxml~=4.4',
-        'python-qpid-proton~=0.28',
-        'tornado~=6.0',
-        'isodate~=0.6',
-        'aioboto3~=11.3',
-        'motor~=2.1'
+        'pystache~=0.6.5',
+        'lxml~=5.3',
+        'python-qpid-proton~=0.39.0',
+        'tornado~=6.4.1',
+        'isodate~=0.6.1',
+        'aioboto3~=11.3.1',
+        'motor~=3.5.1'
     ]
 )
