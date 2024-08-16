@@ -24,6 +24,9 @@ ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
 RUN pipenv --python 3.9
 RUN pipenv install --deploy --ignore-pipfile
 
+# PYCURL expects certificate to live in /etc/pki/tls, Debian is providing the cert in ssl/certs
+RUN mkdir -p /etc/pki/tls && ln -s /etc/ssl/certs /etc/pki/tls/certs && ln -s ca-certificates.crt /etc/ssl/certs/ca-bundle.crt
+
 EXPOSE 80
 
 ENTRYPOINT pipenv run start
