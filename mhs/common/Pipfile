@@ -8,11 +8,11 @@ coverage = "~=4.5"
 unittest-xml-reporting = "~=2.5"
 
 [packages]
-tornado = "~=6.0"
-defusedxml = "~=0.6"
-aioboto3 = "~=11.3"
-isodate = "~=0.6"
-marshmallow = "~=3.2"
+tornado = "~=6.4.1"
+defusedxml = "~=0.7.1"
+aioboto3 = "~=11.3.1"
+isodate = "~=0.6.1"
+marshmallow = "~=3.21.3"
 integration-adaptors-common = {editable = true, path = "./../../common"}
 
 [requires]

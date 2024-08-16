@@ -118,7 +118,7 @@ connecting to the Redis host specified by `MHS_SDS_REDIS_CACHE_HOST`. Defaults t
 * `MHS_SDS_REDIS_DISABLE_TLS` (Spine Route Lookup service only) An optional flag that can be set to disable TLS for
 connections to the Redis cache used by the Spine Route Lookup service. *Must* be set to exactly `True` for TLS to be
 disabled.
-* `MHS_SPINE_ROUTE_LOOKUP_SERVER_PORT`Define a specific port when connecting to the Spint Route Lookup service. Defaults to '80'
+* `MHS_SPINE_ROUTE_LOOKUP_SERVER_PORT`Define a specific port when connecting to the Spine Route Lookup service. Defaults to '80'
 * `MHS_LDAP_CONNECTION_RETRIES` Retry attempt value when attempting LDAP connection 
 * `MHS_LDAP_CONNECTION_TIMEOUT_IN_SECONDS` Timeout value when attempting LDAP connection
 
