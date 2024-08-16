@@ -12,6 +12,7 @@ requests = "~=2.32.3"
 scr = {editable = true,path = "./../SCR"}
 tornado = "~=6.4.1"
 integration-adaptors-common = {editable = true, path = "../../common"}
+pymongo = "~=4.8.0"
 
 [requires]
 python_version = "3.9"

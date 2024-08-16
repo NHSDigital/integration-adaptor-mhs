@@ -14,6 +14,7 @@ ldap3 = "~=2.8.1"
 mhs-common = {editable = true,path = "./../common"}
 redis = "~=3.3"
 integration-adaptors-common = {editable = true, path = "./../../common"}
+pymongo = "~=4.8.0"
 
 [requires]
 python_version = "3.9"
