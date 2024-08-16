@@ -19,31 +19,7 @@ pipeline {
     }
 
     stages {
-        stage('Determine python version') {
-            steps {
-                script {
-                    def python_version = sh(script: "python3 --version", returnStdout: true).trim()
-                    echo "Current Python version: ${python_version}"
-                }
-            }
-        }
-        stage('Prepare and download Python 3.9') {
-            steps {
-                sh 'apt update –fix-missing -y | echo'
-                sh 'apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev wget curl xz-utils'
-                sh 'wget https://www.python.org/ftp/python/3.9.19/Python-3.9.19.tgz'
-                sh 'tar -xvzf Python-3.9.19.tgz'
-            }
-        }
-        stage('Compile and install Python 3.9') {
-            steps {
-                dir('Python-3.9.19') {
-                    sh './configure --enable-optimizations'
-                    sh 'make altinstall'
-                }
-            }
-        }
-        stage('Build & test Common') {
+        stage('Build & test Common directory') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
@@ -51,7 +27,7 @@ pipeline {
                 }
             }
         }
-        stage('Build & test MHS Common') {
+        stage('Build & test MHS Common directory') {
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
@@ -151,9 +127,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
-            //parallel {
+        stage('Run Tests') {
             stages {
                 stage('Run Component Tests (SpineRouteLookup)') {
                     stages {
@@ -471,7 +445,7 @@ pipeline {
                         }
                     }
                 }
-            } // parallel
+            }
         }
     }
     post {
