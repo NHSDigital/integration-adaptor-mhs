@@ -13,7 +13,6 @@ tornado = "~=6.0"
 mhs_common = {editable = true, path = "./../common"}
 isodate = "~=0.6"
 update = "*"
-pymongo = "~=4.8.0"
 
 [requires]
 python_version = "3.9"

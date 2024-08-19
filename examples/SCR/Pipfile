@@ -8,7 +8,6 @@ verify_ssl = true
 [packages]
 scr = {editable = true,path = "."}
 integration-adaptors-common = {editable = true, path = "../../common"}
-pymongo = "~=4.8.0"
 
 [requires]
 python_version = "3.9"
