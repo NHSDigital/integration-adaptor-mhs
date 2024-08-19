@@ -1,6 +1,11 @@
 FROM python:3.9-slim-bookworm
 RUN apt-get update
-RUN apt-get install build-essential git -y
+RUN apt-get install -y \
+    build-essential \
+    git \
+    libffi-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/src/app/mhs/fakespine
 RUN pip install pipenv
 COPY common/ /usr/src/app/common/

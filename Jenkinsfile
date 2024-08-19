@@ -19,7 +19,7 @@ pipeline {
     }
 
     stages {
-        stage('Build & test Common') {
+        stage('Build & test Common directory') {
             steps {
                 dir('common') {
                     buildModules('Installing common dependencies')
@@ -27,7 +27,7 @@ pipeline {
                 }
             }
         }
-        stage('Build & test MHS Common') {
+        stage('Build & test MHS Common directory') {
             steps {
                 dir('mhs/common') {
                     buildModules('Installing mhs common dependencies')
@@ -127,9 +127,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            // NIAD-189: Parallel component and integration tests disabled due to intermittent build failures
-            //parallel {
+        stage('Run Tests') {
             stages {
                 stage('Run Component Tests (SpineRouteLookup)') {
                     stages {
@@ -447,7 +445,7 @@ pipeline {
                         }
                     }
                 }
-            } // parallel
+            }
         }
     }
     post {

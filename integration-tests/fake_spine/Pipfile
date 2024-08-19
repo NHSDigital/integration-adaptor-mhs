@@ -16,4 +16,4 @@ python_version = "3.9"
 [scripts]
 start = "python main.py"
 uninstall_setuptools = "pip uninstall -y setuptools"
-install_setuptools = "pip install -Iv setuptools==57.5.0"
+install_setuptools = "pip install -Iv setuptools==72.2.0"
