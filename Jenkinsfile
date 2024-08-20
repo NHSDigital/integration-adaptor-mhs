@@ -349,7 +349,7 @@ pipeline {
                                     // Wait for MHS load balancers to have healthy targets
                                     dir('../../pipeline/scripts/check-target-group-health') {
                                         sh script: 'pipenv install'
-
+                                        // Timeout 13 minutes.
                                         timeout(13) {
                                             waitUntil {
                                                 script {
