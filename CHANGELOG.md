@@ -14,13 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix rare issue where GP2GP Large Message compressed fragments were being corrupted by the inbound adaptor.
+- Removed logging of "Attachment IDs: ..." at ERROR level.
+  This appears to have been accidentally added, and is not an actual error but rather debugging information.
 
 ## [1.3.1] - 2023-11-22
 
 ### Fixed
 
 - Removed logging of inbound request data at ERROR level.
-  This appears to have been accidently added in version 1.2.4 as part of debugging, but has the side effect of duplicating request data in the logs.
+  This appears to have been accidentally added in version 1.2.4 as part of debugging, but has the side effect of duplicating request data in the logs.
   This additional log was erroneously output at ERROR level, and slows down the adaptor.
 
 ## [1.3.0] - 2023-10-23
