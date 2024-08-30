@@ -43,6 +43,9 @@ class CommonHttps(object):
         if not validate_cert:
             logger.warning("Server certificate validation has been disabled.")
 
+        if ca_certs is None:
+            ca_certs = "/etc/pki/tls/certs/ca-certificates.crt"
+
         response = await httpclient.AsyncHTTPClient().fetch(url,
                                                             raise_error=raise_error_response,
                                                             method=method,
