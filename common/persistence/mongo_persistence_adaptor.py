@@ -48,8 +48,8 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             with open(_CERT_FILE_PATH, "w") as cert_file:
                 cert_file.write(cert)
             kwargs = {
-                'ssl': True,
-                'ssl_ca_certs': _CERT_FILE_PATH
+                'tls': True,
+                'tlsCAFile': _CERT_FILE_PATH
             }
         return AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'), **kwargs)
 
