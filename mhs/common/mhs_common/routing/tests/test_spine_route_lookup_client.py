@@ -43,7 +43,7 @@ class TestSpineRouteLookupClient(unittest.TestCase):
 
         self.assertEqual(EXPECTED_RESPONSE, endpoint_details)
         expected_url = self._build_url(path=ROUTING_PATH)
-        self._assert_http_client_called_with_expected_args(expected_url)
+        self._assert_http_client_called_with_expected_args(expected_url, ca_certs='/etc/pki/tls/certs/ca-certificates.crt')
 
     @test_utilities.async_test
     async def test_should_retrieve_endpoint_details_with_default_org_code(self):
@@ -54,7 +54,7 @@ class TestSpineRouteLookupClient(unittest.TestCase):
 
         self.assertEqual(EXPECTED_RESPONSE, endpoint_details)
         expected_url = self._build_url(path=ROUTING_PATH, org_code=SPINE_ORG_CODE)
-        self._assert_http_client_called_with_expected_args(expected_url)
+        self._assert_http_client_called_with_expected_args(expected_url, ca_certs='/etc/pki/tls/certs/ca-certificates.crt')
 
     @test_utilities.async_test
     async def test_should_pass_through_exception_if_raised_when_retrieving_endpoint_details(self):
@@ -88,7 +88,7 @@ class TestSpineRouteLookupClient(unittest.TestCase):
 
         expected_url = self._build_url(path=ROUTING_PATH)
         self._assert_http_client_called_with_expected_args(expected_url, proxy_host=HTTP_PROXY_HOST,
-                                                           proxy_port=HTTP_PROXY_PORT)
+                                                           proxy_port=HTTP_PROXY_PORT, ca_certs='/etc/pki/tls/certs/ca-certificates.crt')
 
     @test_utilities.async_test
     async def test_should_retrieve_reliability_details_if_given_org_code(self):
@@ -99,7 +99,7 @@ class TestSpineRouteLookupClient(unittest.TestCase):
 
         self.assertEqual(EXPECTED_RESPONSE, endpoint_details)
         expected_url = self._build_url(path=RELIABILITY_PATH)
-        self._assert_http_client_called_with_expected_args(expected_url)
+        self._assert_http_client_called_with_expected_args(expected_url, ca_certs='/etc/pki/tls/certs/ca-certificates.crt')
 
     @test_utilities.async_test
     async def test_should_retrieve_reliability_details_with_default_org_code(self):
@@ -110,7 +110,7 @@ class TestSpineRouteLookupClient(unittest.TestCase):
 
         self.assertEqual(EXPECTED_RESPONSE, endpoint_details)
         expected_url = self._build_url(path=RELIABILITY_PATH, org_code=SPINE_ORG_CODE)
-        self._assert_http_client_called_with_expected_args(expected_url)
+        self._assert_http_client_called_with_expected_args(expected_url, ca_certs='/etc/pki/tls/certs/ca-certificates.crt')
 
     @test_utilities.async_test
     async def test_should_pass_through_exception_if_raised_when_retrieving_reliability_details(self):
@@ -144,7 +144,7 @@ class TestSpineRouteLookupClient(unittest.TestCase):
 
         expected_url = self._build_url(path=RELIABILITY_PATH)
         self._assert_http_client_called_with_expected_args(expected_url, proxy_host=HTTP_PROXY_HOST,
-                                                           proxy_port=HTTP_PROXY_PORT)
+                                                           proxy_port=HTTP_PROXY_PORT, ca_certs='/etc/pki/tls/certs/ca-certificates.crt')
 
     def _given_http_client_returns_a_json_response(self):
         mock_response = mock.Mock()

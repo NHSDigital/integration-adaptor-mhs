@@ -145,7 +145,7 @@ class TestSdsApiClient(unittest.TestCase):
                       method=HTTP_METHOD, body=None,
                       headers={'X-Correlation-ID': CORRELATION_ID, 'apikey': API_KEY},
                       client_cert=None, client_key=None,
-                      ca_certs=None, validate_cert=True, proxy_host=None,
+                      ca_certs='/etc/pki/tls/certs/ca-certificates.crt', validate_cert=True, proxy_host=None,
                       proxy_port=None)
                  for expected_url in expected_urls]
 
