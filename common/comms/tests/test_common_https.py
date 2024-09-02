@@ -58,7 +58,7 @@ class TestCommonHttps(TestCase):
                                           method=METHOD,
                                           body=BODY,
                                           headers=HEADERS,
-                                          client_cert=None,
+                                          client_cert='/etc/pki/tls/certs/ca-certificates.crt',
                                           client_key=None,
                                           ca_certs=None,
                                           validate_cert=True,
