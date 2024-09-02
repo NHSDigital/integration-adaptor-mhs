@@ -28,7 +28,7 @@ def configure_http_client():
     """
     Configure Tornado to use the curl HTTP client.
     """
-    tornado.httpclient.AsyncHTTPClient.configure('tornado.simple_httpclient.SimpleAsyncHTTPClient')
+    tornado.httpclient.AsyncHTTPClient.configure('tornado.curl_httpclient.CurlAsyncHTTPClient')
 
 
 def initialise_workflows(transmission: outbound_transmission.OutboundTransmission, party_key: str,
