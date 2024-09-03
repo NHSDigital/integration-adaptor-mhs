@@ -4,6 +4,7 @@ from tornado import httpclient
 
 from utilities import integration_adaptors_logger as log
 import logging
+import ssl
 
 logger = log.IntegrationAdaptorsLogger(__name__)
 
@@ -44,7 +45,7 @@ class CommonHttps(object):
             logger.warning("Server certificate validation has been disabled.")
 
         if ca_certs is None:
-            ca_certs = "/etc/pki/tls/certs/ca-certificates.crt"
+            ca_certs = ssl.get_default_verify_paths().cafile
 
         response = await httpclient.AsyncHTTPClient().fetch(url,
                                                             raise_error=raise_error_response,
