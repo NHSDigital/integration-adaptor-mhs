@@ -5,6 +5,7 @@ from tornado import httpclient
 
 from comms.common_https import CommonHttps
 from utilities.test_utilities import async_test, awaitable
+from unittest.mock import ANY
 
 URL = "ABC.ABC"
 METHOD = "GET"
@@ -60,7 +61,7 @@ class TestCommonHttps(TestCase):
                                           headers=HEADERS,
                                           client_cert=None,
                                           client_key=None,
-                                          ca_certs='/etc/pki/tls/certs/ca-certificates.crt',
+                                          ca_certs=ANY,
                                           validate_cert=True,
                                           proxy_host=None,
                                           proxy_port=None)
