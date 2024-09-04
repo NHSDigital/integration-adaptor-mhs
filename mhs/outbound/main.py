@@ -102,6 +102,9 @@ def initialise_sds_api_client():
     sds_api_key = config.get_config('SDS_API_KEY')
     spine_org_code = config.get_config('SPINE_ORG_CODE')
 
+    if ssl.get_default_verify_paths().cafile is None:
+        raise Exception("Unable to find path to root certificates using the OpenSSL library. This is required to communicate with SDS. Quitting.")
+
     return sds_api_client.SdsApiClient(sds_url, sds_api_key, spine_org_code)
 
 
@@ -146,9 +149,6 @@ def main():
     data_dir = pathlib.Path(definitions.ROOT_DIR) / "data"
 
     configure_http_client()
-
-    if ssl.get_default_verify_paths().cafile is None:
-        raise Exception("Unable to find path to root certificates using the OpenSSL library. This is required to communicate with SDS. Quitting.")
 
     routing_lookup_method = config.get_config('OUTBOUND_ROUTING_LOOKUP_METHOD', default='SPINE_ROUTE_LOOKUP')
     if routing_lookup_method == 'SPINE_ROUTE_LOOKUP':
