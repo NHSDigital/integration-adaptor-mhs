@@ -147,7 +147,7 @@ def main():
 
     configure_http_client()
 
-    if ssl.get_default_verify_paths().openssl_cafile is None:
+    if ssl.get_default_verify_paths().cafile is None:
         raise Exception("Unable to find MHS path to certificates.")
 
     routing_lookup_method = config.get_config('OUTBOUND_ROUTING_LOOKUP_METHOD', default='SPINE_ROUTE_LOOKUP')
