@@ -111,7 +111,7 @@ services:
       - TIMEOUT=connect 0, client 0, server 0
 
   sds-api-mock:
-    build: ./dockers/sds-api-mock
+    build: ./docker/sds-api-mock
     ports:
       - "8081:8080"
     command:

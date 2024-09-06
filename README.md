@@ -19,7 +19,7 @@ The following illustration shows the MHS adaptor in the wider systems context:
 ## Repository Contents
 This repository contains the following directories:
 - [common](common) - A Python package containing components and utilities that are common to several integration adaptors.
-- [dockers](dockers) - Files used to create each of the base docker images that make up the MHS adaptor
+- [docker](docker) - Files used to create each of the base docker images that make up the MHS adaptor
 - [documentation](documentation) - Documentation and assets for the integration adaptors including workflows and two architecture exemplars based on AWS and Azure
 - [integration-tests](integration-tests) - A package containing integration tests intended to pre-assure the MHS Adaptor
 - [mhs](mhs) - A pre-assured implementation of a Message Handling Service (MHS), that encapsulates the details of Spine
