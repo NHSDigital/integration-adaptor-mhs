@@ -69,8 +69,12 @@ class TestCommonHttps(TestCase):
             self.assertIs(actual_response, return_value, "Expected content should be returned.")
 
     @async_test
-    async def test_make_request_with_no_cert(self):
-        with patch.object(httpclient.AsyncHTTPClient(), "fetch") as mock_fetch:
+    async def test_make_request_with_no_cacert_uses_ssl_default_verify_path_cafile(self):
+        import ssl
+        with patch.object(httpclient.AsyncHTTPClient(), "fetch") as mock_fetch, \
+            patch.object(ssl, 'get_default_verify_paths', return_value=ssl.DefaultVerifyPaths(
+                CA_CERTS, None, None, None, None, None
+            )):
             return_value = Mock()
             mock_fetch.return_value = awaitable(return_value)
 
