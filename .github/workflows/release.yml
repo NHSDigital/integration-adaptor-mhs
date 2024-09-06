@@ -1,0 +1,18 @@
+on:
+  push:
+    tags: "*"
+
+jobs:
+  push_to_dockerhub:
+    strategy:
+      matrix:
+        image:
+          - {folder: spineroutelookup, dockerhub_name: nia-mhs-route}
+          - {folder: outbound, dockerhub_name: nia-mhs-outbound}
+          - {folder: inbound, dockerhub_name: nia-mhs-inbound}
+    uses: NHSDigital/integration-adaptor-actions/.github/workflows/release-adaptor-container-image.yml@main
+    with:
+        dockerhub_name: ${{matrix.image.dockerhub_name}}
+        folder: ${{matrix.image.folder}}
+
+    secrets: inherit
