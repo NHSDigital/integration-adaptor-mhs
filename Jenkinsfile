@@ -58,7 +58,7 @@ pipeline {
                                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
                             }
                             steps {
-                                buildAndPushImage('${LOCAL_INBOUND_IMAGE_NAME}', '${INBOUND_IMAGE_NAME}', 'mhs/inbound/Dockerfile')
+                                buildAndPushImage('${LOCAL_INBOUND_IMAGE_NAME}', '${INBOUND_IMAGE_NAME}', 'docker/inbound/Dockerfile')
                             }
                         }
                     }
@@ -84,7 +84,7 @@ pipeline {
                               expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
                           }
                           steps {
-                              buildAndPushImage('${LOCAL_OUTBOUND_IMAGE_NAME}', '${OUTBOUND_IMAGE_NAME}', 'mhs/outbound/Dockerfile')
+                              buildAndPushImage('${LOCAL_OUTBOUND_IMAGE_NAME}', '${OUTBOUND_IMAGE_NAME}', 'docker/outbound/Dockerfile')
                           }
                         }
                     }
@@ -110,7 +110,7 @@ pipeline {
                                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
                             }
                             steps {
-                                buildAndPushImage('${LOCAL_ROUTE_IMAGE_NAME}', '${ROUTE_IMAGE_NAME}', 'mhs/spineroutelookup/Dockerfile')
+                                buildAndPushImage('${LOCAL_ROUTE_IMAGE_NAME}', '${ROUTE_IMAGE_NAME}', 'docker/spineroutelookup/Dockerfile')
                             }
                         }
                     }
