@@ -27,4 +27,4 @@ RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 80
 
-ENTRYPOINT pipenv run start
+ENTRYPOINT ["pipenv", "run", "start"]

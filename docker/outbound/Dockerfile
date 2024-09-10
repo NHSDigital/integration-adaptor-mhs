@@ -29,4 +29,4 @@ RUN mkdir -p /etc/pki/tls && ln -s /etc/ssl/certs /etc/pki/tls/certs && ln -s ca
 
 EXPOSE 80
 
-ENTRYPOINT pipenv run start
+ENTRYPOINT ["pipenv", "run", "start"]
