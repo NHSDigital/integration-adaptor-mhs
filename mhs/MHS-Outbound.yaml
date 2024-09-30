@@ -20,11 +20,9 @@ info:
     As the MHS adaptor is implemented client side, there are no sandbox or integration environments to test this API directly against.
 
   contact: 
-    name: Contact Name for the Outbound Service
-    url: 'https://digital.nhs.uk/developer'
-    email: tbc
-servers:
-- url: https://virtserver.swaggerhub.com/petervdm/outbound/1.0.0
+    name: National Integration Adaptors support team
+    url: https://digital.nhs.uk/developer/api-catalogue/mhs
+    email: niasupport@nhs.net
 paths:
   /:
     post:

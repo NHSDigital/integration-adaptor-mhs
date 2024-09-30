@@ -46,6 +46,10 @@ This adaptor supports a number of patterns. More information on these patterns c
 ### Outbound Service Open API Specification
 An [Open API spec](mhs/MHS-Outbound.yaml) has been created specifically for the MHS adaptors outbound service.
 
+The spec can also be displayed using the [editor.swagger.io (external link)][swagger_editor].
+
+[swagger_editor]: https://editor.swagger.io/?url=https://raw.githubusercontent.com/NHSDigital/integration-adaptor-mhs/refs/heads/main/mhs/MHS-Outbound.yaml
+
 ### Developer Notes
 The [Developer Notes](mhs/mhs-adaptor-dev-notes.md) readme has a number of sections that are intended to provide the necessary information on how to configure and run the MHS adaptor locally.  It also contains a list of environment variables and their desciptions and how to run unit and integration tests.
 
