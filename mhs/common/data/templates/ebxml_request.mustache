@@ -43,7 +43,7 @@ Content-Transfer-Encoding: 8bit
             <eb:Description xml:lang="en">{{description}}</eb:Description>
         </eb:Reference>{{/attachments}}{{#external_attachments}}
         <eb:Reference{{#document_id}} eb:id="{{document_id}}"{{/document_id}} xlink:href="mid:{{message_id}}">
-            <eb:Description xml:lang="en">{{{description}}}</eb:Description>
+            <eb:Description xml:lang="en">{{description}}</eb:Description>
         </eb:Reference>{{/external_attachments}}
     </eb:Manifest>
 </SOAP:Body>
