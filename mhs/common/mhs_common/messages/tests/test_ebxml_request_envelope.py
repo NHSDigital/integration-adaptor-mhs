@@ -100,7 +100,7 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
         message_dictionary[ebxml_request_envelope.ATTACHMENTS] = [{
             ebxml_request_envelope.ATTACHMENT_CONTENT_TYPE: 'text/plain',
             ebxml_request_envelope.ATTACHMENT_BASE64: False,
-            ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some description',
+            ebxml_request_envelope.ATTACHMENT_DESCRIPTION: 'Some A&E description',
             ebxml_request_envelope.ATTACHMENT_PAYLOAD: 'Some payload',
             ebxml_request_envelope.ATTACHMENT_DOCUMENT_ID: []
         }]
