@@ -8,7 +8,7 @@ coverage = "~=4.5"
 unittest-xml-reporting = "~=2.5"
 
 [packages]
-tornado = "~=6.4.1"
+tornado = "~=6.4.2"
 python-qpid-proton = "~=0.39.0"
 pystache = "~=0.6.5"
 lxml = "~=5.3"
