@@ -17,13 +17,13 @@ RUN wget -O terraform.zip https://releases.hashicorp.com/terraform/0.12.31/terra
         unzip terraform.zip -d /usr/bin/ && \
         rm terraform.zip
 
-# Install Python 3.9
+# Install Python 3.11
 RUN apt-get update && apt-get install -y build-essential libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev libgdbm-dev libc6-dev libbz2-dev uuid-dev zlib1g-dev libffi-dev swig pkg-config && \
-        wget -O python.tgz https://www.python.org/ftp/python/3.9.19/Python-3.9.19.tgz && \
+        wget -O python.tgz https://www.python.org/ftp/python/3.11.11/Python-3.11.11.tgz && \
         tar -xf python.tgz && rm python.tgz && \
-        cd Python-3.9.19 && \
+        cd Python-3.11.11 && \
         ./configure && make && make install && \
-        cd .. && rm -rf Python-3.9.19
+        cd .. && rm -rf Python-3.11.11
 
 # Install pipenv
 RUN pip3 install pipenv
