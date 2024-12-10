@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bookworm AS base
+FROM python:3.11-slim-bookworm AS base
 
 RUN apt-get update && \
     apt-get install -y build-essential libssl-dev swig pkg-config libxml2-dev libxslt-dev python3-dev libffi-dev
@@ -22,7 +22,7 @@ ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
 
 WORKDIR /usr/src/app/mhs/spineroutelookup
 
-RUN pipenv --python 3.9
+RUN pipenv --python 3.11
 RUN pipenv install --deploy --ignore-pipfile
 
 EXPOSE 80

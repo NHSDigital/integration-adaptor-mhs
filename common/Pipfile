@@ -17,7 +17,7 @@ aioboto3 = "~=11.3.1"
 motor = "~=3.5.1"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"
 
 [scripts]
 unittests = 'python -m xmlrunner -o test-reports -v'
