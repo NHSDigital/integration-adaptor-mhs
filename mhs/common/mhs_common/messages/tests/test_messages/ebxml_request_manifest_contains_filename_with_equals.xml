@@ -1,44 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SOAP:Envelope xmlns:xsi="http://www.w3c.org/2001/XML-Schema-Instance" xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eb="http://www.oasis-open.org/committees/ebxml-msg/schema/msg-header-2_0.xsd" xmlns:hl7ebxml="urn:hl7-org:transport/ebXML/DSTUv1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<SOAP:Header>
-		<eb:MessageHeader SOAP:mustUnderstand="1" eb:version="2.0">
+<soap:Envelope xmlns:eb="http://www.oasis-open.org/committees/ebxml-msg/schema/msg-header-2_0.xsd"
+			   xmlns:hl7ebxml="urn:hl7-org:transport/ebxml/DSTUv1.0"
+			   xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Header>
+		<eb:MessageHeader eb:version="2.0" soap:mustUnderstand="1">
 			<eb:From>
-				<eb:PartyId eb:type="urn:nhs:names:partyType:ocs+serviceInstance">YES-0000806</eb:PartyId>
+				<eb:PartyId eb:type="urn:nhs:names:partyType:ocs+serviceInstance">C88046-807354</eb:PartyId>
 			</eb:From>
 			<eb:To>
-				<eb:PartyId eb:type="urn:nhs:names:partyType:ocs+serviceInstance">A91424-9199121</eb:PartyId>
+				<eb:PartyId eb:type="urn:nhs:names:partyType:ocs+serviceInstance">P83007-822482</eb:PartyId>
 			</eb:To>
-			<eb:CPAId>S1001A1630</eb:CPAId>
-			<eb:ConversationId>10F5A436-1913-43F0-9F18-95EA0E43E61A</eb:ConversationId>
-			<eb:Service>urn:nhs:names:services:psis</eb:Service>
-			<eb:Action>MCCI_IN010000UK13</eb:Action>
+			<eb:CPAId>d434c95b662b941a59f9</eb:CPAId>
+			<eb:ConversationId>A0000131-351C-452F-BEDB-3ED4759A0800</eb:ConversationId>
+			<eb:Service>urn:nhs:names:services:gp2gp</eb:Service>
+			<eb:Action>RCMR_IN030000UK07</eb:Action>
 			<eb:MessageData>
-				<eb:MessageId>C614484E-4B10-499A-9ACD-5D645CFACF61</eb:MessageId>
-				<eb:Timestamp>2019-05-04T20:55:16Z</eb:Timestamp>
-				<eb:RefToMessageId>F106022D-758B-49A9-A80A-8FF211C32A43</eb:RefToMessageId>
+				<eb:MessageId>F01D21CB-31A3-49C6-B0FC-A64C858149AA</eb:MessageId>
+				<eb:Timestamp>2024-12-10T08:02:33.405Z</eb:Timestamp>
+				<eb:TimeToLive>2024-12-10T14:17:33.405Z</eb:TimeToLive>
 			</eb:MessageData>
-			<eb:DuplicateElimination/>
+			<eb:DuplicateElimination />
 		</eb:MessageHeader>
-		<eb:AckRequested SOAP:mustUnderstand="1" eb:version="2.0" eb:signed="false" SOAP:actor="urn:oasis:names:tc:ebxml-msg:actor:toPartyMSH"/>
-		<eb:SyncReply SOAP:mustUnderstand="1" eb:version="2.0" SOAP:actor="http://schemas.xmlsoap.org/soap/actor/next"/>
-	</SOAP:Header>
-	<SOAP:Body>
-		<eb:Manifest SOAP:mustUnderstand="1" eb:version="2.0">
-			<eb:Reference xlink:href="cid:C614484E-4B10-499A-9ACD-5D645CFACF61@spine.nhs.uk">
-				<eb:Schema eb:location="http://www.nhsia.nhs.uk/schemas/HL7-Message.xsd" eb:version="1.0"/>
-				<eb:Description xml:lang="en">HL7 payload</eb:Description>
-				<hl7ebxml:Payload style="HL7" encoding="XML" version="3.0"/>
-			</eb:Reference>
-			<eb:Reference xlink:href="cid:8F1D7DE1-02AB-48D7-A797-A947B09F347F@spine.nhs.uk">
-				<eb:Description xml:lang="en">Some description</eb:Description>
+		<eb:AckRequested eb:version="2.0" soap:mustUnderstand="1"
+						 soap:actor="urn:oasis:names:tc:ebxml-msg:actor:nextMSH" eb:signed="false" />
+	</soap:Header>
+	<soap:Body>
+		<eb:Manifest eb:version="2.0" soap:mustUnderstand="1">
+			<eb:Reference xlink:href="cid:Content1@e-mis.com/EMISWeb/GP2GP2.2A"
+						  xmlns:xlink="http://www.w3.org/1999/xlink">
+				<eb:Description xml:lang="en">RCMR_IN030000UK07</eb:Description>
+				<hl7ebxml:Payload style="HL7" encoding="XML" version="3.0" />
 			</eb:Reference>
 			<eb:Reference xlink:href="cid:Attachment1@e-mis.com/EMISWeb/GP2GP2.2A"
 						  eb:id="_EB653254-7854-450E-A3D3-B1711D99D665"
 						  xmlns:xlink="http://www.w3.org/1999/xlink">
-				<eb:Description xml:lang="en">Filename="filename_with=equals.BMP"
+				<eb:Description xml:lang="en">Filename="EB653254-7854-450E-A3D3-B1711D99D665_adrian=marbles.BMP"
+					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
+					OriginalBase64=No Length=3345444</eb:Description>
+			</eb:Reference>
+			<eb:Reference xlink:href="mid:E54DEC57-6BA5-40AB-ACD0-1E383209C034"
+						  eb:id="_735BB673-D9C0-4B85-951E-98DD045C4713"
+						  xmlns:xlink="http://www.w3.org/1999/xlink">
+				<eb:Description xml:lang="en">Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"
+					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
+					OriginalBase64=No Length=3345444</eb:Description>
+			</eb:Reference>
+			<eb:Reference xlink:href="mid:C71F890F-54B9-4A2E-AD8B-15702C5017FF"
+						  eb:id="_71EB2161-848F-4352-B20F-E385F94FFED2"
+						  xmlns:xlink="http://www.w3.org/1999/xlink">
+				<eb:Description xml:lang="en">Filename="71EB2161-848F-4352-B20F-E385F94FFED2_adrian=marbles3.BMP"
 					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
 					OriginalBase64=No Length=3345444</eb:Description>
 			</eb:Reference>
 		</eb:Manifest>
-	</SOAP:Body>
-</SOAP:Envelope>
+	</soap:Body>
+</soap:Envelope>

@@ -51,6 +51,7 @@ class TestEbxmlEnvelope(BaseTestEbxmlEnvelope):
         )
         xml_tree = ElementTree.fromstring(message)
 
-        result = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)
-        values_dict = {}
-        self.assertEqual(result, values_dict)
+        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)
+        print("MartinTest")
+        print(external_attachments.keys())
+        self.assertEqual(external_attachments, {})

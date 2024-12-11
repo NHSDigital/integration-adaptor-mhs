@@ -227,6 +227,7 @@ class EbxmlEnvelope(envelope.Envelope):
                     variables = descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
 
                     filename = None
+                    print(variables)
                     description_variables = dict(pair.split("=") for pair in variables)
                     if "Filename" in description_variables:
                         filename = description_variables["Filename"].replace('\\', '')
