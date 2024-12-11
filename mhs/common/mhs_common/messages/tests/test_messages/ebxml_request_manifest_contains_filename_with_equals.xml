@@ -30,19 +30,12 @@
 				<eb:Description xml:lang="en">RCMR_IN030000UK07</eb:Description>
 				<hl7ebxml:Payload style="HL7" encoding="XML" version="3.0" />
 			</eb:Reference>
-			<eb:Reference xlink:href="cid:Attachment1@e-mis.com/EMISWeb/GP2GP2.2A"
-						  eb:id="_EB653254-7854-450E-A3D3-B1711D99D665"
-						  xmlns:xlink="http://www.w3.org/1999/xlink">
-				<eb:Description xml:lang="en">Filename="EB653254-7854-450E-A3D3-B1711D99D665_adrian=marbles.BMP"
-					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
-					OriginalBase64=No Length=3345444</eb:Description>
-			</eb:Reference>
 			<eb:Reference xlink:href="mid:E54DEC57-6BA5-40AB-ACD0-1E383209C034"
 						  eb:id="_735BB673-D9C0-4B85-951E-98DD045C4713"
 						  xmlns:xlink="http://www.w3.org/1999/xlink">
-				<eb:Description xml:lang="en">Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"
-					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
-					OriginalBase64=No Length=3345444</eb:Description>
+				<eb:Description xml:lang="en">
+				Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" ContentType=application/octet-stream Compressed=Yes LargeAttachment=No OriginalBase64=No Length=3345444
+				</eb:Description>
 			</eb:Reference>
 		</eb:Manifest>
 	</soap:Body>

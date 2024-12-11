@@ -46,17 +46,13 @@ class TestEbxmlEnvelope(BaseTestEbxmlEnvelope):
         self.assertEqual({}, values_dict)
 
     def test_filename_contains_equals_sign(self):
-        expected_external_attachment1 = {
-            'document_id': 'EB653254-7854-450E-A3D3-B1711D99D665_adrian=marbles.BMP',
-            'message_id': 'MESSAGE GOES HERE',
-            'description': 'DESCRIPTION GOES HERE',
-            'title': 'EB653254-7854-450E-A3D3-B1711D99D665_adrian=marbles.BMP'
-        },
-        expected_external_attachment2 = {
+        expected_external_attachment = {
             'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
             'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'DESCRIPTION GOES HERE',
-            'title': 'EB653254-7854-450E-A3D3-B1711D99D665_adrian=marbles.BMP'
+            'description': 'Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
+                           'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
+                           'OriginalBase64=No Length=3345444',
+            'title': '"735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"'
         }
 
         message = file_utilities.get_file_string(
@@ -65,5 +61,6 @@ class TestEbxmlEnvelope(BaseTestEbxmlEnvelope):
         xml_tree = ElementTree.fromstring(message)
 
         external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
-        self.assertEqual(external_attachments[0], expected_external_attachment1)
+
+        self.assertEqual(external_attachments[0], expected_external_attachment)
 
