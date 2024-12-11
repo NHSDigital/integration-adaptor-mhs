@@ -44,13 +44,6 @@
 					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
 					OriginalBase64=No Length=3345444</eb:Description>
 			</eb:Reference>
-			<eb:Reference xlink:href="mid:C71F890F-54B9-4A2E-AD8B-15702C5017FF"
-						  eb:id="_71EB2161-848F-4352-B20F-E385F94FFED2"
-						  xmlns:xlink="http://www.w3.org/1999/xlink">
-				<eb:Description xml:lang="en">Filename="71EB2161-848F-4352-B20F-E385F94FFED2_adrian=marbles3.BMP"
-					ContentType=application/octet-stream Compressed=Yes LargeAttachment=No
-					OriginalBase64=No Length=3345444</eb:Description>
-			</eb:Reference>
 		</eb:Manifest>
 	</soap:Body>
 </soap:Envelope>
