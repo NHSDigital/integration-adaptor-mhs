@@ -44,3 +44,13 @@ class TestEbxmlEnvelope(BaseTestEbxmlEnvelope):
         )
 
         self.assertEqual({}, values_dict)
+
+    def test_filename_contains_equals_sign(self):
+        message = file_utilities.get_file_string(
+            str(self.message_dir / "ebxml_request_manifest_contains_filename_with_equals.xml")
+        )
+        xml_tree = ElementTree.fromstring(message)
+
+        result = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)
+        values_dict = {}
+        self.assertEqual(result, values_dict)
