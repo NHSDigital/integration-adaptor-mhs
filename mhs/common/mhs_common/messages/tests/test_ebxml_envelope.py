@@ -45,22 +45,46 @@ class TestEbxmlEnvelope(BaseTestEbxmlEnvelope):
 
         self.assertEqual({}, values_dict)
 
-    def test_filename_contains_equals_sign(self):
-        expected_external_attachment = {
-            'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
-            'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
-                           'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
-                           'OriginalBase64=No Length=3345444',
-            'title': '"735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"'
-        }
 
-        message = file_utilities.get_file_string(
-            str(self.message_dir / "ebxml_request_manifest_contains_filename_with_equals.xml")
-        )
-        xml_tree = ElementTree.fromstring(message)
+def test_filename_contains_equals_sign(self):
+    expected_external_attachment = {
+        'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
+        'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
+        'description': 'Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
+                       'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
+                       'OriginalBase64=No Length=3345444',
+        'title': '"735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"'
+    }
+
+    manifest = '<eb:Manifest eb:version="2.0" soap:mustUnderstand="1"> \
+                        <eb:Reference xlink:href="mid:E54DEC57-6BA5-40AB-ACD0-1E383209C034" \
+                            eb:id="_735BB673-D9C0-4B85-951E-98DD045C4713" xmlns:xlink="http://www.w3.org/1999/xlink"> \
+                                <eb:Description xml:lang="en"> \
+                                    Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" \
+                                    ContentType=application/octet-stream Compressed=Yes LargeAttachment=No \
+                                    OriginalBase64=No Length=3345444 \
+                                </eb:Description> \
+                            </eb:Reference> \
+                    </eb:Manifest>'
+
+    xml_tree = ElementTree.fromstring(manifest)
+
+    external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
+
+    self.assertEqual(external_attachments[0], expected_external_attachment)
+
+
+def test_description_does_not_contain_filename(self):
+        manifest = '<eb:Manifest eb:version="2.0" soap:mustUnderstand="1"> \
+                        <eb:Reference xlink:href="mid:E54DEC57-6BA5-40AB-ACD0-1E383209C034" \
+                            eb:id="_735BB673-D9C0-4B85-951E-98DD045C4713" xmlns:xlink="http://www.w3.org/1999/xlink"> \
+                                <eb:Description xml:lang="en">This is not a GP2GP Comment</eb:Description> \
+                            </eb:Reference> \
+                    </eb:Manifest>'
+
+        xml_tree = ElementTree.fromstring(manifest)
 
         external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
 
-        self.assertEqual(external_attachments[0], expected_external_attachment)
+        self.assertEqual(len(external_attachments), 0)
 
