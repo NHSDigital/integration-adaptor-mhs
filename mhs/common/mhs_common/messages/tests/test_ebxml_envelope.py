@@ -25,6 +25,7 @@ BASE_EXPECTED_VALUES = {
     ebxml_envelope.RECEIVED_MESSAGE_ID: "F106022D-758B-49A9-A80A-8FF211C32A43"
 }
 
+
 class BaseTestEbxmlEnvelope(TestCase):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     message_dir = Path(current_dir) / MESSAGE_DIR
@@ -75,16 +76,43 @@ def test_filename_contains_equals_sign(self):
 
 
 def test_description_does_not_contain_filename(self):
-        manifest = '<eb:Manifest eb:version="2.0" soap:mustUnderstand="1"> \
+    manifest = '<eb:Manifest eb:version="2.0" soap:mustUnderstand="1"> \
+                    <eb:Reference xlink:href="mid:E54DEC57-6BA5-40AB-ACD0-1E383209C034" \
+                        eb:id="_735BB673-D9C0-4B85-951E-98DD045C4713" xmlns:xlink="http://www.w3.org/1999/xlink"> \
+                            <eb:Description xml:lang="en">This is not a GP2GP Comment</eb:Description> \
+                        </eb:Reference> \
+                </eb:Manifest>'
+    xml_tree = ElementTree.fromstring(manifest)
+    external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
+    self.assertEqual(len(external_attachments), 0)
+
+def test_description_contains_filename_in_uppercase(self):
+    expected_external_attachment = {
+        'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
+        'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
+        'description': 'Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
+                       'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
+                       'OriginalBase64=No Length=3345444',
+        'title': '"735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"'
+    }
+
+    manifest = '<eb:Manifest eb:version="2.0" soap:mustUnderstand="1"> \
                         <eb:Reference xlink:href="mid:E54DEC57-6BA5-40AB-ACD0-1E383209C034" \
                             eb:id="_735BB673-D9C0-4B85-951E-98DD045C4713" xmlns:xlink="http://www.w3.org/1999/xlink"> \
-                                <eb:Description xml:lang="en">This is not a GP2GP Comment</eb:Description> \
+                                <eb:Description xml:lang="en"> \
+                                    FILENAME="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" \
+                                    ContentType=application/octet-stream Compressed=Yes LargeAttachment=No \
+                                    OriginalBase64=No Length=3345444 \
+                                </eb:Description> \
                             </eb:Reference> \
                     </eb:Manifest>'
 
-        xml_tree = ElementTree.fromstring(manifest)
+    xml_tree = ElementTree.fromstring(manifest)
 
-        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
+    external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
 
-        self.assertEqual(len(external_attachments), 0)
+    print("DEBUG2")
+    print(external_attachments[0])
+
+    self.assertEqual(external_attachments[0], expected_external_attachment)
 
