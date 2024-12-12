@@ -2,6 +2,89 @@
 
 This following is a guide to operational considerations where the MHS Adaptor is deployed within your infrastructure
 
+## Environment Variables
+
+MHS takes a number of environment variables when it is run. Some of the variables are environment specific (OpenTest, PTL and if necessary the Fakespine).  You can find more information on environment config values in the [OpenTest](https://digital.nhs.uk/services/spine/open-access-test-environment-for-spine-opentest) and [Path To Live](https://digital.nhs.uk/services/path-to-live-environments) portal pages.
+
+The list of environment variables are:
+* `MHS_LOG_LEVEL` This is required to be set to one of: `INFO`, `WARNING`, `ERROR` or `CRITICAL`, where `INFO` displays
+the most logs and `CRITICAL` displays the least. Note: Setting this value to one of the more detailed 'standard' Python
+log levels (such as `DEBUG` or `NOTSET`) may result in the libraries used by this application logging details that
+contain sensitive information such as the content of messages being sent.
+* `MHS_SECRET_PARTY_KEY` (inbound & outbound only) The party key associated with your MHS.
+* `MHS_SECRET_CLIENT_CERT` Your endpoint certificate
+* `MHS_SECRET_CLIENT_KEY` Your endpoint private key
+* `MHS_SECRET_CA_CERTS` Should include the following in this order: endpoint issuing subCA certificate, root CA Certificate.
+* `MHS_STATE_TABLE_NAME` (inbound & outbound only) The name of the DB table used to store MHS state.
+* `MHS_SYNC_ASYNC_STATE_TABLE_NAME` (inbound & outbound only) The table name used to store sync async responses
+* `MHS_STATE_STORE_MAX_RETRIES'` (inbound & outbound only) The max number of retries when attempting to interact with either the work description or sync-async store. Defaults to `3`
+* `MHS_OUTBOUND_TRANSMISSION_MAX_RETRIES` (outbound only) This is the maximum number of retries for outbound requests. If no value is given a default of `3` is used.
+* `MHS_OUTBOUND_TRANSMISSION_RETRY_DELAY` (outbound only) The delay between retries of outbound requests in milliseconds. If no value is given, a default of `100` is used.
+* `MHS_OUTBOUND_HTTP_PROXY` (outbound only) An optional http(s) proxy to route downstream requests via. Note that the proxy must passthrough https requests transparently.
+* `MHS_OUTBOUND_HTTP_PROXY_PORT` (outbound only) The http(s) proxy port to use. Ignored if `MHS_OUTBOUND_HTTP_PROXY` is not provided. Defaults to `3128`.
+* `MHS_OUTBOUND_VALIDATE_CERTIFICATE` (outbound only) Verification of the server certificate received when making a connection to the spine MHS.
+* `MHS_INBOUND_QUEUE_BROKERS` (inbound only) The url(s) of the amqp inbound queue broker(s). e.g. `amqps://example.com:port`. Note that if the amqp connection being used is a secured connection (which it should be in production), then the url should start with `amqps://` and not `amqp+ssl://`. This URL should not include the queue name. Can be a coma-separated list or urls for HA
+* `MHS_INBOUND_QUEUE_NAME` The name of the queue on the broker identified by `MHS_INBOUND_QUEUE_BROKERS` to place inbound messages on. e.g `queue-name`
+* `MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS` Defines Time-To-Live of inbound queue messages
+* `MHS_SECRET_INBOUND_QUEUE_USERNAME` (inbound only) The username to use when connecting to the amqp inbound queue.
+* `MHS_SECRET_INBOUND_QUEUE_PASSWORD` (inbound only) The password to use when connecting to the amqp inbound queue.
+* `MHS_INBOUND_QUEUE_MAX_RETRIES` (inbound only) The max number of times to retry putting a message onto the amqp inbound queue. Defaults to `3`.
+* `MHS_INBOUND_QUEUE_RETRY_DELAY` (inbound only) The delay in milliseconds between retrying putting a message onto the amqp inbound queue. Defaults to `100`ms.
+* `MHS_SYNC_ASYNC_STORE_MAX_RETRIES'` (inbound only) The max number of retries when attempting to add a message to the sync-async store. Defaults to `3`
+* `MHS_SYNC_ASYNC_STORE_RETRY_DELAY` (inbound only) The delay in milliseconds between retrying placing a message on the sysnc-async store. Defaults to `100`ms
+* `MHS_RESYNC_RETRIES` (outbound only) The total number of attempts made to the sync-async store during resynchronisation, defaults to `20`
+* `MHS_RESYNC_INTERVAL` (outbound only) The time in between polls of the sync-async store, the interval is in seconds and defaults to `1`
+* `MHS_SPINE_ROUTE_LOOKUP_URL` (outbound only) The URL of the Spine route lookup service. E.g `https://example.com`. This URL should not contain path or query parameter parts.
+* `MHS_SPINE_ORG_CODE` (outbound only) The organisation code for the Spine instance that your MHS is communicating with. E.g `YES`
+* `MHS_FORWARD_RELIABLE_ENDPOINT_URL` (outbound only) The URL to communicate with Spine for Forward Reliable messaging
+* `MHS_RESYNC_INITIAL_DELAY` (Outbound service only) The initial delay (in seconds) before making the first poll to the sync-async
+    store after the outbound service receives an acknowledgement from Spine
+* `MHS_SPINE_REQUEST_MAX_SIZE` (outbound service only) The maximum size (in bytes) that request bodies sent to Spine
+are allowed to be. This should be set minus any HTTP headers and other content in the HTTP packets sent to Spine.
+e.g. Setting this to ~400 bytes less than the maximum request body size should be roughly the correct value
+(calculating this value accurately is pretty much impossible as one of the HTTP headers is the Content-Length header
+which varies depending on the request body size).
+* `MHS_DB_ENDPOINT_URL` The URL for the adaptors DB
+* `MHS_CLOUD_REGION` Cloud region that the adaptor has/will be been deployed to
+* `MHS_PERSISTENCE_ADAPTOR` Used to determine the type of persistence adaptor to implement (dynamodb/mongodb)  
+* `MHS_LOG_FORMAT` #[%(asctime)sZ] | %(levelname)s | %(process)d | %(interaction_id)s | %(message_id)s | %(correlation_id)s | (inbound_message_id)s | %(name)s | %(message)s"
+* `MHS_INBOUND_USE_SSL` Boolean for the use of SSL. Only for testing purpose to facilitate local development debugging
+* `MHS_INBOUND_SERVER_PORT` Define a specific port when connecting to the Inbound service. Defaults to '443'
+* `MHS_INBOUND_HEALTHCHECK_SERVER_PORT` Define a specific port when connecting to the Inbound Healthcheck service. Defaults to '8082'
+* `MHS_OUTBOUND_SERVER_PORT` Define a specific port when connecting to the Outbound service. Defaults to '80'
+* `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` Define which lookup method to use for routing and reliability. One of `SPINE_ROUTE_LOOKUP` or `SDS_API`
+
+Following variables are required if `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` is set to `SPINE_ROUTE_LOOKUP`
+* `MHS_LAZY_LDAP` use lazy connection from spine route lookup component to SPINE LDAP service
+* `MHS_SECRET_SPINE_ROUTE_LOOKUP_CLIENT_CERT` (outbound only) Optional. The client certificate to present when making HTTPS connections to the Spine Route Lookup service. If not specified, no client certificate will be presented.
+* `MHS_SECRET_SPINE_ROUTE_LOOKUP_CLIENT_KEY` (outbound only) Optional. The private key for the client certificate to present when making HTTPS connections to the Spine Route Lookup service. Must be specified if `MHS_SPINE_ROUTE_LOOKUP_CLIENT_CERT` is provided.
+* `MHS_SECRET_SPINE_ROUTE_LOOKUP_CA_CERTS` (outbound only) Optional. The CA certificates used to validate the certificate presented by the Spine Route Lookup service. Should include the following in this order: endpoint issuing subCA certificate, root CA Certificate. If not specified, the system defaults will be used.
+* `MHS_SPINE_ROUTE_LOOKUP_HTTP_PROXY` (outbound only) An optional http(s) proxy to route requests to the Spine Route Lookup service via. Note that the proxy must pass through https requests transparently.
+* `MHS_SPINE_ROUTE_LOOKUP_HTTP_PROXY_PORT` (outbound only) The http(s) proxy port to use for the Spine Route Lookup service proxy. Ignored if `MHS_SPINE_ROUTE_LOOKUP_HTTP_PROXY` is not provided. Defaults to `3128`.
+* `MHS_SDS_URL` (Spine Route Lookup service only) The URL to communicate with SDS on. e.g. `ldaps://example.com`
+* `MHS_SDS_SEARCH_BASE` (Spine Route Lookup service only) The LDAP location to use as the base of SDS searches, e.g. `ou=services,o=nhs`. This value is specific to the SDS instance you configure your MHS to communicate with and should not contain whitespace.
+* `MHS_DISABLE_SDS_TLS` (Spine Route Lookup service only) An optional flag that can be set to disable TLS for SDS
+connections. *Must* be set to exactly `True` for TLS to be disabled.
+* `MHS_SDS_CACHE_EXPIRY_TIME` (Spine Route Lookup service only). An optional value that specifies the time (in seconds)
+that a value should be held in the SDS cache. Defaults to `900` (fifteen minutes)
+* `MHS_SDS_REDIS_CACHE_HOST` (Spine Route Lookup service only). The Redis host to use when caching SDS information
+retrieved from SDS.
+* `MHS_SDS_REDIS_CACHE_PORT` (Spine Route Lookup service only). An optional value that specified the port to use when
+connecting to the Redis host specified by `MHS_SDS_REDIS_CACHE_HOST`. Defaults to `6379`.
+* `MHS_SDS_REDIS_DISABLE_TLS` (Spine Route Lookup service only) An optional flag that can be set to disable TLS for
+connections to the Redis cache used by the Spine Route Lookup service. *Must* be set to exactly `True` for TLS to be
+disabled.
+* `MHS_SPINE_ROUTE_LOOKUP_SERVER_PORT`Define a specific port when connecting to the Spine Route Lookup service. Defaults to '80'
+* `MHS_LDAP_CONNECTION_RETRIES` Retry attempt value when attempting LDAP connection 
+* `MHS_LDAP_CONNECTION_TIMEOUT_IN_SECONDS` Timeout value when attempting LDAP connection
+
+Following variables are required if `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` is set to `SDS_API`
+* `MHS_SDS_API_URL` URL to SDS API. e.g. `https://sandbox.api.service.nhs.uk/spine-directory/FHIR/R4`
+* `MHS_SDS_API_KEY` api key to authenticate with when sending requests to SDS API
+
+Note that if you are using Opentest, you should use the credentials you were given when you got access to set `MHS_SECRET_PARTY_KEY`, `MHS_SECRET_CLIENT_CERT`, `MHS_SECRET_CLIENT_KEY` and `MHS_SECRET_CA_CERTS`.
+
+
 ## Log consumption
 The MHS Adaptor emit logs and audit records on standard I/O streams which are captured by the Docker containers they are hosted within. 
 Whichever Docker container orchestration technology is used, these log streams can be captured and/or forwarded to an appropriate log indexing 
