@@ -4,7 +4,9 @@ This following is a guide to operational considerations where the MHS Adaptor is
 
 ## Environment Variables
 
-MHS takes a number of environment variables when it is run. Some of the variables are environment specific (OpenTest, PTL and if necessary the Fakespine).  You can find more information on environment config values in the [OpenTest](https://digital.nhs.uk/services/spine/open-access-test-environment-for-spine-opentest) and [Path To Live](https://digital.nhs.uk/services/path-to-live-environments) portal pages.
+MHS takes a number of environment variables when it is run.
+Some of the variables are environment specific (PTL and Live).
+You can find more information on environment config values in [Path To Live](https://digital.nhs.uk/services/path-to-live-environments) portal pages.
 
 The list of environment variables are:
 * `MHS_LOG_LEVEL` This is required to be set to one of: `INFO`, `WARNING`, `ERROR` or `CRITICAL`, where `INFO` displays
@@ -81,9 +83,6 @@ disabled.
 Following variables are required if `MHS_OUTBOUND_ROUTING_LOOKUP_METHOD` is set to `SDS_API`
 * `MHS_SDS_API_URL` URL to SDS API. e.g. `https://sandbox.api.service.nhs.uk/spine-directory/FHIR/R4`
 * `MHS_SDS_API_KEY` api key to authenticate with when sending requests to SDS API
-
-Note that if you are using Opentest, you should use the credentials you were given when you got access to set `MHS_SECRET_PARTY_KEY`, `MHS_SECRET_CLIENT_CERT`, `MHS_SECRET_CLIENT_KEY` and `MHS_SECRET_CA_CERTS`.
-
 
 ## Log consumption
 The MHS Adaptor emit logs and audit records on standard I/O streams which are captured by the Docker containers they are hosted within. 
