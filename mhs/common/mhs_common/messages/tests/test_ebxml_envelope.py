@@ -1,4 +1,5 @@
 import os
+
 from pathlib import Path
 from unittest import TestCase
 
@@ -46,103 +47,56 @@ class TestEbxmlEnvelope(BaseTestEbxmlEnvelope):
 
         self.assertEqual({}, values_dict)
 
-    def test_filename_contains_equals_sign(self):
-        expected_external_attachment = {
-            'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
-            'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
-                           'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
-                           'OriginalBase64=No Length=3345444',
-            'title': '"735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"'
-        }
 
-        description = ('Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
-                       'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No OriginalBase64=No '
-                       'Length=3345444')
+class TestEbxmlEnvelopeFilename(TestCase):
+    def test_external_attachment_title_is_generated_from_description(self):
+        test_cases = [
+            (
+                'Equal sign in Filename',
+                'Filename="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
+                'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
+                'OriginalBase64=No Length=3345444',
+                '"735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP"'
+            ),
+            (
+                'Filename not present',
+                'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No OriginalBase64=No '
+                'Length=3345444',
+                None
+            ),
+            (
+                'Filename in different case',
+                'FILENAME="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
+                'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No OriginalBase64=No '
+                'Length=3345444',
+                None
+            ),
+            (
+                'Invalid message',
+                'This is not a valid GP2GP Message',
+                None
+            ),
+            (
+                'Duplicated Filename key',
+                'Filename="marbles.BMP" Filename="marbles2.BMP" ContentType=application/octet-stream '
+                'Compressed=Yes LargeAttachment=No OriginalBase64=No Length=3345444',
+                '"marbles2.BMP"'
+            )
+        ]
+        for test_name, description, expected_title in test_cases:
+            with self.subTest(test_name):
+                expected_external_attachment = {
+                    'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
+                    'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
+                    'description': description,
+                    'title': expected_title
+                }
 
-        xml_tree = self.generate_soap_envelope_from_description(description)
+                xml_tree = self.generate_soap_envelope_from_description(description)
 
-        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
+                external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
 
-        self.assertEqual(external_attachments[0], expected_external_attachment)
-
-    def test_description_does_not_contain_filename(self):
-        expected_external_attachment = {
-            'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
-            'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
-                           'OriginalBase64=No Length=3345444',
-            'title': None
-        }
-
-        description = (
-            'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No OriginalBase64=No '
-            'Length=3345444'
-        )
-
-        xml_tree = self.generate_soap_envelope_from_description(description)
-        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
-
-        self.assertEqual(external_attachments[0], expected_external_attachment)
-
-    def test_description_contains_filename_in_uppercase(self):
-        expected_external_attachment = {
-            'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
-            'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'FILENAME="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
-                           'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
-                           'OriginalBase64=No Length=3345444',
-            'title': None
-        }
-
-        description = (
-            'FILENAME="735BB673-D9C0-4B85-951E-98DD045C4713_adrian=marbles2.BMP" '
-            'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No OriginalBase64=No '
-            'Length=3345444'
-        )
-
-        xml_tree = self.generate_soap_envelope_from_description(description)
-
-        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
-
-        self.assertEqual(external_attachments[0], expected_external_attachment)
-
-    def test_description_is_not_a_valid_gp2gp_message(self):
-        expected_external_attachment = {
-            'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
-            'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'This is not a valid GP2GP Message',
-            'title': None
-        }
-
-        description = 'This is not a valid GP2GP Message'
-
-        xml_tree = self.generate_soap_envelope_from_description(description)
-
-        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
-
-        self.assertEqual(external_attachments[0], expected_external_attachment)
-
-    def test_description_contains_duplicated_filename_key(self):
-        expected_external_attachment = {
-            'document_id': '_735BB673-D9C0-4B85-951E-98DD045C4713',
-            'message_id': 'E54DEC57-6BA5-40AB-ACD0-1E383209C034',
-            'description': 'Filename="marbles.BMP" Filename="marbles2.BMP" '
-                           'ContentType=application/octet-stream Compressed=Yes LargeAttachment=No '
-                           'OriginalBase64=No Length=3345444',
-            'title': '"marbles2.BMP"'
-        }
-
-        description = (
-            'Filename="marbles.BMP" Filename="marbles2.BMP" ContentType=application/octet-stream '
-            'Compressed=Yes LargeAttachment=No OriginalBase64=No Length=3345444'
-        )
-
-        xml_tree = self.generate_soap_envelope_from_description(description)
-
-        external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
-
-        self.assertEqual(external_attachments[0], expected_external_attachment)
+                self.assertEqual(external_attachments[0], expected_external_attachment)
 
     @staticmethod
     def generate_soap_envelope_from_description(description):
