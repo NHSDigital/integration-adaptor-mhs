@@ -97,6 +97,7 @@ class TestEbxmlEnvelopeFilename(TestCase):
                 external_attachments = ebxml_envelope.EbxmlEnvelope.parse_external_attachments(xml_tree)['external_attachments']
 
                 self.assertEqual(external_attachments[0], expected_external_attachment)
+                
 
     @staticmethod
     def generate_soap_envelope_from_description(description):
