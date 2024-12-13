@@ -227,15 +227,21 @@ class EbxmlEnvelope(envelope.Envelope):
                     variables = descriptionParams = re.findall("(?:\".*?\"|\S)+", description.strip())
 
                     filename = None
-                    description_variables = dict(pair.split("=") for pair in variables)
+
+                    description_variables = {}
+                    for pair in variables:
+                        if "=" in pair:
+                            key, value = pair.split("=", 1)
+                            description_variables[key] = value
+
                     if "Filename" in description_variables:
                         filename = description_variables["Filename"].replace('\\', '')
-                    
+
                     mid = mid_attribute.split(":")[1]
-                    external_attachment =  { 
+                    external_attachment = {
                         EXTERNAL_ATTACHMENT_DOCUMENT_ID :document_id_attribute, 
                         EXTERNAL_ATTACHMENT_MESSAGE_ID :mid_attribute.split(":")[1], 
-                        EXTERNAL_ATTACHMENT_DESCRIPTION: description, 
+                        EXTERNAL_ATTACHMENT_DESCRIPTION: description,
                         EXTERNAL_ATTACHMENT_TITLE: filename 
                     }
 
