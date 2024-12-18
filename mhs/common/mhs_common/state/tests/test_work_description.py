@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 from mhs_common import workflow
 from mhs_common.state import work_description as wd
 from utilities import test_utilities
-from utilities.test_utilities import async_test
 
 input_data = {
     wd.MESSAGE_ID: 'aaa-aaa-aaa',
@@ -25,7 +24,7 @@ old_data = {
 }
 
 
-class TestWorkDescription(unittest.TestCase):
+class TestWorkDescription(unittest.IsolatedAsyncioTestCase):
 
     def test_constructor(self):
         persistence = MagicMock()
@@ -37,7 +36,6 @@ class TestWorkDescription(unittest.TestCase):
         self.assertEqual(work_description.outbound_status, input_data[wd.OUTBOUND_STATUS])
         self.assertEqual(work_description.created_timestamp, input_data[wd.CREATED_TIMESTAMP])
 
-    @async_test
     async def test_publish_saves_new_data(self):
         future = test_utilities.awaitable(old_data)
 
@@ -48,7 +46,6 @@ class TestWorkDescription(unittest.TestCase):
         await work_description.publish()
         persistence.add.assert_called_with(input_data[wd.MESSAGE_ID], input_data)
 
-    @async_test
     async def test_set_outbound_status(self):
         updated_data = copy.deepcopy(input_data)
         updated_data[wd.OUTBOUND_STATUS] = wd.MessageStatus.OUTBOUND_MESSAGE_ACKD
@@ -64,7 +61,6 @@ class TestWorkDescription(unittest.TestCase):
 
         self.assertEqual(work_description.outbound_status, wd.MessageStatus.OUTBOUND_MESSAGE_ACKD)
 
-    @async_test
     async def test_set_inbound_status(self):
         updated_data = copy.deepcopy(input_data)
         updated_data[wd.INBOUND_STATUS] = wd.MessageStatus.INBOUND_RESPONSE_FAILED
@@ -85,10 +81,9 @@ class TestWorkDescription(unittest.TestCase):
             wd.WorkDescription(None, {'None': 'None'})
 
 
-class TestWorkDescriptionFactory(unittest.TestCase):
+class TestWorkDescriptionFactory(unittest.IsolatedAsyncioTestCase):
 
     @patch('mhs_common.state.work_description.WorkDescription')
-    @async_test
     async def test_get_from_store(self, work_mock):
         persistence = MagicMock()
         persistence.get.return_value = test_utilities.awaitable(old_data)
@@ -97,19 +92,16 @@ class TestWorkDescriptionFactory(unittest.TestCase):
         persistence.get.assert_called_with('aaa-aaa-aaa', strongly_consistent_read=True)
         work_mock.assert_called_with(persistence, old_data)
 
-    @async_test
     async def test_get_from_store_no_result_found(self):
         persistence = MagicMock()
         persistence.get.return_value = test_utilities.awaitable(None)
 
         self.assertIsNone(await wd.get_work_description_from_store(persistence, 'aaa-aaa-aaa'))
 
-    @async_test
     async def test_get_from_store_empty_store(self):
         with self.assertRaises(ValueError):
             await wd.get_work_description_from_store(None, 'aaa')
 
-    @async_test
     async def test_get_from_store_empty_message_id(self):
         with self.assertRaises(ValueError):
             await wd.get_work_description_from_store(MagicMock(), None)
