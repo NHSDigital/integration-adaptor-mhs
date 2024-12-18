@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import MagicMock, patch
 
 from utilities import test_utilities
@@ -8,9 +8,8 @@ from mhs_common.workflow import sync_async_resynchroniser as resync
 PARTY_ID = "PARTY-ID"
 
 
-class TestSyncAsyncReSynchroniser(TestCase):
+class TestSyncAsyncReSynchroniser(IsolatedAsyncioTestCase):
 
-    @test_utilities.async_test
     async def test_should_return_correct_result_on_resynchronisation(self):
         # Arrange
         store = MagicMock()
@@ -25,7 +24,6 @@ class TestSyncAsyncReSynchroniser(TestCase):
         self.assertTrue(result)
 
     @patch('asyncio.sleep')
-    @test_utilities.async_test
     async def test_should_return_correct_result_if_retry_succeeds(self, sleep_mock):
         # Arrange
         store = MagicMock()
@@ -41,7 +39,6 @@ class TestSyncAsyncReSynchroniser(TestCase):
         self.assertEqual(store.get.call_count, 2)
 
     @patch('asyncio.sleep')
-    @test_utilities.async_test
     async def test_should_respect_max_retries_while_attempting_to_retry(self, sleep_mock):
         # Arrange
         store = MagicMock()
@@ -59,7 +56,6 @@ class TestSyncAsyncReSynchroniser(TestCase):
                          f"Retrieving the message should be tried once and then retried {max_retries} times.")
 
     @patch('asyncio.sleep')
-    @test_utilities.async_test
     async def test_should_perform_correct_number_of_sleeps_between_retries(self, sleep_mock):
         # Arrange
         store = MagicMock()
@@ -76,7 +72,6 @@ class TestSyncAsyncReSynchroniser(TestCase):
         self.assertEqual(1 + max_retries, sleep_mock.call_count)
 
     @patch('asyncio.sleep')
-    @test_utilities.async_test
     async def test_should_initially_wait_before_polling_store(self, sleep_mock):
         # Arrange
         store = MagicMock()

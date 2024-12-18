@@ -1,16 +1,15 @@
 import datetime
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch, Mock
 
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import Application, RequestHandler
 from utilities import timing
-from utilities.test_utilities import async_test
 
 DEFAULT_RETURN = "default"
 
 
-class TestTimeUtilities(TestCase):
+class TestTimeUtilities(IsolatedAsyncioTestCase):
 
     @patch('time.perf_counter')
     def test_stopwatch(self, time_mock):
@@ -35,7 +34,6 @@ class TestTimeUtilities(TestCase):
 
     @patch('utilities.timing._log_time')
     @patch('utilities.timing.Stopwatch.stop_timer')
-    @async_test
     async def test_invoke_with_time(self, time_mock, log_mock):
         time_mock.return_value = 5
         with self.subTest("Sync version"):
@@ -50,7 +48,6 @@ class TestTimeUtilities(TestCase):
 
     @patch('utilities.timing.Stopwatch.stop_timer')
     @patch('utilities.timing._log_time')
-    @async_test
     async def test_exception_thrown_whilst_timing(self, log_mock, time_mock):
         time_mock.return_value = 10
         with self.subTest("Sync"):
@@ -66,7 +63,6 @@ class TestTimeUtilities(TestCase):
 
     @patch('utilities.timing.Stopwatch.stop_timer')
     @patch.object(timing, 'logger')
-    @async_test
     async def test_invoke_with_time_parameters(self, log_mock, time_mock):
         with self.subTest("Sync"):
             time_mock.return_value = 5
@@ -83,7 +79,6 @@ class TestTimeUtilities(TestCase):
 
     @patch('utilities.timing.Stopwatch.stop_timer')
     @patch.object(timing, 'logger')
-    @async_test
     async def test_async_times_execution_correctly(self, log_mock, time_mock):
         time_mock.return_value = 0
         task = self.default_method_async()
@@ -98,7 +93,6 @@ class TestTimeUtilities(TestCase):
 
     @patch('utilities.timing.Stopwatch.stop_timer')
     @patch.object(timing, 'logger')
-    @async_test
     async def test_invoke_with_time_varargs(self, log_mock, time_mock):
         with self.subTest("Sync"):
             time_mock.return_value = 5

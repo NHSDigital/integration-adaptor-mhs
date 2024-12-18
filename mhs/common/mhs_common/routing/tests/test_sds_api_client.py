@@ -43,9 +43,9 @@ EXPECTED_RELIABILITY = json.loads(load_test_data('reliability.json'))
 CORRELATION_ID = 'CORRELATION_ID'
 
 
-class TestSdsApiClient(unittest.TestCase):
+class TestSdsApiClient(unittest.IsolatedAsyncioTestCase):
 
-    def setUp(self) -> None:
+    async def asyncSetUp(self) -> None:
         # Mock the httpclient.AsyncHTTPClient() constructor
         patcher = unittest.mock.patch.object(httpclient, "AsyncHTTPClient")
         mock_http_client_constructor = patcher.start()
@@ -60,7 +60,6 @@ class TestSdsApiClient(unittest.TestCase):
     def tearDown(self) -> None:
         mdc.correlation_id.set(None)
 
-    @test_utilities.async_test
     async def test_should_retrieve_routing_and_reliability_details_if_given_org_code(self):
         self.routing = sds_api_client.SdsApiClient(BASE_URL, API_KEY, SPINE_ORG_CODE)
         for function_to_test, expected_result in [(self.routing.get_end_point, EXPECTED_ROUTING), (self.routing.get_reliability, EXPECTED_RELIABILITY)]:
@@ -77,7 +76,6 @@ class TestSdsApiClient(unittest.TestCase):
                 self._assert_http_client_called_with_expected_args([expected_device_url, expected_endpoint_url])
 
 
-    @test_utilities.async_test
     async def test_should_retrieve_routing_and_reliability_details_if_given_no_org_code(self):
         self.routing = sds_api_client.SdsApiClient(BASE_URL, API_KEY, SPINE_ORG_CODE)
         for function_to_test, expected_result in [(self.routing.get_end_point, EXPECTED_ROUTING), (self.routing.get_reliability, EXPECTED_RELIABILITY)]:
@@ -93,7 +91,6 @@ class TestSdsApiClient(unittest.TestCase):
 
                 self._assert_http_client_called_with_expected_args([expected_device_url, expected_endpoint_url])
 
-    @test_utilities.async_test
     async def test_should_retrieve_routing_and_reliability_first_endpoint_details_if_there_are_multiple_results(self):
         self.routing = sds_api_client.SdsApiClient(BASE_URL, API_KEY, SPINE_ORG_CODE)
         for function_to_test, expected_result in [(self.routing.get_end_point, EXPECTED_ROUTING), (self.routing.get_reliability, EXPECTED_RELIABILITY)]:
@@ -109,7 +106,6 @@ class TestSdsApiClient(unittest.TestCase):
 
                 self._assert_http_client_called_with_expected_args([expected_device_url, expected_endpoint_url])
 
-    @test_utilities.async_test
     async def test_should_raise_error_if_endpoint_yields_no_result(self):
         self.routing = sds_api_client.SdsApiClient(BASE_URL, API_KEY, SPINE_ORG_CODE)
         self._given_http_client_returns_a_json_response(SDS_JSON_ZERO_RESULTS_RESPONSE, SDS_JSON_ZERO_RESULTS_RESPONSE)
@@ -119,7 +115,6 @@ class TestSdsApiClient(unittest.TestCase):
                 with self.assertRaises(SDSException):
                     await function_to_test(SERVICE_ID, ORG_CODE)
 
-    @test_utilities.async_test
     async def test_should_raise_error_if_endpoint_returns_unexpected_response(self):
         self.routing = sds_api_client.SdsApiClient(BASE_URL, API_KEY, SPINE_ORG_CODE)
         self._given_http_client_returns_a_json_response(SDS_JSON_UNEXPECTED_RESPONSE, SDS_JSON_UNEXPECTED_RESPONSE)

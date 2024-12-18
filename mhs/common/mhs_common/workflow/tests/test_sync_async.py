@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch, MagicMock
 
 from mhs_common import workflow
@@ -9,7 +9,7 @@ from mhs_common.workflow.common import MessageData
 from utilities import test_utilities
 
 
-class TestSyncAsyncWorkflowOutbound(TestCase):
+class TestSyncAsyncWorkflowOutbound(IsolatedAsyncioTestCase):
 
     def setUp(self):
         self.persistence = MagicMock()
@@ -20,7 +20,6 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
                                                      resynchroniser=self.resync)
 
     @patch('mhs_common.state.work_description.create_new_work_description')
-    @test_utilities.async_test
     async def test_sync_async_happy_path(self, wd_mock):
         wdo = MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -51,7 +50,6 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
         self.assertEqual(actual_wdo, wdo)
 
     @patch('mhs_common.state.work_description.create_new_work_description')
-    @test_utilities.async_test
     async def test_async_workflow_return_error_code(self, wd_mock):
         wdo = MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -69,7 +67,6 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
         self.assertEqual("Failed to reach spine", response)
 
     @patch('mhs_common.state.work_description.create_new_work_description')
-    @test_utilities.async_test
     async def test_resync_failure(self, wd_mock):
         async def resync_raises_exception(fake_key):
             raise resynchroniser.SyncAsyncResponseException()
@@ -92,7 +89,6 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
         self.assertEqual(status, 500)
         self.assertEqual("No async response received from sync-async store", response)
 
-    @test_utilities.async_test
     async def test_success_response(self):
         wdo = MagicMock()
         wdo.update.return_value = test_utilities.awaitable(None)
@@ -103,7 +99,6 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
         wdo.set_outbound_status.assert_called_once_with(
             wd.MessageStatus.OUTBOUND_SYNC_ASYNC_MESSAGE_SUCCESSFULLY_RESPONDED)
 
-    @test_utilities.async_test
     async def test_failure_response(self):
         wdo = MagicMock()
         wdo.update.return_value = test_utilities.awaitable(None)
@@ -114,7 +109,7 @@ class TestSyncAsyncWorkflowOutbound(TestCase):
         wdo.set_outbound_status.assert_called_once_with(wd.MessageStatus.OUTBOUND_SYNC_ASYNC_MESSAGE_FAILED_TO_RESPOND)
 
 
-class TestSyncAsyncWorkflowInbound(TestCase):
+class TestSyncAsyncWorkflowInbound(IsolatedAsyncioTestCase):
 
     message_data = MessageData(None, 'wqe', None, None)
 
@@ -124,7 +119,6 @@ class TestSyncAsyncWorkflowInbound(TestCase):
 
         self.workflow = sync_async.SyncAsyncWorkflow(sync_async_store=self.persistence)
 
-    @test_utilities.async_test
     async def test_inbound_workflow_happy_path(self):
         self.workflow.sync_async_store.add.return_value = test_utilities.awaitable(True)
         self.work_description.set_inbound_status.return_value = test_utilities.awaitable(True)

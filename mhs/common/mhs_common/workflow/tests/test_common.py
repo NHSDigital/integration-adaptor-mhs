@@ -6,7 +6,6 @@ from unittest import mock
 from mhs_common.request import request_body_schema
 from mhs_common.workflow.common import MessageData
 from utilities import test_utilities
-from utilities.test_utilities import async_test
 
 import mhs_common.state.work_description as wd
 from mhs_common.workflow import common
@@ -54,13 +53,12 @@ class DummyCommonWorkflow(common.CommonWorkflow):
 
 
 
-class TestCommonWorkflow(unittest.TestCase):
+class TestCommonWorkflow(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.mock_routing_reliability = mock.MagicMock()
 
         self.workflow = DummyCommonWorkflow(self.mock_routing_reliability)
 
-    @async_test
     async def test_lookup_endpoint_details(self):
         self.mock_routing_reliability.get_end_point.return_value = test_utilities.awaitable({
             MHS_END_POINT_KEY: [MHS_END_POINT_VALUE],
@@ -77,7 +75,6 @@ class TestCommonWorkflow(unittest.TestCase):
         self.assertEqual(details['cpa_id'], MHS_CPA_ID_VALUE)
         self.assertEqual(details['to_asid'], MHS_ASID_VALUE)
 
-    @async_test
     async def test_lookup_endpoint_details_handles_no_ods_code_passed(self):
         self.mock_routing_reliability.get_end_point.return_value = test_utilities.awaitable({
             MHS_END_POINT_KEY: [MHS_END_POINT_VALUE],
@@ -97,21 +94,18 @@ class TestCommonWorkflow(unittest.TestCase):
         self.assertEqual(details['cpa_id'], MHS_CPA_ID_VALUE)
         self.assertEqual(details['to_asid'], MHS_ASID_VALUE)
 
-    @async_test
     async def test_lookup_endpoint_details_error(self):
         self.mock_routing_reliability.get_end_point.side_effect = Exception()
 
         with self.assertRaises(Exception):
             await self.workflow._lookup_endpoint_details(INTERACTION_DETAILS)
 
-    @async_test
     async def test_extract_endpoint_url_no_endpoints_returned(self):
         endpoint_details = {MHS_END_POINT_KEY: []}
 
         with self.assertRaises(IndexError):
             common.CommonWorkflow._extract_endpoint_url(endpoint_details)
 
-    @async_test
     async def test_extract_endpoint_url_multiple_endpoints_returned(self):
         expected_url = "first_url"
         endpoint_details = {MHS_END_POINT_KEY: [expected_url, "second-url"]}
@@ -120,14 +114,12 @@ class TestCommonWorkflow(unittest.TestCase):
 
         self.assertEqual(expected_url, actual_url)
 
-    @async_test
     async def test_extract_no_to_asid_returned(self):
         endpoint_details = {MHS_TO_ASID: []}
 
         with self.assertRaises(IndexError):
             common.CommonWorkflow._extract_asid(endpoint_details)
 
-    @async_test
     async def test_extract_asid_multiple_returned(self):
         expected_asid = "asid 1"
         endpoint_details = {MHS_TO_ASID: [expected_asid, "asid 2"]}
