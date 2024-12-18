@@ -1,7 +1,5 @@
 from copy import copy
-from unittest import TestCase
-
-from utilities.test_utilities import async_test
+from unittest import IsolatedAsyncioTestCase
 
 import lookup.sds_client as sds_client
 import lookup.sds_exception as re
@@ -37,9 +35,8 @@ expected_mhs_attributes = {
 }
 
 
-class TestSDSClient(TestCase):
+class TestSDSClient(IsolatedAsyncioTestCase):
 
-    @async_test
     async def test_mhs_details_lookup(self):
         client = mocks.mocked_sds_client()
 
@@ -53,7 +50,6 @@ class TestSDSClient(TestCase):
         # Assert exact number of attributes
         self.assertEqual(len(attributes), len(expected_mhs_attributes))
 
-    @async_test
     async def test_accredited(self):
         client = mocks.mocked_sds_client()
 
@@ -64,7 +60,6 @@ class TestSDSClient(TestCase):
         self.assertEqual(result[0]['attributes']['uniqueIdentifier'][0], ASID)
         self.assertEqual(len(result[0]['attributes']), 2)
 
-    @async_test
     async def test_get_mhs_lookup(self):
         client = mocks.mocked_sds_client()
 
@@ -78,7 +73,6 @@ class TestSDSClient(TestCase):
         # Assert exact number of attributes, minus the unique values
         self.assertEqual(len(attributes), len(expected_mhs_attributes))
 
-    @async_test
     async def test_should_return_result_as_dictionary(self):
         client = mocks.mocked_sds_client()
 
@@ -86,18 +80,15 @@ class TestSDSClient(TestCase):
 
         self.assertIsInstance(attributes, dict)
 
-    @async_test
     async def test_no_results(self):
         client = mocks.mocked_sds_client()
         with self.assertRaises(re.SDSException):
             await client.get_mhs_details("fake code", "fake interaction")
 
-    @async_test
     async def test_should_raise_error_if_no_connection_set(self):
         with self.assertRaises(ValueError):
             sds_client.SDSClient(None, "ou=search,o=base")
 
-    @async_test
     async def test_should_raise_error_if_no_search_base_set(self):
         with self.assertRaises(ValueError):
             sds_client.SDSClient(mocks.fake_ldap_connection(), None)

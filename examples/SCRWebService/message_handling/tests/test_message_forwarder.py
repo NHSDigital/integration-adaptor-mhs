@@ -3,13 +3,12 @@ import unittest
 from unittest import mock
 from message_handling import message_forwarder as mh
 from builder.pystache_message_builder import MessageGenerationError
-from utilities.test_utilities import async_test, awaitable
+from utilities.test_utilities import awaitable
 
 
-class TestMessageForwarder(unittest.TestCase):
+class TestMessageForwarder(unittest.IsolatedAsyncioTestCase):
     """Tests associated with the MessageForwarder class"""
 
-    @async_test
     async def test_forwarding_message_attempts_to_populate_message_template(self):
         template_mock = mock.MagicMock()
         sender_mock = mock.MagicMock()
@@ -21,7 +20,6 @@ class TestMessageForwarder(unittest.TestCase):
         await handler.forward_message_to_mhs('interaction', input_json, None, None)
         template_mock.populate_template.assert_called_with(input_json)
 
-    @async_test
     async def test_exceptions_raised_during_message_population_are_caught_and_raised_as_MessageGenerationError(self):
         template_mock = mock.MagicMock()
         sender_mock = mock.MagicMock()
@@ -35,7 +33,6 @@ class TestMessageForwarder(unittest.TestCase):
             await handler.forward_message_to_mhs('interaction', input_json, None, None)
             self.assertEqual(str(e), 'Exception')
 
-    @async_test
     async def test_exception_raised_if_no_message_template_populator_found(self):
         sender_mock = mock.MagicMock()
         handler = mh.MessageForwarder({}, sender_mock)
