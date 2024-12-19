@@ -2,7 +2,6 @@
 import unittest.mock
 
 import comms.proton_queue_adaptor
-import utilities.test_utilities
 
 TEST_UUID = "TEST UUID"
 TEST_MESSAGE = {'test': 'message'}
@@ -21,7 +20,7 @@ TEST_TTL = 100
 
 
 @unittest.mock.patch('utilities.message_utilities.get_uuid', new=lambda: TEST_UUID)
-class TestProtonQueueAdaptor(unittest.TestCase):
+class TestProtonQueueAdaptor(unittest.IsolatedAsyncioTestCase):
     """Class to contain tests for the ProtonQueueAdaptor functionality."""
 
     def setUp(self) -> None:
@@ -54,7 +53,6 @@ class TestProtonQueueAdaptor(unittest.TestCase):
 
     # TESTING SEND ASYNC METHOD
 
-    @utilities.test_utilities.async_test
     async def test_send_async_success(self):
         """Test happy path of send_async."""
         awaitable = self.service.send_async(TEST_MESSAGE)
@@ -64,7 +62,6 @@ class TestProtonQueueAdaptor(unittest.TestCase):
 
         self.assert_proton_called_correctly()
 
-    @utilities.test_utilities.async_test
     async def test_send_async_with_properties_success(self):
         """Test happy path of send_async."""
         awaitable = self.service.send_async(TEST_MESSAGE, properties=TEST_PROPERTIES)
@@ -88,7 +85,7 @@ class TestProtonQueueAdaptor(unittest.TestCase):
 
 
 @unittest.mock.patch('utilities.message_utilities.get_uuid', new=lambda: TEST_UUID)
-class TestProtonQueueAdaptorRetries(unittest.TestCase):
+class TestProtonQueueAdaptorRetries(unittest.IsolatedAsyncioTestCase):
     """Class to contain tests for the ProtonQueueAdaptor retry functionality."""
 
     def setUp(self) -> None:
@@ -106,7 +103,6 @@ class TestProtonQueueAdaptorRetries(unittest.TestCase):
 
     # TESTING SEND ASYNC METHOD
 
-    @utilities.test_utilities.async_test
     async def test_send_async_when_first_url_succeeds(self):
         """Test happy path of send_async."""
         awaitable = self.service.send_async(TEST_MESSAGE)
@@ -121,7 +117,6 @@ class TestProtonQueueAdaptorRetries(unittest.TestCase):
 
         self.assert_proton_called_correctly(TEST_QUEUE_MULTIPLE_URLS[0], call_index=0, call_count=1)
 
-    @utilities.test_utilities.async_test
     async def test_send_async_when_first_url_fails(self):
         """Test happy path of send_async."""
         awaitable = self.service.send_async(TEST_MESSAGE)
@@ -137,7 +132,6 @@ class TestProtonQueueAdaptorRetries(unittest.TestCase):
         self.assert_proton_called_correctly(TEST_QUEUE_MULTIPLE_URLS[0], call_index=0, call_count=2)
         self.assert_proton_called_correctly(TEST_QUEUE_MULTIPLE_URLS[1], call_index=1, call_count=2)
 
-    @utilities.test_utilities.async_test
     async def test_send_async_when_second_both_urls_fail_once(self):
         """Test happy path of send_async."""
         awaitable = self.service.send_async(TEST_MESSAGE)
@@ -156,7 +150,6 @@ class TestProtonQueueAdaptorRetries(unittest.TestCase):
         self.assert_proton_called_correctly(TEST_QUEUE_MULTIPLE_URLS[1], call_index=1, call_count=len(side_effects))
         self.assert_proton_called_correctly(TEST_QUEUE_MULTIPLE_URLS[0], call_index=2, call_count=len(side_effects))
 
-    @utilities.test_utilities.async_test
     async def test_send_async_when_second_both_urls_fail_twice(self):
         """Test happy path of send_async."""
         awaitable = self.service.send_async(TEST_MESSAGE)

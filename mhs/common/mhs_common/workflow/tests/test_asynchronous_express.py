@@ -17,7 +17,6 @@ from mhs_common.state import work_description
 from mhs_common.state.work_description import MessageStatus
 from mhs_common.workflow.common import MessageData
 from utilities import test_utilities
-from utilities.test_utilities import async_test
 
 FROM_PARTY_KEY = 'from-party-key'
 TO_PARTY_KEY = 'to-party-key'
@@ -64,7 +63,7 @@ MHS_RETRY_VAL = 3
 TEST_MESSAGE_DIR = "mhs_common/messages/tests/test_messages"
 
 
-class TestAsynchronousExpressWorkflow(unittest.TestCase):
+class TestAsynchronousExpressWorkflow(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.mock_persistence_store = mock.MagicMock()
         self.mock_transmission_adaptor = mock.MagicMock()
@@ -100,7 +99,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
     ############################
 
     @mock.patch('utilities.integration_adaptors_logger.IntegrationAdaptorsLogger.audit')
-    @async_test
     async def test_successful_handle_outbound_message(self, audit_log_mock):
         response = mock.MagicMock()
         response.code = 202
@@ -145,7 +143,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
                                           })
 
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_handle_outbound_doesnt_overwrite_work_description(self, wdo_mock):
         response = mock.MagicMock()
         response.code = 202
@@ -177,7 +174,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
         wdo_mock.assert_not_called()
         self.assertEqual(wdo.workflow, 'This should not change')
 
-    @async_test
     async def test_handle_outbound_message_serialisation_fails(self):
         self.setup_mock_work_description()
         self._setup_routing_mock()
@@ -195,7 +191,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
                          self.mock_work_description.set_outbound_status.call_args_list)
         self.mock_transmission_adaptor.make_request.assert_not_called()
 
-    @async_test
     async def test_handle_outbound_message_fails_with_serialised_message_too_large(self):
         self.setup_mock_work_description()
         self._setup_routing_mock()
@@ -213,7 +208,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
                          self.mock_work_description.set_outbound_status.call_args_list)
         self.mock_transmission_adaptor.make_request.assert_not_called()
 
-    @async_test
     async def test_handle_outbound_message_error_when_looking_up_spine_url(self):
         self.setup_mock_work_description()
         self.mock_routing_reliability.get_end_point.side_effect = Exception()
@@ -229,7 +223,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
                          self.mock_work_description.set_outbound_status.call_args_list)
         self.mock_transmission_adaptor.make_request.assert_not_called()
 
-    @async_test
     async def test_non_http_error_handled_when_making_request_to_spine(self):
         self.setup_mock_work_description()
         self._setup_routing_mock()
@@ -252,7 +245,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
             self.mock_work_description.set_outbound_status.call_args_list)
 
     @mock.patch('utilities.integration_adaptors_logger.IntegrationAdaptorsLogger.audit')
-    @async_test
     async def test_well_formed_soap_error_response_from_spine(self, audit_log_mock):
         self.setup_mock_work_description()
         self._setup_routing_mock()
@@ -293,7 +285,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
                                           fparams={'WorkflowName': 'async-express'})
 
     @mock.patch('utilities.integration_adaptors_logger.IntegrationAdaptorsLogger.audit')
-    @async_test
     async def test_unhandled_response_from_spine(self, audit_log_mock):
         self.setup_mock_work_description()
         self._setup_routing_mock()
@@ -322,7 +313,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
                                           fparams={'WorkflowName': 'async-express'})
 
     @mock.patch('utilities.integration_adaptors_logger.IntegrationAdaptorsLogger.audit')
-    @async_test
     async def test_well_formed_ebxml_error_response_from_spine(self, audit_log_mock):
         self.setup_mock_work_description()
         self._setup_routing_mock()
@@ -381,7 +371,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
     ############################
 
     @mock.patch('utilities.integration_adaptors_logger.IntegrationAdaptorsLogger.audit')
-    @async_test
     async def test_successful_handle_inbound_message(self, audit_log_mock):
         self.setup_mock_work_description()
         self.mock_queue_adaptor.send_async.return_value = test_utilities.awaitable(None)
@@ -397,7 +386,6 @@ class TestAsynchronousExpressWorkflow(unittest.TestCase):
             '{WorkflowName} inbound workflow completed. Message placed on queue, returning {Acknowledgement} to spine',
             fparams={'Acknowledgement': 'INBOUND_RESPONSE_SUCCESSFULLY_PROCESSED', 'WorkflowName': 'async-express'})
 
-    @async_test
     async def test_handle_inbound_message_error_putting_message_onto_queue_despite_retries(self):
         self.setup_mock_work_description()
         future = asyncio.Future()

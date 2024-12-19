@@ -11,7 +11,7 @@ Usage:
    the ability to rollback.
 4. Run these commands, specifying the version you wish to publish as.
    ```shell
-   VERSION=0.6
+   VERSION=0.7
    REGISTRY="$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.eu-west-2.amazonaws.com"
    aws ecr get-login-password --region eu-west-2 | docker login -u AWS --password-stdin $REGISTRY
    docker buildx build --platform linux/amd64 --tag $REGISTRY/jenkins-worker:$VERSION --push .

@@ -5,7 +5,6 @@ import uuid
 from exceptions import MaxRetriesExceeded
 from persistence.persistence_adaptor import PersistenceAdaptor, DuplicatePrimaryKeyError
 from persistence.persistence_adaptor_factory import get_persistence_adaptor, PERSISTENCE_ADAPTOR_TYPES
-from utilities import test_utilities
 
 MONGODB_ENDPOINT_URL = 'mongodb://mongodb:27017'
 DYNAMODB_ENDPOINT_URL = 'http://dynamodb:8000'
@@ -33,16 +32,14 @@ DB_KEY_FIELDS = {
 }
 
 
-class DbAdaptorsTests(unittest.TestCase):
+class DbAdaptorsTests(unittest.IsolatedAsyncioTestCase):
 
     keys = []
 
-    @test_utilities.async_test
-    async def setUp(self) -> None:
+    async def asyncSetUp(self) -> None:
         await self.clean_up()
 
-    @test_utilities.async_test
-    async def tearDown(self) -> None:
+    async def asyncTearDown(self) -> None:
         await self.clean_up()
 
     async def clean_up(self):
@@ -52,7 +49,6 @@ class DbAdaptorsTests(unittest.TestCase):
                 await adaptor.delete(key)
         self.keys = []
 
-    @test_utilities.async_test
     async def test_can_CRUD(self):
         for adaptor_type in PERSISTENCE_ADAPTOR_TYPES:
             with self.subTest(f"{adaptor_type}"):
@@ -93,7 +89,6 @@ class DbAdaptorsTests(unittest.TestCase):
                 value = await adaptor.get(other_key)
                 self.assertIsNone(value)
 
-    @test_utilities.async_test
     async def test_error_if_same_key_inserted_twice(self):
         for adaptor_type in PERSISTENCE_ADAPTOR_TYPES:
             with self.subTest(f"{adaptor_type}"):
@@ -112,11 +107,9 @@ class DbAdaptorsTests(unittest.TestCase):
                 else:
                     self.fail(f"Expected '{type(DuplicatePrimaryKeyError)}' exception not raised")
 
-    @test_utilities.async_test
     async def test_error_if_data_to_add_has_primary_key_in(self):
         await self._test_error_if_data_has_primary_key_in(PersistenceAdaptor.add.__name__)
 
-    @test_utilities.async_test
     async def test_error_if_data_to_update_has_primary_key_in(self):
         await self._test_error_if_data_has_primary_key_in(PersistenceAdaptor.update.__name__)
 

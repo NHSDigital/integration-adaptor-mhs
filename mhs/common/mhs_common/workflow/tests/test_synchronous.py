@@ -10,7 +10,6 @@ from mhs_common.workflow import synchronous as sync
 from mhs_common import workflow
 from mhs_common.state import work_description
 from utilities import test_utilities
-from utilities.test_utilities import async_test
 
 PARTY_KEY = "313"
 LOOKUP_RESPONSE = {
@@ -20,7 +19,7 @@ LOOKUP_RESPONSE = {
 MAX_REQUEST_SIZE = 5000000
 
 
-class TestSynchronousWorkflow(unittest.TestCase):
+class TestSynchronousWorkflow(unittest.IsolatedAsyncioTestCase):
 
     def setUp(self) -> None:
         self.wd_store = mock.MagicMock()
@@ -36,7 +35,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
         )
 
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_should_set_store_outbound_status_to_received_when_handling_outbound_message(self, wd_mock):
         wdo_mock = mock.MagicMock()
         wd_mock.return_value = wdo_mock
@@ -57,7 +55,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch.object(sync, 'logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_asid_lookup_failure_set_store(self, wd_mock, log_mock):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -79,7 +76,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch.object(sync, 'logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_prepare_message_failure(self, wd_mock, log_mock):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -104,7 +100,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch('mhs_common.messages.soap_envelope.SoapEnvelope')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_prepare_message_success_but_message_too_large(self, wd_mock, mock_soap_envelope):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -129,7 +124,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch.object(sync, 'logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_send_message_failure(self, wd_mock, log_mock):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -158,7 +152,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch.object(sync, 'logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_send_message_http_error(self, wd_mock, log_mock):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -185,7 +178,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
         self.assertEqual(text, 'Error(s) received from Spine: HTTP 409: Conflict')
 
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_send_message_http_status_code_err(self, wd_mock):
         self._setup_success_workflow()
         wdo = mock.MagicMock()
@@ -210,7 +202,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
         self.assertEqual(text[:40], 'Error(s) received from Spine: HTTP 451: ')
 
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_send_message_success_message(self, wd_mock):
         self._setup_success_workflow()
         wdo = mock.MagicMock()
@@ -232,7 +223,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch('mhs_common.workflow.synchronous.logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_success_audit_log_should_be_called_when_successful_response_is_returned_from_spine(self, wd_mock,
                                                                                                       log_mock):
         self._setup_success_workflow()
@@ -255,7 +245,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
 
     @mock.patch('mhs_common.workflow.synchronous.logger')
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_initial_audit_log_should_be_called_handling_is_invoked(self, wd_mock, log_mock):
         self._setup_success_workflow()
         wdo = mock.MagicMock()
@@ -279,7 +268,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
         log_mock.audit('Outbound Synchronous workflow invoked.')
 
     @mock.patch('mhs_common.state.work_description.create_new_work_description')
-    @async_test
     async def test_handle_outbound_errors_when_no_asid_provided(self, wd_mock):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -296,12 +284,10 @@ class TestSynchronousWorkflow(unittest.TestCase):
         self.assertEqual(error, 400)
         self.assertEqual(text, '`from_asid` header field required for sync messages')
 
-    @async_test
     async def test_no_inbound(self):
         with self.assertRaises(NotImplementedError):
             await self.wf.handle_inbound_message("1", "2", mock.MagicMock(), "payload")
 
-    @async_test
     async def test_prepare_message(self):
         id, headers, message = await self.wf._prepare_outbound_message("message_id", "to_asid", "from_asid", RequestBody("message", [], []),
                                                                        {'service': 'service', 'action': 'action'})
@@ -312,7 +298,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
                                    'type': 'text/xml'})
 
     @mock.patch('mhs_common.messages.soap_envelope.SoapEnvelope')
-    @async_test
     async def test_prepare_message_correct_constructor_call(self, envelope_patch):
         envelope = mock.MagicMock()
         envelope_patch.return_value = envelope
@@ -332,14 +317,12 @@ class TestSynchronousWorkflow(unittest.TestCase):
         envelope.serialize.assert_called_once()
 
     @mock.patch('mhs_common.messages.soap_envelope.SoapEnvelope.serialize')
-    @async_test
     async def test_prepare_message_raises_exception(self, serialize_mock):
         serialize_mock.side_effect = Exception()
         with self.assertRaises(Exception):
             await self.wf._prepare_outbound_message("message_id", "to_asid", "from_asid", "mesasge",
                                                     {'service': 'service', 'action': 'action'})
 
-    @async_test
     async def test_success_response(self):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)
@@ -348,7 +331,6 @@ class TestSynchronousWorkflow(unittest.TestCase):
         await self.wf.set_successful_message_response(wdo)
         wdo.set_outbound_status.assert_called_once_with(work_description.MessageStatus.SYNC_RESPONSE_SUCCESSFUL)
 
-    @async_test
     async def test_failure_response(self):
         wdo = mock.MagicMock()
         wdo.publish.return_value = test_utilities.awaitable(None)

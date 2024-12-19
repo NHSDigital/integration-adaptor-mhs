@@ -1,10 +1,10 @@
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch, Mock
 
 from tornado import httpclient
 
 from comms.common_https import CommonHttps
-from utilities.test_utilities import async_test, awaitable
+from utilities.test_utilities import awaitable
 from unittest.mock import ANY
 
 URL = "ABC.ABC"
@@ -18,9 +18,8 @@ HTTP_PROXY_HOST = "http_proxy"
 HTTP_PROXY_PORT = 3128
 
 
-class TestCommonHttps(TestCase):
+class TestCommonHttps(IsolatedAsyncioTestCase):
 
-    @async_test
     async def test_make_request(self):
         with patch.object(httpclient.AsyncHTTPClient(), "fetch") as mock_fetch:
             return_value = Mock()
@@ -46,7 +45,6 @@ class TestCommonHttps(TestCase):
 
             self.assertIs(actual_response, return_value, "Expected content should be returned.")
 
-    @async_test
     async def test_make_request_defaults(self):
         with patch.object(httpclient.AsyncHTTPClient(), "fetch") as mock_fetch:
             return_value = Mock()
@@ -68,7 +66,6 @@ class TestCommonHttps(TestCase):
 
             self.assertIs(actual_response, return_value, "Expected content should be returned.")
 
-    @async_test
     async def test_make_request_with_no_cacert_uses_ssl_default_verify_path_cafile(self):
         import ssl
         with patch.object(httpclient.AsyncHTTPClient(), "fetch") as mock_fetch, \

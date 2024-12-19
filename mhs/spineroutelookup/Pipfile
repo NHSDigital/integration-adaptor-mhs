@@ -4,8 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-coverage = "~=4.5"
-unittest-xml-reporting = "~=2.5"
+coverage = "~=7.6"
+unittest-xml-reporting = "~=3.2"
 
 [packages]
 tornado = "~=6.0"
@@ -16,7 +16,7 @@ redis = "~=3.3"
 integration-adaptors-common = {editable = true, path = "./../../common"}
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"
 
 [scripts]
 unittests = 'python -m xmlrunner -o test-reports -v'
