@@ -23,7 +23,7 @@ JSON_RESPONSE = '{"one": 1, "two": "2"}'
 EXPECTED_RESPONSE = {"one": 1, "two": "2"}
 
 
-class TestSpineRouteLookupClient(unittest.TestCase):
+class TestSpineRouteLookupClient(unittest.IsolatedAsyncioTestCase):
 
     def setUp(self) -> None:
         # Mock the httpclient.AsyncHTTPClient() constructor
@@ -35,7 +35,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         self.mock_http_client = unittest.mock.MagicMock()
         mock_http_client_constructor.return_value = self.mock_http_client
 
-    @test_utilities.async_test
     async def test_should_retrieve_endpoint_details_if_given_org_code(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE)
         self._given_http_client_returns_a_json_response()
@@ -46,7 +45,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         expected_url = self._build_url(path=ROUTING_PATH)
         self._assert_http_client_called_with_expected_args(expected_url, ca_certs=ANY)
 
-    @test_utilities.async_test
     async def test_should_retrieve_endpoint_details_with_default_org_code(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE)
         self._given_http_client_returns_a_json_response()
@@ -57,7 +55,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         expected_url = self._build_url(path=ROUTING_PATH, org_code=SPINE_ORG_CODE)
         self._assert_http_client_called_with_expected_args(expected_url, ca_certs=ANY)
 
-    @test_utilities.async_test
     async def test_should_pass_through_exception_if_raised_when_retrieving_endpoint_details(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE)
         self.mock_http_client.fetch.side_effect = IOError("Something went wrong!")
@@ -65,7 +62,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         with self.assertRaises(IOError):
             await self.routing.get_end_point(SERVICE_ID, ORG_CODE)
 
-    @test_utilities.async_test
     async def test_should_use_certificate_details_if_provided_when_retrieving_endpoint_details(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE,
                                                                   client_cert=CLIENT_CERT_PATH,
@@ -78,7 +74,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         self._assert_http_client_called_with_expected_args(expected_url, client_cert=CLIENT_CERT_PATH,
                                                            client_key=CLIENT_KEY_PATH, ca_certs=CA_CERTS_PATH)
 
-    @test_utilities.async_test
     async def test_should_use_proxy_if_provided_when_retrieving_endpoint_details(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE,
                                                                   http_proxy_host=HTTP_PROXY_HOST,
@@ -91,7 +86,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         self._assert_http_client_called_with_expected_args(expected_url, proxy_host=HTTP_PROXY_HOST,
                                                            proxy_port=HTTP_PROXY_PORT, ca_certs=ANY)
 
-    @test_utilities.async_test
     async def test_should_retrieve_reliability_details_if_given_org_code(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE)
         self._given_http_client_returns_a_json_response()
@@ -102,7 +96,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         expected_url = self._build_url(path=RELIABILITY_PATH)
         self._assert_http_client_called_with_expected_args(expected_url, ca_certs=ANY)
 
-    @test_utilities.async_test
     async def test_should_retrieve_reliability_details_with_default_org_code(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE)
         self._given_http_client_returns_a_json_response()
@@ -113,7 +106,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         expected_url = self._build_url(path=RELIABILITY_PATH, org_code=SPINE_ORG_CODE)
         self._assert_http_client_called_with_expected_args(expected_url, ca_certs=ANY)
 
-    @test_utilities.async_test
     async def test_should_pass_through_exception_if_raised_when_retrieving_reliability_details(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE)
         self.mock_http_client.fetch.side_effect = IOError("Something went wrong!")
@@ -121,7 +113,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         with self.assertRaises(IOError):
             await self.routing.get_reliability(SERVICE_ID, ORG_CODE)
 
-    @test_utilities.async_test
     async def test_should_use_certificate_details_if_provided_when_retrieving_reliability_details(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE,
                                                                   client_cert=CLIENT_CERT_PATH,
@@ -134,7 +125,6 @@ class TestSpineRouteLookupClient(unittest.TestCase):
         self._assert_http_client_called_with_expected_args(expected_url, client_cert=CLIENT_CERT_PATH,
                                                            client_key=CLIENT_KEY_PATH, ca_certs=CA_CERTS_PATH)
 
-    @test_utilities.async_test
     async def test_should_use_proxy_if_provided_when_retrieving_reliability_details(self):
         self.routing = spine_route_lookup_client.SpineRouteLookupClient(BASE_URL, SPINE_ORG_CODE,
                                                                   http_proxy_host=HTTP_PROXY_HOST,

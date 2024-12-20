@@ -7,7 +7,6 @@ from mhs_common.request import request_body_schema
 from mhs_common.workflow import common_asynchronous
 from mhs_common.workflow.common import MessageData
 from utilities import test_utilities
-from utilities.test_utilities import async_test
 
 SERVICE = 'service'
 ACTION = 'action'
@@ -44,7 +43,7 @@ class DummyCommonAsynchronousWorkflow(common_asynchronous.CommonAsynchronousWork
         pass
 
 
-class TestCommonAsynchronousWorkflow(unittest.TestCase):
+class TestCommonAsynchronousWorkflow(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         party_key = 'PARTY_KEY'
         persistence_store = mock.MagicMock()
@@ -60,7 +59,6 @@ class TestCommonAsynchronousWorkflow(unittest.TestCase):
                                                         max_request_size,
                                                         self.mock_routing_reliability)
 
-    @async_test
     async def test_lookup_reliability_details(self):
         self.mock_routing_reliability.get_reliability.return_value = test_utilities.awaitable(
             EXPECTED_RELIABILITY_DETAILS)
@@ -70,7 +68,6 @@ class TestCommonAsynchronousWorkflow(unittest.TestCase):
         self.mock_routing_reliability.get_reliability.assert_called_with(SERVICE_ID, ODS_CODE)
         self.assertEqual(reliability_details, EXPECTED_RELIABILITY_DETAILS)
 
-    @async_test
     async def test_lookup_reliability_details_error(self):
         self.mock_routing_reliability.get_reliability.side_effect = Exception()
 

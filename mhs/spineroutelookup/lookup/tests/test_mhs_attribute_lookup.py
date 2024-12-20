@@ -1,8 +1,7 @@
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest import mock
 
 from utilities import test_utilities
-from utilities.test_utilities import async_test
 
 import lookup.mhs_attribute_lookup as mhs_attribute_lookup
 import lookup.tests.ldap_mocks as mocks
@@ -39,12 +38,11 @@ expected_mhs_attributes = {
 }
 
 
-class TestMHSAttributeLookup(TestCase):
+class TestMHSAttributeLookup(IsolatedAsyncioTestCase):
 
     def setUp(self) -> None:
         self.cache = mock.MagicMock()
 
-    @async_test
     async def test_get_endpoint(self):
         self.cache.retrieve_mhs_attributes_value.return_value = test_utilities.awaitable(None)
         self.cache.add_cache_value.return_value = test_utilities.awaitable(None)
@@ -54,17 +52,14 @@ class TestMHSAttributeLookup(TestCase):
 
         self.assertEqual(expected_mhs_attributes, attributes)
 
-    @async_test
     async def test_no_client(self):
         with self.assertRaises(ValueError):
             mhs_attribute_lookup.MHSAttributeLookup(None, self.cache)
 
-    @async_test
     async def test_no_cache(self):
         with self.assertRaises(ValueError):
             mhs_attribute_lookup.MHSAttributeLookup(mocks.mocked_sds_client(), None)
 
-    @async_test
     async def test_value_added_to_cache(self):
         handler = mhs_attribute_lookup.MHSAttributeLookup(mocks.mocked_sds_client(), self.cache)
         self.cache.retrieve_mhs_attributes_value.return_value = test_utilities.awaitable(None)
@@ -74,7 +69,6 @@ class TestMHSAttributeLookup(TestCase):
 
         self.cache.add_cache_value.assert_called_with(ODS_CODE, INTERACTION_ID, result)
 
-    @async_test
     async def test_sds_not_called_when_value_in_cache(self):
         expected_value = {"some-key": "some-value"}
         self.cache.retrieve_mhs_attributes_value.return_value = test_utilities.awaitable(expected_value)
@@ -85,7 +79,6 @@ class TestMHSAttributeLookup(TestCase):
         self.assertEqual(result, expected_value)
         handler.sds_client.assert_not_called()
 
-    @async_test
     async def test_should_not_propagate_exception_when_retrieving_cache_entry(self):
         self.cache.retrieve_mhs_attributes_value.side_effect = Exception
         self.cache.add_cache_value.return_value = test_utilities.awaitable(None)
@@ -95,7 +88,6 @@ class TestMHSAttributeLookup(TestCase):
 
         self.assertEqual(expected_mhs_attributes, attributes)
 
-    @async_test
     async def test_should_not_propagate_exception_when_storing_cache_entry(self):
         self.cache.retrieve_mhs_attributes_value.side_effect = test_utilities.awaitable(None)
         self.cache.add_cache_value.side_effect = None

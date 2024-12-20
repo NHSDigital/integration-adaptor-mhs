@@ -1,11 +1,11 @@
 import ssl
 from pathlib import Path
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch, sentinel, call
 
 import definitions
 from tornado import httpclient
-from utilities.test_utilities import async_test, awaitable
+from utilities.test_utilities import awaitable
 
 from outbound.transmission import outbound_transmission
 
@@ -44,12 +44,11 @@ HTTP_PROXY_HOST = "proxy_host"
 HTTP_PROXY_PORT = 3128
 
 
-class TestOutboundTransmission(TestCase):
+class TestOutboundTransmission(IsolatedAsyncioTestCase):
     def setUp(self):
         self.transmission = outbound_transmission.OutboundTransmission(CLIENT_CERT_PATH, CLIENT_KEY_PATH, CA_CERTS_PATH,
                                                                        MAX_RETRIES, RETRY_DELAY, VALIDATE_CERT)
 
-    @async_test
     async def test_should_make_HTTP_request_with_default_parameters(self):
         with patch.object(httpclient.AsyncHTTPClient(), "fetch") as mock_fetch:
             sentinel.result.code = 200
@@ -72,7 +71,6 @@ class TestOutboundTransmission(TestCase):
 
             self.assertIs(actual_response, sentinel.result, "Expected content should be returned.")
 
-    @async_test
     async def test_should_use_proxy_details_if_provided(self):
         self.transmission = outbound_transmission.OutboundTransmission(CLIENT_CERT_PATH, CLIENT_KEY_PATH, CA_CERTS_PATH,
                                                                        MAX_RETRIES, RETRY_DELAY, VALIDATE_CERT, HTTP_PROXY_HOST,
@@ -98,7 +96,6 @@ class TestOutboundTransmission(TestCase):
 
             self.assertIs(actual_response, sentinel.result, "Expected content should be returned.")
 
-    @async_test
     async def test_should_not_retry_request_if_non_retriable_exception_raised(self):
         test_cases = [
             ("HTTPClientError 400", httpclient.HTTPClientError(code=400), httpclient.HTTPClientError),
@@ -112,7 +109,6 @@ class TestOutboundTransmission(TestCase):
                     with self.assertRaises(expected_result):
                         await self.transmission.make_request(URL_VALUE, HEADERS, MESSAGE)
 
-    @async_test
     async def test_should_retry_request_if_retriable_exception_raised(self):
         test_cases = [
             ("HTTPClientError 599", httpclient.HTTPClientError(code=599)),
@@ -130,7 +126,6 @@ class TestOutboundTransmission(TestCase):
                     self.assertIs(actual_response, sentinel.result, "Expected content should be returned.")
 
     @patch("asyncio.sleep")
-    @async_test
     async def test_should_try_request_twice_if_max_retries_set_to_one(self, mock_sleep):
         transmission = outbound_transmission.OutboundTransmission(CLIENT_CERT_PATH, CLIENT_KEY_PATH, CA_CERTS_PATH, 1,
                                                                   RETRY_DELAY, VALIDATE_CERT)
@@ -145,7 +140,6 @@ class TestOutboundTransmission(TestCase):
             self.assertEqual(mock_fetch.call_count, 2)
 
     @patch("asyncio.sleep")
-    @async_test
     async def test_should_retry_request_up_to_configured_max_retries(self, mock_sleep):
         mock_sleep.return_value = awaitable(None)
 
