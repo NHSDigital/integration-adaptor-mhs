@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pipenv"
+    directories:
+      - "/common"
+      - "/examples/SCR"
+      - "/examples/SCRWebService"
+      - "/examples/supplier-example"
+      - "/integration-tests/fake_spine"
+      - "/integration-tests/fake_spineroutelookup"
+      - "/integration-tests/integration_tests"
+      - "/mhs/common"
+      - "/mhs/inbound"
+      - "/mhs/outbound"
+      - "/mhs/spineroutelookup"
+      - "/pipeline/scripts/check-target-group-health"
+    schedule:
+      interval: "weekly"
