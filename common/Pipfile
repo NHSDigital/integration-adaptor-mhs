@@ -12,7 +12,7 @@ tornado = "~=6.4.2"
 python-qpid-proton = "~=0.39.0"
 pystache = "~=0.6.5"
 lxml = "~=5.3"
-isodate = "~=0.6.1"
+isodate = "~=0.7.2"
 aioboto3 = "~=11.3.1"
 motor = "~=3.5.1"
 
