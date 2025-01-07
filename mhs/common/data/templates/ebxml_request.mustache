@@ -40,10 +40,10 @@ Content-Transfer-Encoding: 8bit
             <hl7ebxml:Payload style="HL7" encoding="XML" version="3.0"/>
         </eb:Reference>{{#attachments}}
         <eb:Reference{{#document_id}} eb:id="{{document_id}}"{{/document_id}} xlink:href="cid:{{content_id}}">
-            <eb:Description xml:lang="en">{{{description}}}</eb:Description>
+            <eb:Description xml:lang="en">{{description}}</eb:Description>
         </eb:Reference>{{/attachments}}{{#external_attachments}}
         <eb:Reference{{#document_id}} eb:id="{{document_id}}"{{/document_id}} xlink:href="mid:{{message_id}}">
-            <eb:Description xml:lang="en">{{{description}}}</eb:Description>
+            <eb:Description xml:lang="en">{{description}}</eb:Description>
         </eb:Reference>{{/external_attachments}}
     </eb:Manifest>
 </SOAP:Body>
