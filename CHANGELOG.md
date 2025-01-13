@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fixed an issue where outbound request attachment filenames were not properly escaped.
+
 ## [1.3.3] - 2024-12-16
 
 ### Fixed
