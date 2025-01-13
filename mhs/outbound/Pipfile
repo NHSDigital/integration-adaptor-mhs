@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 coverage = "~=7.6"
 unittest-xml-reporting = "~=3.2"
-apispec = "~=3.0"
+apispec = "~=6.8"
 apispec-webframeworks = "~=0.5"
 
 [packages]
