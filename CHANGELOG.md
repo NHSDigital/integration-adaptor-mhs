@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Fixed an issue where outbound request attachment filenames were not properly escaped.
+## [2.0.0] - 2025-02-20
+
+### Changed
+
+- **Breaking Change** Fixed an issue where outbound EBXML requests `attachment` and `external_attachment` descriptions
+  weren't being escaped within the XML.
+  Now any XML special characters `&'<>"` within the description field are escaped to prevent invalid XML being generated.
+  If users were performing XML escaping of the description field before passing it over to the outbound, this no longer
+  needs to be performed, otherwise the data will be escaped twice.
 
 ## [1.3.3] - 2024-12-16
 
