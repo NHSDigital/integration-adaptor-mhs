@@ -17,8 +17,8 @@ COPY common/ /usr/src/app/common/
 COPY mhs/common/ /usr/src/app/mhs/common/
 COPY mhs/spineroutelookup/ /usr/src/app/mhs/spineroutelookup
 
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/mhs/common"
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src/app/common"
+ENV PYTHONPATH="${PYTHONPATH}:/usr/src/app/mhs/common"
+ENV PYTHONPATH="${PYTHONPATH}:/usr/src/app/common"
 
 WORKDIR /usr/src/app/mhs/spineroutelookup
 
