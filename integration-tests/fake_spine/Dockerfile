@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm
+FROM python:3.13-slim-bookworm
 RUN apt-get update
 RUN apt-get install -y \
     build-essential \
@@ -14,7 +14,7 @@ WORKDIR /usr/src/app/mhs/fakespine
 COPY integration-tests/fake_spine/Pipfile /usr/src/app
 COPY integration-tests/fake_spine/Pipfile.lock /usr/src/app
 
-RUN pipenv --python 3.11
+RUN pipenv --python 3.13
 RUN pipenv run uninstall_setuptools
 RUN pipenv run install_setuptools
 RUN pipenv install --deploy --ignore-pipfile
