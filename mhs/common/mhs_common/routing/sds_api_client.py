@@ -93,7 +93,10 @@ class SdsApiClient(RouteLookupClient):
     def _get_extension(endpoint, system, value_key):
         def _get_extensions(resource):
             return list(filter(lambda kv: kv['url'] == 'https://fhir.nhs.uk/StructureDefinition/Extension-SDS-ReliabilityConfiguration', resource['extension']))[0]['extension']
-        return list(filter(lambda kv: kv['url'] == system, _get_extensions(endpoint)))[0][value_key]
+        extensions_matching_system = list(filter(lambda kv: kv['url'] == system, _get_extensions(endpoint)))
+        if len(extensions_matching_system) > 0:
+            return extensions_matching_system[0][value_key]
+        return None
 
     async def _get_endpoint_resource(self, interaction_id: str, ods_code: str = None) -> Dict:
         if not ods_code:
