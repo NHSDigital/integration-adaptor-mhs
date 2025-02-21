@@ -410,7 +410,7 @@ class TestEbxmlRequestEnvelope(test_ebxml_envelope.BaseTestEbxmlEnvelope):
             # Regression test for NIAD-2822
             message, _ = message_utilities.load_test_data(self.message_dir, 'ebxml_request_multibyte_character')
             parsed_message = ebxml_request_envelope.EbxmlRequestEnvelope.from_string(MULTIPART_MIME_HEADERS, message)
-            self.assertEquals(parsed_message.message_dictionary['hl7_message'], "<xml>¬ ❤️ 🧸</xml>")
+            self.assertEqual(parsed_message.message_dictionary['hl7_message'], "<xml>¬ ❤️ 🧸</xml>")
 
         with self.subTest(
             "A valid request containing a fragment of a GZIP compressed text/plain file. "
