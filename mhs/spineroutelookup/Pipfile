@@ -12,7 +12,7 @@ tornado = "~=6.0"
 defusedxml = "~=0.6"
 ldap3 = "~=2.8.1"
 mhs-common = {editable = true,path = "./../common"}
-redis = "~=3.3"
+redis = "~=4.1.3"
 integration-adaptors-common = {editable = true, path = "./../../common"}
 
 [requires]
