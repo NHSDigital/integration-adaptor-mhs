@@ -11,7 +11,7 @@ document useful for the setup of OpenTest necessary in order to make this projec
 Using TunnelBlick VPN, after receiving a response containing two files:
 * Download both of them
 * Remove `.txt` from `<filename>.ovpn.txt`, so it's an `.ovpn` extension file
-  * **Note:** It was changed because of mail attachments policies 
+  * **Note:** It was changed because of mail attachments policies
 * Open TunnelBlick, go into `Configurations` tab and simply drag the `.ovpn` configuration file into the box
 * Choose `Only Me` when asked
   * **Note:** Might be prompted to confirm the action using system credentials
@@ -24,8 +24,8 @@ ___
   * EnvFile - plugin that allows you to set env variables for run configurations from files
   * Python - plugin allowing for having some PyCharm functionalities in IntelliJ
 * Restart IntelliJ IDEA to make sure the plugins are installed properly
-* Open cloned project from folder or clone using VCS 
-`git clone https://github.com/nhsconnect/integration-adaptor-mhs.git`
+* Open cloned project from folder or clone using VCS
+  `git clone https://github.com/nhsconnect/integration-adaptor-mhs.git`
 ---
 ### 3. Terminal actions
 
@@ -38,12 +38,12 @@ Install ``Python 3.11``:
 Note: If you have ``pyenv`` already installed, ``pipenv`` will get the global set Python version from it on installation
 
 * Go into each of the directories in terminal (from the root directory of the project):
-    * `common`
-    * `integration-tests/integration_tests`
-    * `mhs/common`
-    * `mhs/spineroutelookup`
-    * `mhs/inbound`
-    * `mhs/outbound`
+  * `common`
+  * `integration-tests/integration_tests`
+  * `mhs/common`
+  * `mhs/spineroutelookup`
+  * `mhs/inbound`
+  * `mhs/outbound`
 
 
 **Install dependencies for `Python 3.11` for each:**
@@ -66,7 +66,11 @@ export PYCURL_SSL_LIBRARY=openssl
 export LDFLAGS="-L/usr/local/opt/curl-openssl/lib"
 export CPPFLAGS="-I/usr/local/opt/curl-openssl/include"
 
-pip install --no-cache-dir --compile --ignore-installed --install-option="--with-openssl" --install-option="--openssl-dir=/usr/local/opt/openssl" pycurl
+pip install --no-cache-dir \
+  --config-settings="--build-option=--with-openssl" \
+  --config-settings="--build-option=--openssl-dir=/usr/local/opt/openssl" \
+  pycurl
+
 ```
 * `exit` virtual environment shell
 ___
@@ -144,7 +148,7 @@ For each module:
 * Create a copy of [MHS INTEGRATION TESTS CONFIGURATION FILE](https://github.com/nhsconnect/integration-adaptor-mhs/blob/develop/integration-tests/integration_tests/integration-test-env-example.yaml)
   * Directory: `/integration-tests/integration_tests/integration-test-env-example.yaml`
   * Optionally you might want to rename the file to `integration-tests.yaml`
-* Fill the `INTEGRATION_TEST_ASID`'s empty `''` with a value of `ASID` from e-mail's attached text file  
+* Fill the `INTEGRATION_TEST_ASID`'s empty `''` with a value of `ASID` from e-mail's attached text file
 * Choose the proper `MHS_PERSISTENCE_ADAPTOR` and `MHS_DB_ENDPOINT_URL`
 * In IntelliJ, click the Select `Run/Debug Configuration` dropdown menu on the top toolbar and click `Edit Configurations...`
 * Click `Edit Configuration Templates`
@@ -175,7 +179,7 @@ For each module:
 * Rename the compound to `Run Unit Tests`
 * Add all newly created `UnitTests in <modulename>` configurations to the compound
 
-### 9. Running 
+### 9. Running
 
 * Connect to the VPN you configured earlier
 * Make sure Docker is running and from the root directory of the project, run:
