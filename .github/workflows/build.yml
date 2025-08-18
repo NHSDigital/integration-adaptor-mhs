@@ -144,8 +144,6 @@ jobs:
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
             docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           fi
-      - name: Get Unhealthy Container Logs
-        run: docker-compose -p ${{ env.BUILD_TAG_LOWER }} logs dynamodb
       - name: Run Component Tests
         run: |
           docker build -t local/mhs-componenttest:${{ env.BUILD_TAG }} -f ./component-test.Dockerfile .
