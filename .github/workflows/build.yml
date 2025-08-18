@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_TAG: ${{ needs.generate-build-id.outputs.build-id }}
-      BUILD_TAG_LOWER: ${{ toLower(needs.generate-build-id.outputs.build-id) }}
+      BUILD_TAG_LOWER: ${{ needs.generate-build-id.outputs.build-id | toLower }}
     strategy:
       matrix:
         component: [ 'SpineRouteLookup', 'SDS API' ]
