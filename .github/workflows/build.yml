@@ -20,13 +20,13 @@ jobs:
       - name: "Build & test Common directory"
         working-directory: ./common
         run: |
-          python3 -m pip install -r requirements.txt
-          python3 -m pytest
+          pipenv install --dev
+          pipenv run pytest
       - name: "Build & test MHS Common directory"
         working-directory: ./mhs/common
         run: |
-          python3 -m pip install -r requirements.txt
-          python3 -m pytest
+          pipenv install --dev
+          pipenv run pytest
 
   inbound_tests:
     name: "Inbound Tests"
