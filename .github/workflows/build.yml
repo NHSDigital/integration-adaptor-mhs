@@ -114,14 +114,18 @@ jobs:
 
   component_tests:
     name: "Component Tests"
-    needs: [publish-docker-images]
+    needs: [ publish-docker-images ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        component: ['SpineRouteLookup', 'SDS API']
+        component: [ 'SpineRouteLookup', 'SDS API' ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      - name: Install docker-compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
       - name: Setup Docker Environment
         run: |
           ./integration-tests/setup_component_test_env.sh
