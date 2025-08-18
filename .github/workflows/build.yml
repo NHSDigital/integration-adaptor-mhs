@@ -137,10 +137,10 @@ jobs:
           ./integration-tests/setup_component_test_env.sh
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
             docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up -d
+            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
             docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml build
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up -d
+            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up
           fi
       - name: Run Component Tests
         run: |
