@@ -114,8 +114,11 @@ jobs:
 
   component_tests:
     name: "Component Tests"
-    needs: [ publish-docker-images ]
+    needs: [ publish-docker-images, generate-build-id ]
     runs-on: ubuntu-latest
+    env:
+      BUILD_TAG: ${{ needs.generate-build-id.outputs.build-id }}
+      BUILD_TAG_LOWER: ${{ toLower(needs.generate-build-id.outputs.build-id) }}
     strategy:
       matrix:
         component: [ 'SpineRouteLookup', 'SDS API' ]
@@ -131,24 +134,24 @@ jobs:
           ./integration-tests/setup_component_test_env.sh
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
             docker-compose -f docker-compose.yml -f docker-compose.component.override.yml build
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} up -d
+            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up -d
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
             docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml build
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${BUILD_TAG_LOWER} up -d
+            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up -d
           fi
       - name: Run Component Tests
         run: |
-          docker build -t local/mhs-componenttest:${{ needs.generate-build-id.outputs.build-id }} -f ./component-test.Dockerfile .
-          docker run --rm --network "${BUILD_TAG_LOWER}_default" \
+          docker build -t local/mhs-componenttest:${{ env.BUILD_TAG }} -f ./component-test.Dockerfile .
+          docker run --rm --network "${{ env.BUILD_TAG_LOWER }}_default" \
             --env "MHS_ADDRESS=http://outbound" \
             --env "FAKE_SPINE_ADDRESS=http://fakespine" \
-            local/mhs-componenttest:${{ needs.generate-build-id.outputs.build-id }}
+            local/mhs-componenttest:${{ env.BUILD_TAG }}
       - name: Dump Logs and Cleanup
         if: always()
         run: |
-          docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${BUILD_TAG_LOWER} down -v
+          docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
           mkdir -p logs
-          docker logs ${BUILD_TAG_LOWER}_outbound_1 > logs/outbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_outbound_1 > logs/outbound_1.log
       - name: Archive Logs
         if: always()
         uses: actions/upload-artifact@v4
