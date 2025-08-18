@@ -23,16 +23,18 @@ jobs:
           python-version: '3.11'
       - name: Install pipenv
         run: python3 -m pip install pipenv
-      - name: "Build & test Common directory"
+      - name: "Install Common directory dependencies"
         working-directory: ./common
-        run: |
-          pipenv install --dev
-          pipenv run unittests-cov
-      - name: "Build & test MHS Common directory"
+        run: pipenv install --dev
+      - name: "Run Common directory tests"
+        working-directory: ./common
+        run: pipenv run unittests-cov
+      - name: "Install MHS Common directory dependencies"
         working-directory: ./mhs/common
-        run: |
-          pipenv install --dev
-          pipenv run unittests-cov
+        run: pipenv install --dev
+      - name: "Run MHS Common directory tests"
+        working-directory: ./mhs/common
+        run: pipenv run unittests-cov
 
   inbound_tests:
     name: "Inbound Tests"
@@ -97,4 +99,7 @@ jobs:
       repository: ${{ matrix.config.repository }}
       dockerfile: ${{ matrix.config.dockerfile }}
       build-id: ${{ needs.generate-build-id.outputs.build-id }}
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
