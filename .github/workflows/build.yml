@@ -200,7 +200,7 @@ jobs:
 
   post-build-cleanup:
     name: "Post-build Cleanup"
-    needs: [build_common, inbound_tests, outbound_tests, route_tests, generate-build-id, publish-docker-images, component_tests, integration_tests]
+    needs: [build_common, inbound_tests, outbound_tests, route_tests, generate-build-id, publish-docker-images, component_tests ]
     if: always()
     runs-on: ubuntu-latest
     steps:
