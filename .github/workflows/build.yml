@@ -25,16 +25,24 @@ jobs:
         run: python3 -m pip install pipenv
       - name: "Install Common directory dependencies"
         working-directory: ./common
-        run: pipenv install --dev
+        run: pipenv install --dev --ignore-pipfile
       - name: "Run Common directory tests"
         working-directory: ./common
         run: pipenv run unittests-cov
       - name: "Install MHS Common directory dependencies"
         working-directory: ./mhs/common
-        run: pipenv install --dev
+        run: pipenv install --dev --ignore-pipfile
       - name: "Run MHS Common directory tests"
         working-directory: ./mhs/common
         run: pipenv run unittests-cov
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Common-Test-Reports
+          path: |
+            common/test-reports/**
+            mhs/common/test-reports/**
 
   inbound_tests:
     name: "Inbound Tests"
@@ -103,3 +111,15 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+
+  post-build-cleanup:
+    name: "Post-build Cleanup"
+    needs: [ build_common, inbound_tests, outbound_tests, route_tests, generate-build-id, publish-docker-images ]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Prune Docker Images"
+        run: |
+          docker image prune --force
+          docker container prune --force
+          docker volume prune --force
