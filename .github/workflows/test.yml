@@ -1,4 +1,4 @@
-name: "Reusable Python Test Workflow"
+name: "Test"
 
 on:
   workflow_call:
@@ -28,4 +28,4 @@ jobs:
         run: pipenv install --dev
       - name: Execute Unit Tests
         working-directory: ${{ inputs.path }}
-        run: pipenv run pytest
+        run: pipenv run unittests-cov
