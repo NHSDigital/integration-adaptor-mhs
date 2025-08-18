@@ -27,12 +27,12 @@ jobs:
         working-directory: ./common
         run: |
           pipenv install --dev
-          pipenv run pytest
+          pipenv run unittests-cov
       - name: "Build & test MHS Common directory"
         working-directory: ./mhs/common
         run: |
           pipenv install --dev
-          pipenv run pytest
+          pipenv run unittests-cov
 
   inbound_tests:
     name: "Inbound Tests"
