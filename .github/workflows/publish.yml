@@ -1,0 +1,50 @@
+name: "Publish"
+
+on:
+  workflow_call:
+    inputs:
+      directory:
+        required: true
+        type: string
+      repository:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+      build-id:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCOUNT_ID:
+        required: true
+      AWS_ROLE_TO_ASSUME:
+        required: true
+      AWS_REGION:
+        required: true
+
+jobs:
+  publish_image:
+    name: "Publish ${{ inputs.repository }} Image"
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build and Push Docker Image
+        run: |
+          ECR_REGISTRY="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com"
+          DOCKER_IMAGE="$ECR_REGISTRY/${{ inputs.repository }}:${{ inputs.build-id }}"
+          
+          docker build -t $DOCKER_IMAGE -f ${{ inputs.dockerfile }} .
+          
+          docker push $DOCKER_IMAGE

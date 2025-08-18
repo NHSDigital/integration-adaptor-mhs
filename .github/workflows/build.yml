@@ -1,0 +1,94 @@
+name: "Build"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - TEST-GITHUB-ACTIONS
+
+jobs:
+  build_common:
+    name: "Common & MHS Common Tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: "Build & test Common directory"
+        working-directory: ./common
+        run: |
+          python3 -m pip install -r requirements.txt
+          python3 -m pytest
+      - name: "Build & test MHS Common directory"
+        working-directory: ./mhs/common
+        run: |
+          python3 -m pip install -r requirements.txt
+          python3 -m pytest
+
+  inbound_tests:
+    name: "Inbound Tests"
+    uses: ./.github/workflows/test.yml
+    with:
+      name: Inbound
+      path: ./mhs/inbound
+    secrets: inherit
+
+  outbound_tests:
+    name: "Outbound Tests"
+    uses: ./.github/workflows/test.yml
+    with:
+      name: Outbound
+      path: ./mhs/outbound
+    secrets: inherit
+
+  route_tests:
+    name: "Route Tests"
+    uses: ./.github/workflows/test.yml
+    with:
+      name: Route
+      path: ./mhs/spineroutelookup
+    secrets: inherit
+
+  generate-build-id:
+    name: "Generate Build Id"
+    needs: [ build_common, inbound_tests, outbound_tests, route_tests ]
+    runs-on: ubuntu-latest
+    outputs:
+      build-id: ${{ steps.generate.outputs.buildId }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - id: generate
+        run: |
+          BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
+          echo "Generated the build tag: $BUILD_ID"
+          echo "buildId=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
+  publish-docker-images:
+    name: "Publish Docker Images"
+    needs: [ generate-build-id ]
+    strategy:
+      matrix:
+        config:
+          - directory: mhs/inbound
+            repository: mhs/inbound
+            dockerfile: docker/inbound/Dockerfile
+          - directory: mhs/outbound
+            repository: mhs/outbound
+            dockerfile: docker/outbound/Dockerfile
+          - directory: mhs/spineroutelookup
+            repository: mhs/route
+            dockerfile: docker/spineroutelookup/Dockerfile
+          - directory: integration-tests/fake_spine
+            repository: fake-spine
+            dockerfile: integration-tests/fake_spine/Dockerfile
+    uses: ./.github/workflows/publish.yml
+    with:
+      directory: ${{ matrix.config.directory }}
+      repository: ${{ matrix.config.repository }}
+      dockerfile: ${{ matrix.config.dockerfile }}
+      build-id: ${{ needs.generate-build-id.outputs.build-id }}
+    secrets: inherit
