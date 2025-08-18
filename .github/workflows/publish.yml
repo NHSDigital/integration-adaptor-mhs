@@ -44,5 +44,5 @@ jobs:
         run: |
           ECR_REGISTRY="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com"
           DOCKER_IMAGE="$ECR_REGISTRY/${{ inputs.repository }}:${{ inputs.build-id }}"
-          docker build -t $DOCKER_IMAGE -f ${{ inputs.dockerfile }} ${{ inputs.directory }}
+          docker build -t $DOCKER_IMAGE -f ${{ inputs.dockerfile }} .
           docker push $DOCKER_IMAGE
