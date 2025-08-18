@@ -149,6 +149,8 @@ jobs:
           docker run --rm --network "${{ env.BUILD_TAG_LOWER }}_default" \
             --env "MHS_ADDRESS=http://outbound" \
             --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+            --env "AWS_ACCESS_KEY_ID=test" \
+            --env "AWS_SECRET_ACCESS_KEY=test" \
             local/mhs-componenttest:${{ env.BUILD_TAG }}
       - name: Dump Logs and Cleanup
         if: always()
