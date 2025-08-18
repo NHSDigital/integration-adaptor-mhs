@@ -132,14 +132,18 @@ jobs:
         run: |
           BUILD_TAG_LOWER=$(echo -n ${{ env.BUILD_TAG }} | tr '[:upper:]' '[:lower:]')
           echo "BUILD_TAG_LOWER=$BUILD_TAG_LOWER" >> $GITHUB_ENV
-      - name: Setup Docker Environment
-        run: |
-          ./integration-tests/setup_component_test_env.sh
-          if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --build -d
-          elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --build -d
-          fi
+          - name: Build Docker Images
+            run: |
+              chmod +x ./build.sh
+              ./build.sh
+          - name: Setup Docker Environment
+            run: |
+              ./integration-tests/setup_component_test_env.sh
+              if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
+                docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up -d
+              elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
+                docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up -d
+              fi
       - name: Run Component Tests
         run: |
           docker build -t local/mhs-componenttest:${{ env.BUILD_TAG }} -f ./component-test.Dockerfile .
