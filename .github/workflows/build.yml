@@ -144,6 +144,8 @@ jobs:
       - name: Setup Docker Environment
         run: |
           ./integration-tests/setup_component_test_env.sh
+          cat component-test-source.sh >> $GITHUB_ENV
+          
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
             docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
@@ -176,6 +178,7 @@ jobs:
           docker logs ${{ env.BUILD_TAG_LOWER }}_dynamodb_1 > logs/dynamodb_1.log
           docker logs ${{ env.BUILD_TAG_LOWER }}_mongodb_1 > logs/mongodb_1.log
           docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
+          rm -f .integration-tests/component-test.source.sh
 
       - name: Archive Logs
         if: always()
