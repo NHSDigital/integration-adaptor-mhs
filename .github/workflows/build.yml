@@ -126,10 +126,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose v2
+      - name: Install Docker Compose
+        uses: docker/setup-docker-compose@v2
+
+      - name: Install other dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
+          sudo apt-get install -y docker-compose-plugin # or other packages you need
 
       - name: Set Lowercase Build Tag
         run: |
