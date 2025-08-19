@@ -125,46 +125,66 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Install docker-compose
+
+      - name: Install Docker Compose v2
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
+
       - name: Set Lowercase Build Tag
         run: |
           echo "BUILD_TAG_LOWER=$(echo -n ${{ env.BUILD_TAG }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build Docker Images
         run: |
           chmod +x ./build.sh
           ./build.sh
+
       - name: Setup Docker Environment
         run: |
           ./integration-tests/setup_component_test_env.sh
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+          docker-compose --env-file ./component-test-source.sh -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+          docker-compose --env-file ./component-test-source.sh -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           fi
+
       - name: Run Component Tests
         run: |
           docker build -t local/mhs-componenttest:${{ env.BUILD_TAG }} -f ./component-test.Dockerfile .
           docker run --rm --network "${{ env.BUILD_TAG_LOWER }}_default" \
+            --env-file ./component-test-source.sh \
             --env "MHS_ADDRESS=http://outbound" \
-            --env "FAKE_SPINE_ADDRESS=http://fakespine" \
             --env "AWS_ACCESS_KEY_ID=test" \
             --env "AWS_SECRET_ACCESS_KEY=test" \
+            --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
+            --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+            --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
+            --env "MHS_INBOUND_QUEUE_NAME=inbound" \
+            --env "SCR_ADDRESS=http://scradaptor" \
             local/mhs-componenttest:${{ env.BUILD_TAG }}
+
       - name: Dump Logs and Cleanup
         if: always()
         run: |
-          docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
           mkdir -p logs
           docker logs ${{ env.BUILD_TAG_LOWER }}_outbound_1 > logs/outbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_inbound_1 > logs/inbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_fakespine_1 > logs/fakespine_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_rabbitmq_1 > logs/rabbitmq_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_redis_1 > logs/redis_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_dynamodb_1 > logs/dynamodb_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}_mongodb_1 > logs/mongodb_1.log
+          docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
+
       - name: Archive Logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.component }} Component Test Logs
           path: logs/
+
+
 
 #  integration_tests:
 #    name: "Integration Tests"
