@@ -126,11 +126,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose
-        uses: docker/setup-docker-compose@v2
-
-      - name: Install other dependencies
-        run: sudo apt-get update
+      - name: Install Docker Compose v2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
 
       - name: Set Lowercase Build Tag
         run: |
@@ -145,16 +144,15 @@ jobs:
         run: |
           ./integration-tests/setup_component_test_env.sh
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
-            docker-compose --env-file ./component-test-source.sh -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
-            docker-compose --env-file ./component-test-source.sh -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           fi
 
       - name: Run Component Tests
         run: |
           docker build -t local/mhs-componenttest:${{ env.BUILD_TAG }} -f ./component-test.Dockerfile .
           docker run --rm --network "${{ env.BUILD_TAG_LOWER }}_default" \
-            --env-file ./component-test-source.sh \
             --env "MHS_ADDRESS=http://outbound" \
             --env "AWS_ACCESS_KEY_ID=test" \
             --env "AWS_SECRET_ACCESS_KEY=test" \
