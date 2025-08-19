@@ -126,8 +126,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose
-        uses: docker/setup-docker-compose@v2
+      - name: Check Docker Compose Version
+        run: docker compose version
 
       - name: Install other dependencies
         run: sudo apt-get update
