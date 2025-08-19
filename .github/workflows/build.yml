@@ -145,9 +145,9 @@ jobs:
         run: |
           ./integration-tests/setup_component_test_env.sh
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+            docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
-            docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+            docker compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           fi
 
       - name: Run Component Tests
@@ -175,7 +175,7 @@ jobs:
           docker logs ${{ env.BUILD_TAG_LOWER }}_redis_1 > logs/redis_1.log
           docker logs ${{ env.BUILD_TAG_LOWER }}_dynamodb_1 > logs/dynamodb_1.log
           docker logs ${{ env.BUILD_TAG_LOWER }}_mongodb_1 > logs/mongodb_1.log
-          docker-compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
+          docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
 
       - name: Archive Logs
         if: always()
