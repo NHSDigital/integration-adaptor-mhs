@@ -121,7 +121,7 @@ jobs:
       BUILD_TAG: ${{ needs.generate-build-id.outputs.build-id }}
     strategy:
       matrix:
-        component: [ 'SpineRouteLookup', 'SDS API' ]
+        component: [ 'SpineRouteLookup' ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
