@@ -144,8 +144,10 @@ jobs:
       - name: Setup Docker Environment
         run: |
           ./integration-tests/setup_component_test_env.sh
-          cat component-test-source.sh >> $GITHUB_ENV
-          
+          if [ -f component-test-source.sh ]; then
+            source component-test-source.sh
+          fi
+
           if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
             docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
