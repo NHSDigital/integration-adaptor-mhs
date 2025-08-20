@@ -153,6 +153,7 @@ jobs:
           elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
             docker compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
           fi
+          docker ps
 
       - name: Run Component Tests
         run: |
@@ -172,15 +173,14 @@ jobs:
         if: always()
         run: |
           mkdir -p logs
-          docker logs ${{ env.BUILD_TAG_LOWER }}_outbound_1 > logs/outbound_1.log
-          docker logs ${{ env.BUILD_TAG_LOWER }}_inbound_1 > logs/inbound_1.log
-          docker logs ${{ env.BUILD_TAG_LOWER }}_fakespine_1 > logs/fakespine_1.log
-          docker logs ${{ env.BUILD_TAG_LOWER }}_rabbitmq_1 > logs/rabbitmq_1.log
-          docker logs ${{ env.BUILD_TAG_LOWER }}_redis_1 > logs/redis_1.log
-          docker logs ${{ env.BUILD_TAG_LOWER }}_dynamodb_1 > logs/dynamodb_1.log
-          docker logs ${{ env.BUILD_TAG_LOWER }}_mongodb_1 > logs/mongodb_1.log
-          docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
-          docker ps
+          docker logs ${{ env.BUILD_TAG_LOWER }}-outbound-1 > logs/outbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-inbound-1 > logs/inbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-fakespine-1 > logs/fakespine_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-rabbitmq-1 > logs/rabbitmq_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-redis-1 > logs/redis_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-dynamodb-1 > logs/dynamodb_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-mongodb-1 > logs/mongodb_1.log
+          docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v  
           
           rm -f .integration-tests/component-test.source.sh
 
