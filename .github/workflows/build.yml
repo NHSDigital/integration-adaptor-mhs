@@ -180,6 +180,8 @@ jobs:
           docker logs ${{ env.BUILD_TAG_LOWER }}_dynamodb_1 > logs/dynamodb_1.log
           docker logs ${{ env.BUILD_TAG_LOWER }}_mongodb_1 > logs/mongodb_1.log
           docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v
+          docker ps
+          
           rm -f .integration-tests/component-test.source.sh
 
       - name: Archive Logs
