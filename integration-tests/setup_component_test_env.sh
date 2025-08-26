@@ -23,4 +23,4 @@ echo -e "export INBOUND_CA_STORE=\"$(cat ./generated-certs/fake-spine/cert.pem)\
 echo -e "export MHS_SECRET_PARTY_KEY=\"test-party-key\"" >> component-test-source.sh
 echo -e "export MHS_OUTBOUND_VALIDATE_CERTIFICATE=\"False\"" >> component-test-source.sh
 
-rm -rf ./generated-certs
+#rm -rf ./generated-certs
