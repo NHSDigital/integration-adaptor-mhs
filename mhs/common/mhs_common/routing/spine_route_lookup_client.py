@@ -64,6 +64,8 @@ class SpineRouteLookupClient(RouteLookupClient):
             logger.info("Proxy setup: {proxy_host} & {proxy_port}.",
                         fparams={"proxy_host": self._proxy_host, "proxy_port": self._proxy_port})
 
+            logger.info("URL: {url}.", fparams={"url": url})
+
             http_response = await common_https.CommonHttps.make_request(url=url, method="GET",
                                                                         headers=build_tracking_headers(),
                                                                         body=None,
