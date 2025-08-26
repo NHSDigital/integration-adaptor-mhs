@@ -1,7 +1,8 @@
-version: '3'
-
 services:
   inbound:
+    build:
+      context: .
+      dockerfile: ./docker/inbound/Dockerfile
     image: local/mhs-inbound:${BUILD_TAG}
     ports:
       - "443"
@@ -20,8 +21,6 @@ services:
       - MHS_SYNC_ASYNC_STATE_TABLE_NAME=sync_async_state
       - MHS_DB_ENDPOINT_URL=http://dynamodb:8000
       - MHS_INBOUND_QUEUE_MESSAGE_TTL_IN_SECONDS=0
-      # boto3 requires some AWS creds to be provided, even
-      # when connecting to local DynamoDB
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - MHS_INBOUND_USE_SSL=True
@@ -29,6 +28,9 @@ services:
       - SERVICE_PORTS=443,80
       - SUPPORTED_FILE_TYPES
   outbound:
+    build:
+      context: .
+      dockerfile: ./docker/outbound/Dockerfile
     image: local/mhs-outbound:${BUILD_TAG}
     ports:
       - "80"
@@ -47,19 +49,18 @@ services:
       - MAX_RESYNC_RETRIES=20
       - MHS_SPINE_ROUTE_LOOKUP_URL=http://route
       - MHS_SPINE_ORG_CODE=YES
-      - MHS_SPINE_REQUEST_MAX_SIZE=4999600 # 5 000 000 - 400
-      # Note that this endpoint URL is Opentest-specific
+      - MHS_SPINE_REQUEST_MAX_SIZE=4999600
       - MHS_FORWARD_RELIABLE_ENDPOINT_URL=https://192.168.128.11/reliablemessaging/forwardreliable
-      # This is for disabling hostname validation so OpenTest ip address will work
       - MHS_OUTBOUND_VALIDATE_CERTIFICATE=${MHS_OUTBOUND_VALIDATE_CERTIFICATE:-False}
       - SERVICE_PORTS=80
       - MHS_OUTBOUND_ROUTING_LOOKUP_METHOD
       - MHS_SDS_API_URL
       - MHS_SDS_API_KEY
   route:
+    build: ./docker/spineroutelookup
     image: local/mhs-route:${BUILD_TAG}
     ports:
-        - "8080:80"
+      - "8080:80"
     environment:
       - MHS_LOG_LEVEL=NOTSET
       - MHS_SDS_URL=ldap://192.168.128.11

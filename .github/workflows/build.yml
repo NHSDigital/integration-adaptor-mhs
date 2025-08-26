@@ -1,0 +1,251 @@
+name: "Build"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - TEST-GITHUB-ACTIONS
+
+jobs:
+  build_common:
+    name: "Common & MHS Common Tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install pipenv
+        run: python3 -m pip install pipenv
+      - name: "Install Common directory dependencies"
+        working-directory: ./common
+        run: pipenv install --dev
+      - name: "Run Common directory tests"
+        working-directory: ./common
+        run: pipenv run unittests-cov
+      - name: "Install MHS Common directory dependencies"
+        working-directory: ./mhs/common
+        run: pipenv install --dev
+      - name: "Run MHS Common directory tests"
+        working-directory: ./mhs/common
+        run: pipenv run unittests-cov
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Common-Test-Reports
+          path: |
+            common/test-reports/**
+            mhs/common/test-reports/**
+
+  inbound_tests:
+    name: "Inbound Tests"
+    uses: ./.github/workflows/test.yml
+    with:
+      name: Inbound
+      path: ./mhs/inbound
+    secrets: inherit
+
+  outbound_tests:
+    name: "Outbound Tests"
+    uses: ./.github/workflows/test.yml
+    with:
+      name: Outbound
+      path: ./mhs/outbound
+    secrets: inherit
+
+  route_tests:
+    name: "Route Tests"
+    uses: ./.github/workflows/test.yml
+    with:
+      name: Route
+      path: ./mhs/spineroutelookup
+    secrets: inherit
+
+  generate-build-id:
+    name: "Generate Build Id"
+    needs: [build_common, inbound_tests, outbound_tests, route_tests]
+    runs-on: ubuntu-latest
+    outputs:
+      build-id: ${{ steps.generate.outputs.buildId }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - id: generate
+        run: |
+          BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
+          echo "Generated the build tag: $BUILD_ID"
+          echo "buildId=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
+
+  publish-docker-images:
+    name: "Publish Docker Images"
+    needs: [generate-build-id]
+    strategy:
+      matrix:
+        config:
+          - directory: mhs/inbound
+            repository: mhs/inbound
+            dockerfile: docker/inbound/Dockerfile
+          - directory: mhs/outbound
+            repository: mhs/outbound
+            dockerfile: docker/outbound/Dockerfile
+          - directory: mhs/spineroutelookup
+            repository: mhs/route
+            dockerfile: docker/spineroutelookup/Dockerfile
+          - directory: integration-tests/fake_spine
+            repository: fake-spine
+            dockerfile: integration-tests/fake_spine/Dockerfile
+    uses: ./.github/workflows/publish.yml
+    with:
+      directory: ${{ matrix.config.directory }}
+      repository: ${{ matrix.config.repository }}
+      dockerfile: ${{ matrix.config.dockerfile }}
+      build-id: ${{ needs.generate-build-id.outputs.build-id }}
+    secrets:
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
+  component_tests:
+    name: "Component Tests"
+    needs: [ publish-docker-images, generate-build-id ]
+    runs-on: ubuntu-latest
+    env:
+      BUILD_TAG: ${{ needs.generate-build-id.outputs.build-id }}
+    strategy:
+      matrix:
+        component: [ 'SpineRouteLookup' ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check Docker Compose Version
+        run: docker compose version
+
+      - name: Install other dependencies
+        run: sudo apt-get update
+
+      - name: Set Lowercase Build Tag
+        run: |
+          echo "BUILD_TAG_LOWER=$(echo -n ${{ env.BUILD_TAG }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Build Docker Images
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Setup Docker Environment
+        run: |
+          ./integration-tests/setup_component_test_env.sh
+          if [ -f component-test-source.sh ]; then
+            source component-test-source.sh
+          fi
+
+          if [[ "${{ matrix.component }}" == "SpineRouteLookup" ]]; then
+            docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+          elif [[ "${{ matrix.component }}" == "SDS API" ]]; then
+            docker compose -f docker-compose.yml -f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml -p ${{ env.BUILD_TAG_LOWER }} up --wait -d
+          fi
+          docker ps
+
+      - name: Docker Setup debug
+        run: |
+          docker network ls
+
+      - name: Ensure Network Exists
+        run: |
+          BUILD_TAG_LOWER_NETWORK=${{ env.BUILD_TAG_LOWER }}_default
+          if ! docker network ls --format '{{.Name}}' | grep -q "^$BUILD_TAG_LOWER_NETWORK$"; then
+            echo "Network $BUILD_TAG_LOWER_NETWORK not found, creating it."
+            docker network create $BUILD_TAG_LOWER_NETWORK
+          fi
+
+      - name: Run Component Tests
+        run: |
+          docker build -t local/mhs-componenttest:${{ env.BUILD_TAG }} -f ./component-test.Dockerfile .
+          docker run --rm --network "${{ env.BUILD_TAG_LOWER }}_default" \
+            --env "MHS_ADDRESS=http://outbound" \
+            --env "AWS_ACCESS_KEY_ID=test" \
+            --env "AWS_SECRET_ACCESS_KEY=test" \
+            --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
+            --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+            --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
+            --env "MHS_INBOUND_QUEUE_NAME=inbound" \
+            --env "SCR_ADDRESS=http://scradaptor" \
+            local/mhs-componenttest:${{ env.BUILD_TAG }}
+
+      - name: Dump Logs and Cleanup
+        if: always()
+        run: |
+          mkdir -p logs
+          docker logs ${{ env.BUILD_TAG_LOWER }}-outbound-1 > logs/outbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-inbound-1 > logs/inbound_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-fakespine-1 > logs/fakespine_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-rabbitmq-1 > logs/rabbitmq_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-redis-1 > logs/redis_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-dynamodb-1 > logs/dynamodb_1.log
+          docker logs ${{ env.BUILD_TAG_LOWER }}-mongodb-1 > logs/mongodb_1.log
+          docker compose -f docker-compose.yml -f docker-compose.component.override.yml -p ${{ env.BUILD_TAG_LOWER }} down -v  
+          
+          rm -f .integration-tests/component-test.source.sh
+
+      - name: Archive Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.component }} Component Test Logs
+          path: logs/
+
+#  integration_tests:
+#    name: "Integration Tests"
+#    needs: [component_tests]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v4
+#      - name: Setup Terraform
+#        uses: hashicorp/setup-terraform@v3
+#        with:
+#          terraform_version: 1.0.0
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_TO_ASSUME }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#      - name: Terraform Init
+#        run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" -backend-config="region=${{ secrets.TF_STATE_BUCKET_REGION }}" -backend-config="key=${{ env.ENVIRONMENT_ID }}-mhs.tfstate"
+#        working-directory: ./pipeline/terraform/mhs-environment
+#      - name: Terraform Apply
+#        run: |
+#          terraform apply -auto-approve \
+#            -var environment_id=build \
+#            -var build_id=${{ needs.generate-build-id.outputs.build-id }}
+#        working-directory: ./pipeline/terraform/mhs-environment
+#      - name: Run Integration Tests
+#        run: |
+#          LB_DNS=$(terraform output -raw outbound_lb_domain_name)
+#          echo "MHS_ADDRESS=https://$LB_DNS" >> $GITHUB_ENV
+#          # Execute your integration test script here
+#        working-directory: ./pipeline/terraform/mhs-environment
+#      - name: Clean up Terraform
+#        if: always()
+#        run: terraform destroy -auto-approve
+#        working-directory: ./pipeline/terraform/mhs-environment
+
+  post-build-cleanup:
+    name: "Post-build Cleanup"
+    needs: [build_common, inbound_tests, outbound_tests, route_tests, generate-build-id, publish-docker-images, component_tests ]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Prune Docker Images"
+        run: |
+          docker system prune --force
+          docker volume prune --force
