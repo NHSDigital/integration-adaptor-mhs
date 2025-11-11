@@ -21,8 +21,7 @@ WORKDIR /test
 COPY . .
 
 WORKDIR /test/integration-tests/integration_tests
-ENV PYTHONPATH "${PYTHONPATH}:/test/mhs/common"
-ENV PYTHONPATH "${PYTHONPATH}:/test/common"
+ENV PYTHONPATH "/test/mhs/common:/test/common"
 
 RUN pipenv --python 3.11 \
     && pipenv install --dev --deploy --ignore-pipfile
