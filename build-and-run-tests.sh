@@ -48,6 +48,7 @@ setup_fake_spine_environment_variables() {
       chmod +x setup_component_test_env.sh
       ./setup_component_test_env.sh
       source component-test-source.sh
+      rm component-test-source.sh
       cd ..
   echo
   echo "[🟢 ]: Completed setup environment variables for fake spine"
@@ -238,8 +239,8 @@ run_unit_tests() {
 
 run_component_test_sds() {
   clean_docker_containers
-  build_component_test_dependencies
   setup_fake_spine_environment_variables
+  build_component_test_dependencies
   build_component_test_docker
   run_sds_component_docker
   run_component_tests "SDS"
@@ -247,8 +248,8 @@ run_component_test_sds() {
 
 run_component_test_fake_spine() {
   clean_docker_containers
-  build_component_test_dependencies
   setup_fake_spine_environment_variables
+  build_component_test_dependencies
   build_component_test_docker
   run_spine_route_lookup_docker
   run_component_tests "Fake Spine"
