@@ -1,0 +1,32 @@
+name: "Build"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  unit_tests:
+    name: "Run Unit Tests"
+    strategy:
+      matrix:
+        config:
+          - name: common
+            path: ./common
+          - name: mhs-common
+            path: ./mhs/common
+          - name: mhs-inbound
+            path: ./mhs/inbound
+          - name: mhs-outbound
+            path: ./mhs/outbound
+          - name: spine-route-lookup
+            path: ./mhs/spineroutelookup
+    uses: ./.github/workflows/test.yml
+    with:
+      name: ${{ matrix.config.name }}
+      path: ${{ matrix.config.path }}
+    secrets: inherit

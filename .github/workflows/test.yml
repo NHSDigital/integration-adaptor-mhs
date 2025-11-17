@@ -1,0 +1,42 @@
+name: "Test"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      path:
+        required: true
+        type: string
+
+jobs:
+  unit_tests:
+    name: ${{ inputs.name }} Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pipenv
+        run: python3 -m pip install pipenv
+
+      - name: Install Dependencies
+        working-directory: ${{ inputs.path }}
+        run: pipenv install --dev
+
+      - name: Execute Unit Tests
+        working-directory: ${{ inputs.path }}
+        run: pipenv run unittests-cov
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test-Reports-${{ inputs.name }}
+          path: ${{ inputs.path }}/test-reports/**
