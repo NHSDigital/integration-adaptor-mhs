@@ -11,7 +11,7 @@ on:
 
 jobs:
   unit_tests:
-    name: "Run Unit Tests"
+    name: "Unit Tests"
     strategy:
       matrix:
         config:
