@@ -40,3 +40,11 @@ jobs:
         with:
           name: Test-Reports-${{ inputs.name }}
           path: ${{ inputs.path }}/test-reports/**
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: ${{ inputs.name }} Unit Tests
+          path: ${{ inputs.path }}/test-reports/*.xml
+          reporter: java-junit
