@@ -1,0 +1,159 @@
+name: "Component Test"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      yaml:
+        required: true
+        type: string
+
+jobs:
+  component_tests:
+    name: ${{ inputs.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Build MHS Outbound
+        run: |
+          chmod +x integration-tests/setup_component_test_env.sh
+          ./integration-tests/setup_component_test_env.sh
+          source component-test-source.sh
+          export BUILD_TAG=latest
+          
+          docker build \
+            -t local/mhs-outbound:latest \
+            -f docker/outbound/Dockerfile \
+            .
+          
+          docker build \
+            -t local/mhs-inbound:latest \
+            -f docker/inbound/Dockerfile \
+            .
+          
+          docker build \
+            -t local/mhs-route:latest \
+            -f docker/spineroutelookup/Dockerfile \
+            .
+          
+          docker build \
+            -t local/fake-spine:latest \
+            -f integration-tests/fake_spine/Dockerfile \
+            .
+          
+          docker build \
+            -t local/mhs-componenttest:latest \
+            -f ./component-test.Dockerfile \
+            .
+               
+          docker compose \
+            -f docker-compose.yml \
+            -f ${{ inputs.yaml }} \
+            build
+               
+          docker compose \
+            -f docker-compose.yml \
+            -f ${{ inputs.yaml }} \
+            --project-name component-test \
+            up -d
+          
+          echo "**************************"
+          echo "    COMPONENT TESTS       "
+          echo "**************************"
+          docker ps
+          echo
+          echo "**************************"
+
+          docker network list
+
+          docker run \
+            --network component-test_default \
+            --env "MHS_ADDRESS=http://outbound" \
+            --env "AWS_ACCESS_KEY_ID=test" \
+            --env "AWS_SECRET_ACCESS_KEY=test" \
+            --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
+            --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+            --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
+            --env "MHS_INBOUND_QUEUE_NAME=inbound" \
+            --env "SCR_ADDRESS=http://scradaptor" \
+            --name "component-tests" \
+            local/mhs-componenttest:latest
+
+#      - name: Build MHS Inbound
+#        run: |
+#          docker build \
+#              -t local/mhs-inbound:latest \
+#              -f docker/inbound/Dockerfile \
+#              .
+#
+#      - name: Build Spine Route Lookup
+#        run: |
+#          docker build \
+#            -t local/mhs-route:latest \
+#            -f docker/spineroutelookup/Dockerfile \
+#            .
+
+#      - name: Build Fake Spine
+#        run: |
+#          docker build \
+#            -t local/fake-spine:latest \
+#            -f integration-tests/fake_spine/Dockerfile \
+#            .
+#
+#      - name: Build Component Tests Docker Image
+#        run : |
+#          docker build \
+#              -t local/mhs-componenttest:latest \
+#              -f ./component-test.Dockerfile \
+#              .
+#
+#      - name: Build Docker Environment
+#        run: |
+#          chmod +x integration-tests/setup_component_test_env.sh
+#          ./integration-tests/setup_component_test_env.sh
+#          source component-test-source.sh
+#          export BUILD_TAG=latest
+#
+#          docker compose \
+#            -f docker-compose.yml \
+#            -f ${{ inputs.yaml }} \
+#            build
+#
+#          docker compose \
+#            -f docker-compose.yml \
+#            -f ${{ inputs.yaml }} \
+#            --project-name component-test \
+#            up -d
+#
+#      - name: Run Component Tests
+#        run: |
+#          echo "**************************"
+#          echo "    COMPONENT TESTS       "
+#          echo "**************************"
+#          docker ps
+#          echo
+#          echo "**************************"
+#
+#          docker network list
+#
+#          docker run \
+#            --network component-test_default \
+#            --env "MHS_ADDRESS=http://outbound" \
+#            --env "AWS_ACCESS_KEY_ID=test" \
+#            --env "AWS_SECRET_ACCESS_KEY=test" \
+#            --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
+#            --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+#            --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
+#            --env "MHS_INBOUND_QUEUE_NAME=inbound" \
+#            --env "SCR_ADDRESS=http://scradaptor" \
+#            --name "component-tests" \
+#            local/mhs-componenttest:latest

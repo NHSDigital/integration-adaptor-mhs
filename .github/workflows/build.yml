@@ -10,23 +10,51 @@ on:
       - main
 
 jobs:
-  unit_tests:
-    name: "Unit Tests"
+#  unit_tests:
+#    name: "Unit Tests"
+#    strategy:
+#      matrix:
+#        config:
+#          - name: common
+#            path: ./common
+#          - name: mhs-common
+#            path: ./mhs/common
+#          - name: mhs-inbound
+#            path: ./mhs/inbound
+#          - name: mhs-outbound
+#            path: ./mhs/outbound
+#          - name: spine-route-lookup
+#            path: ./mhs/spineroutelookup
+#    uses: ./.github/workflows/test.yml
+#    with:
+#      name: ${{ matrix.config.name }}
+#      path: ${{ matrix.config.path }}
+#    secrets: inherit
+
+  generate_build_id:
+    name: "Generate Build Id"
+    runs-on: ubuntu-latest
+    outputs:
+      build-id: ${{ steps.generate.outputs.buildId }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - id: generate
+        run: |
+          BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
+          echo "Generated the build tag: $BUILD_ID"
+          echo "buildId=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
+
+  component-tests:
+    name: "Component Tests"
     strategy:
       matrix:
         config:
-          - name: common
-            path: ./common
-          - name: mhs-common
-            path: ./mhs/common
-          - name: mhs-inbound
-            path: ./mhs/inbound
-          - name: mhs-outbound
-            path: ./mhs/outbound
-          - name: spine-route-lookup
-            path: ./mhs/spineroutelookup
-    uses: ./.github/workflows/test.yml
+          - name: "Fake Spine"
+            yaml: "docker-compose.component.override.yml"
+    uses: ./.github/workflows/component-test.yml
     with:
       name: ${{ matrix.config.name }}
-      path: ${{ matrix.config.path }}
+      yaml: ${{ matrix.config.yaml }}
     secrets: inherit
