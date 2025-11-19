@@ -25,10 +25,12 @@ jobs:
 
       - name: Build and Run Tests
         run: |
-          chmod +x integration-tests/setup_component_test_env.sh
-          ./integration-tests/setup_component_test_env.sh
+          cd integration-tests
+          chmod +x setup_component_test_env.sh
+          ./setup_component_test_env.sh
           source component-test-source.sh
           export BUILD_TAG=latest
+          cd ..
           
           docker build -t local/mhs-outbound:latest -f docker/outbound/Dockerfile .
           docker build -t local/mhs-inbound:latest -f docker/inbound/Dockerfile .
@@ -36,8 +38,8 @@ jobs:
           docker build -t local/fake-spine:latest -f integration-tests/fake_spine/Dockerfile .
           docker build -t local/mhs-componenttest:latest -f ./component-test.Dockerfile .
                
-          docker compose -f docker-compose.yml -f ${{ inputs.yaml }} build
-          docker compose -f docker-compose.yml -f ${{ inputs.yaml }} --project-name component-test up -d
+          docker compose -f docker-compose.yml ${{ inputs.yaml }} build
+          docker compose -f docker-compose.yml ${{ inputs.yaml }} --project-name component-test up -d
 
           docker run \
             --network component-test_default \
@@ -64,15 +66,20 @@ jobs:
         if: always()
         run: |
           mkdir -p logs
-          docker logs component-test-outbound-1 > logs/outbound.log>/dev/null || true
-          docker logs component-test-inbound-1 > logs/inbound.log>/dev/null || true
-          docker logs component-test-fakespine-1 > logs/fakespine.log>/dev/null || true
-          docker logs component-test-rabbitmq-1 > logs/rabbitmq.log>/dev/null || true
-          docker logs component-test-dynamodb-1 > logs/dynamodb.log>/dev/null || true
-          docker logs component-test-sds-api-mock-1 > logs/sdsapimock.log>/dev/null || true
-          docker logs component-test-route-1 > logs/route.log>/dev/null || true
-          docker logs component-test-mongodb-1 > logs/mongodb.log>/dev/null || true
-          docker logs component-test-redis-1 > logs/redis.log>/dev/null || true
+          
+          CONTAINER_IDS=$(docker ps -aq)
+          
+          if [ -z "$CONTAINER_IDS" ]; then
+            echo "No running Docker containers found."
+            exit 0
+          fi
+          
+          for ID in $CONTAINER_IDS; do
+            NAME=$(docker inspect --format '{{.Name}}' $ID | sed 's/\///')
+            LOG_FILE="logs/${NAME}_logs.txt"
+            echo " -> Copying logs for container: $NAME (ID: $ID) to $LOG_FILE"
+            docker logs -t --details $ID > $LOG_FILE 2>&1
+          done
 
       - name: Upload Docker Logs
         if: always()

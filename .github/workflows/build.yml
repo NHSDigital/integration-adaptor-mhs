@@ -37,9 +37,9 @@ jobs:
       matrix:
         config:
           - name: "Fake Spine"
-            yaml: "docker-compose.component.override.yml"
+            yaml: "-f docker-compose.component.override.yml"
           - name: "SDS"
-            yaml: "docker-compose.component-sds.override.yml"
+            yaml: "-f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml"
     uses: ./.github/workflows/component-test.yml
     with:
       name: ${{ matrix.config.name }}
@@ -48,7 +48,7 @@ jobs:
 
   generate_build_id:
     name: "Generate Build Id"
-    needs: [ unit-tests, component-tests ]
+    needs: [ component-tests ]
     runs-on: ubuntu-latest
     outputs:
       build-id: ${{ steps.generate.outputs.buildId }}

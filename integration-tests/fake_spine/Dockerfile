@@ -6,19 +6,15 @@ RUN apt-get install -y \
     libffi-dev \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /usr/src/app/mhs/fakespine
 RUN pip install pipenv
-COPY common/ /usr/src/app/common/
-COPY integration-tests/fake_spine/ /usr/src/app/mhs/fakespine
 WORKDIR /usr/src/app/mhs/fakespine
-COPY integration-tests/fake_spine/Pipfile /usr/src/app
-COPY integration-tests/fake_spine/Pipfile.lock /usr/src/app
+COPY common/ /usr/src/app/common/
+COPY integration-tests/fake_spine/Pipfile .
+COPY integration-tests/fake_spine/Pipfile.lock .
 
-RUN pipenv --python 3.11
-RUN pipenv run uninstall_setuptools
-RUN pipenv run install_setuptools
-RUN pipenv install --deploy --ignore-pipfile
+RUN pipenv install --deploy --system --ignore-pipfile
 
-COPY . .
+COPY integration-tests/fake_spine/ .
+
 EXPOSE 80 443
-ENTRYPOINT ["pipenv", "run", "start", "--logging=DEBUG"]
+ENTRYPOINT ["python", "main.py", "--logging=DEBUG"]
