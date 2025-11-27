@@ -10,6 +10,19 @@ on:
       - main
 
 jobs:
+  hadolint-docker:
+    name: Hadolint Dockerfiles
+    runs-on: ubuntu-latest
+    env:
+      HADOLINT_RECURSIVE: "true"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lint dockerfiles
+        uses: hadolint/hadolint-action@v2.0.0
+        with:
+          dockerfile: "Dockerfile"
+          recursive: true
+
   unit-tests:
     name: "Unit Tests"
     strategy:
@@ -33,6 +46,7 @@ jobs:
 
   component-tests:
     name: "Component Tests"
+    needs: [ hadolint-docker, unit-tests ]
     strategy:
       matrix:
         config:
