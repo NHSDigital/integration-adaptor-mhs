@@ -16,7 +16,7 @@ jobs:
     env:
       HADOLINT_RECURSIVE: "true"
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Lint dockerfiles
         uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5
@@ -69,7 +69,7 @@ jobs:
       build-id: ${{ steps.generate.outputs.buildId }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - id: generate
         run: |
           BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
