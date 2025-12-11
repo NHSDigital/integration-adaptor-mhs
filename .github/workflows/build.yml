@@ -1,0 +1,77 @@
+name: "Build"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  hadolint-docker:
+    name: Hadolint Dockerfiles
+    runs-on: ubuntu-latest
+    env:
+      HADOLINT_RECURSIVE: "true"
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Lint dockerfiles
+        uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5
+        with:
+          dockerfile: "Dockerfile"
+          recursive: true
+
+  unit-tests:
+    name: "Unit Tests"
+    strategy:
+      matrix:
+        config:
+          - name: common
+            path: ./common
+          - name: mhs-common
+            path: ./mhs/common
+          - name: mhs-inbound
+            path: ./mhs/inbound
+          - name: mhs-outbound
+            path: ./mhs/outbound
+          - name: spine-route-lookup
+            path: ./mhs/spineroutelookup
+    uses: ./.github/workflows/test.yml
+    with:
+      name: ${{ matrix.config.name }}
+      path: ${{ matrix.config.path }}
+    secrets: inherit
+
+  component-tests:
+    name: "Component Tests"
+    needs: [ hadolint-docker, unit-tests ]
+    strategy:
+      matrix:
+        config:
+          - name: "Fake Spine"
+            yaml: "-f docker-compose.component.override.yml"
+          - name: "SDS"
+            yaml: "-f docker-compose.component.override.yml -f docker-compose.component-sds.override.yml"
+    uses: ./.github/workflows/component-test.yml
+    with:
+      name: ${{ matrix.config.name }}
+      yaml: ${{ matrix.config.yaml }}
+    secrets: inherit
+
+  generate_build_id:
+    name: "Generate Build Id"
+    needs: [ component-tests ]
+    runs-on: ubuntu-latest
+    outputs:
+      build-id: ${{ steps.generate.outputs.buildId }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      - id: generate
+        run: |
+          BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
+          echo "Generated the build tag: $BUILD_ID"
+          echo "buildId=$BUILD_ID" >> "$GITHUB_OUTPUT"
