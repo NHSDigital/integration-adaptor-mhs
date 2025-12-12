@@ -1,0 +1,104 @@
+name: "Component Test"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      yaml:
+        required: true
+        type: string
+
+jobs:
+  component_tests:
+    name: ${{ inputs.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Setup Python
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+        with:
+          python-version: '3.11'
+
+      - name: Build and Run Tests
+        run: |
+          cd integration-tests
+          chmod +x setup_component_test_env.sh
+          ./setup_component_test_env.sh
+          source component-test-source.sh
+          export BUILD_TAG=latest
+          cd ..
+          
+          docker build -t local/mhs-outbound:latest -f docker/outbound/Dockerfile .
+          docker build -t local/mhs-inbound:latest -f docker/inbound/Dockerfile .
+          docker build -t local/mhs-route:latest -f docker/spineroutelookup/Dockerfile .
+          docker build -t local/fake-spine:latest -f integration-tests/fake_spine/Dockerfile .
+          docker build -t local/mhs-componenttest:latest -f ./component-test.Dockerfile .
+               
+          docker compose -f docker-compose.yml ${{ inputs.yaml }} build
+          docker compose -f docker-compose.yml ${{ inputs.yaml }} --project-name component-test up -d
+
+          docker run \
+            --network component-test_default \
+            --env "MHS_ADDRESS=http://outbound" \
+            --env "AWS_ACCESS_KEY_ID=test" \
+            --env "AWS_SECRET_ACCESS_KEY=test" \
+            --env "MHS_DB_ENDPOINT_URL=http://dynamodb:8000" \
+            --env "FAKE_SPINE_ADDRESS=http://fakespine" \
+            --env "MHS_INBOUND_QUEUE_BROKERS=amqp://rabbitmq:5672" \
+            --env "MHS_INBOUND_QUEUE_NAME=inbound" \
+            --env "SCR_ADDRESS=http://scradaptor" \
+            --name component-tests \
+            local/mhs-componenttest:latest
+
+      - name: Copy Test Results
+        if: always()
+        run: |
+          mkdir -p test-reports
+          docker ps
+          docker cp component-tests:/test/integration-tests/integration_tests/test-reports/ ./local-test-reports/
+          docker rm component-tests
+
+      - name: Copy Docker Logs
+        if: always()
+        run: |
+          mkdir -p logs
+          
+          CONTAINER_IDS=$(docker ps -aq)
+          
+          if [ -z "$CONTAINER_IDS" ]; then
+            echo "No running Docker containers found."
+            exit 0
+          fi
+          
+          for ID in $CONTAINER_IDS; do
+            NAME=$(docker inspect --format '{{.Name}}' $ID | sed 's/\///')
+            LOG_FILE="logs/${NAME}_logs.txt"
+            echo " -> Copying logs for container: $NAME (ID: $ID) to $LOG_FILE"
+            docker logs -t --details $ID > $LOG_FILE 2>&1
+          done
+
+      - name: Upload Docker Logs
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        with:
+          name: Component-Test-Docker-Logs-${{ inputs.name }}
+          path: logs/**
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        with:
+          name: Component-Test-Reports-${{ inputs.name }}
+          path: local-test-reports/**
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@fe45e9537387dac839af0d33ba56eed8e24189e8
+        if: always()
+        with:
+          name: ${{ inputs.name }} Component Tests
+          path: local-test-reports/*.xml
+          reporter: java-junit

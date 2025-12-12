@@ -165,3 +165,5 @@ export-env-vars-and-run-mhs-docker.sh
 out/
 
 *.env
+
+pycurl

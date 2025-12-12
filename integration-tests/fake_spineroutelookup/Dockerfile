@@ -2,7 +2,8 @@ FROM python:3.11-slim-bookworm AS base
 
 WORKDIR /app
 
-RUN pip install pipenv
+RUN pip install --no-cache-dir --upgrade pip==25.3 \
+    && pip install --no-cache-dir pipenv==2025.0.4
 
 COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
