@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "eb6e0b47c0b5c1b65ef711de4f2ec5a64d8f141f7ad58137e4d8755970188500"
+            "sha256": "defcf0914363441ef688fd114d00b5d68f068fabd17f8e216384c3de2c3a0ed3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1076,12 +1076,12 @@
                 "yaml"
             ],
             "hashes": [
-                "sha256:a1df9ec6b2cd0edf45039ef025abd7f0660808fa2edf737d3ba1cf5ef1a4625b",
-                "sha256:d23ebd5b71e541e031b02a19db10b5e6d5ef8452c552833e3e1afc836b40b1ad"
+                "sha256:18d6cfaf6a9742d4f9a8f364bfabb7e8884983e10b155ad13616e084f47164ef",
+                "sha256:fd0ed14af71a2949d9aeb96b72ce1517cb4a48a5c55667cd0483b7ed33156a2a"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.5'",
-            "version": "==3.3.2"
+            "markers": "python_version >= '3.9'",
+            "version": "==6.8.4"
         },
         "apispec-webframeworks": {
             "hashes": [
@@ -1305,6 +1305,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==5.3.0"
+        },
+        "packaging": {
+            "hashes": [
+                "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484",
+                "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==25.0"
         },
         "pyyaml": {
             "hashes": [
