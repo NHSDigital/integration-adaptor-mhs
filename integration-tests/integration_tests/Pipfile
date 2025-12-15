@@ -15,6 +15,7 @@ aioboto3 = "~=11.3.1"
 defusedxml = "~=0.7.1"
 dpath = "~=2.2.0"
 integration-adaptors-common = {editable = true, path = "../../common"}
+aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"

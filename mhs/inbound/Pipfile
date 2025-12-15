@@ -13,6 +13,7 @@ tornado = "~=6.0"
 mhs_common = {editable = true, path = "./../common"}
 isodate = "~=0.6"
 update = "*"
+aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"
