@@ -10,6 +10,7 @@ integration-adaptors-common = {editable = true, path = "../../common"}
 scr = {editable = true, path = "../SCR"}
 flask = "~=3.0.3"
 requests = "~=2.32.3"
+aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"
