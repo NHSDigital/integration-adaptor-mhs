@@ -81,8 +81,6 @@ jobs:
     needs: [ generate_build_id ]
     runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/main'
-
     strategy:
       matrix:
         service:
