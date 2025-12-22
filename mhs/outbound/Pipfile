@@ -16,6 +16,7 @@ mhs-common = {editable = true,path = "./../common"}
 isodate = "~=0.6"
 integration-adaptors-common = {editable = true, path = "./../../common"}
 pycurl = "~=7.43"
+aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"

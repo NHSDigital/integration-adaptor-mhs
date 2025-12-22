@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 scr = {editable = true,path = "."}
 integration-adaptors-common = {editable = true, path = "../../common"}
+aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"

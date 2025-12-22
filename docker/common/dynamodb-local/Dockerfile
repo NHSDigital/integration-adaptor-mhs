@@ -1,8 +1,10 @@
-FROM amazon/dynamodb-local
+FROM amazon/dynamodb-local:3.1.0
 
 USER root
 
-RUN yum install --assumeyes --quiet python3 && pip3 install -q awscli
+RUN yum install --assumeyes --quiet python3-3.11 \
+    && pip3 install --no-cache-dir -q awscli==1.43.5 \
+    && yum clean all
 
 USER dynamodblocal
 
@@ -21,11 +23,8 @@ RUN nohup bash -c "java -jar DynamoDBLocal.jar -sharedDb &" && \
         --table-name sync_async_state \
         --attribute-definitions AttributeName=key,AttributeType=S \
         --key-schema AttributeName=key,KeyType=HASH \
-        --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
-
-# I tried using CMD/ENTRYPOINT to run DynamoDB but kept getting errors, so
-# switched to this approach instead.
-RUN printf "#!/bin/sh\njava -jar DynamoDBLocal.jar -sharedDb\n" > run-db.sh
-RUN chmod +x run-db.sh
+        --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+    && printf "#!/bin/sh\njava -jar DynamoDBLocal.jar -sharedDb\n" > run-db.sh \
+    && chmod +x run-db.sh
 
 ENTRYPOINT ["/home/dynamodblocal/run-db.sh"]
