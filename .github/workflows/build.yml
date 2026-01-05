@@ -122,11 +122,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: ${{ matrix.service.context }}
-          file: ${{ matrix.service.dockerfile }}
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_REGISTRY }}/${{ matrix.service.ecr_repo }}:${{ needs.generate_build_id.outputs.build-id }}
-          platform: linux/amd64
+        run: |
+          docker build -f ${{ matrix.service.dockerfile }} -t ${{ secrets.DOCKER_REGISTRY }}/${{ matrix.service.ecr_repo }}:${{ needs.generate_build_id.outputs.build-id }} .
+          docker push ${{ secrets.DOCKER_REGISTRY }}/${{ matrix.service.ecr_repo }}:${{ needs.generate_build_id.outputs.build-id }}
