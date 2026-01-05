@@ -72,9 +72,17 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - id: generate
         run: |
-          BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            GIT_BRANCH="PR"
+          elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            GIT_BRANCH="main"
+          fi
+          
+          GIT_SHORT_SHA=$(git rev-parse --short=7 HEAD)
+          BUILD_ID="${GIT_BRANCH}-${{ github.run_number }}-${GIT_SHORT_SHA}"
           echo "Generated the build tag: $BUILD_ID"
-          echo "buildId=$BUILD_ID" >> "$GITHUB_OUTPUT"
+          echo "buildId=$BUILD_ID" >> $GITHUB_OUTPUT
 
   build-and-push-images:
     name: Build & Push Docker Images
@@ -122,10 +130,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: ${{ matrix.service.context }}
-          file: ${{ matrix.service.dockerfile }}
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_REGISTRY }}/${{ matrix.service.ecr_repo }}:${{ needs.generate_build_id.outputs.build-id }}
+        run: |
+          docker build -f ${{ matrix.service.dockerfile }} -t ${{ secrets.DOCKER_REGISTRY }}/${{ matrix.service.ecr_repo }}:${{ needs.generate_build_id.outputs.build-id }} .
+          docker push ${{ secrets.DOCKER_REGISTRY }}/${{ matrix.service.ecr_repo }}:${{ needs.generate_build_id.outputs.build-id }}
