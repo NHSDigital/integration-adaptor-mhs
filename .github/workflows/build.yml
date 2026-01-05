@@ -79,7 +79,8 @@ jobs:
             GIT_BRANCH="main"
           fi
           
-          BUILD_ID=${GIT_BRANCH}-${{ github.run_number }}-${{ github.sha }}
+          GIT_SHORT_SHA=$(git rev-parse --short=7 HEAD)
+          BUILD_ID="${GIT_BRANCH}-${{ github.run_number }}-${GIT_SHORT_SHA}"
           echo "Generated the build tag: $BUILD_ID"
           echo "buildId=$BUILD_ID" >> $GITHUB_OUTPUT
 
