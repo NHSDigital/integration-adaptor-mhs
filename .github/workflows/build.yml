@@ -72,9 +72,16 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - id: generate
         run: |
-          BUILD_ID=$(python3 pipeline/scripts/tag.py ${{ github.ref }} ${{ github.run_number }} ${{ github.sha }})
+          
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            GIT_BRANCH="PR"
+          elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            GIT_BRANCH="main"
+          fi
+          
+          BUILD_ID=${GIT_BRANCH}-${{ github.run_number }}-${{ github.sha }}
           echo "Generated the build tag: $BUILD_ID"
-          echo "buildId=$BUILD_ID" >> "$GITHUB_OUTPUT"
+          echo "buildId=$BUILD_ID" >> $GITHUB_OUTPUT
 
   build-and-push-images:
     name: Build & Push Docker Images
