@@ -3,7 +3,7 @@ FROM python:3.11-slim-bookworm AS base
 RUN apt-get update  \
     && apt-get install -y --no-install-recommends \
        build-essential=12.9 \
-       libssl-dev=3.0.17-1~deb12u3 \
+       libssl-dev=3.0.18-1~deb12u1 \
        libxml2-dev=2.9.14+dfsg-1.3~deb12u5 \
        libxslt1-dev=1.1.35-1+deb12u3 \
        libffi-dev=3.4.4-1 \
