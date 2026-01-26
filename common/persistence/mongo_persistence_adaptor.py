@@ -51,7 +51,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
                 'tls': True,
                 'tlsCAFile': _CERT_FILE_PATH
             }
-        return MongoClient(config.get_config('DB_ENDPOINT_URL'), server_api=ServerApi('1'), async_=True, **kwargs)
+        return MongoClient(config.get_config('DB_ENDPOINT_URL'), server_api=ServerApi('1'), **kwargs)
 
     @validate_data_has_no_primary_key_field(primary_key=_KEY)
     @retriable
