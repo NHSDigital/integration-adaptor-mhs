@@ -1,6 +1,6 @@
 """Module containing functionality for a MongoDB implementation of a persistence adaptor."""
 import os
-import ssl
+import asyncio
 
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError
@@ -65,7 +65,9 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         logger.info('Adding data for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
 
         try:
-            result = self.collection.insert_one(self.add_primary_key_field(_KEY, key, data))
+            result = await asyncio.to_thread(
+                lambda: self.collection.insert_one(self.add_primary_key_field(_KEY, key, data))
+            )
             if not result.acknowledged:
                 raise RecordCreationError
         except DuplicateKeyError as e:
@@ -86,10 +88,13 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         logger.info('Updating data for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
 
         try:
-            result = await self.collection.find_one_and_update(
-                {_KEY: key},
-                {'$set': data},
-                return_document=ReturnDocument.AFTER)
+            result = await asyncio.to_thread(
+                lambda: self.collection.find_one_and_update(
+                    {_KEY: key},
+                    {'$set': data},
+                    return_document=ReturnDocument.AFTER
+                )
+            )
             return self.remove_primary_key_field(_KEY, result)
         except Exception as e:
             raise RecordUpdateError from e
@@ -103,7 +108,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Getting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            result = await self.collection.find_one({_KEY: key})
+            result = await asyncio.to_thread(self.collection.find_one, {_KEY: key})
             return self.remove_primary_key_field(_KEY, result)
         except Exception as e:
             raise RecordRetrievalError from e
@@ -117,7 +122,9 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         """
         logger.info('Deleting record for {key} from table {table}', fparams={'key': key, 'table': self.table_name})
         try:
-            result = await self.collection.find_one_and_delete({_KEY: key})
+            result = await asyncio.to_thread(
+                lambda: self.collection.find_one_and_delete({_KEY: key})
+            )
             return self.remove_primary_key_field(_KEY, result)
         except Exception as e:
             raise RecordDeletionError from e
