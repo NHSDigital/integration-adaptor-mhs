@@ -2,9 +2,9 @@
 import os
 import ssl
 
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import ReturnDocument
+from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError
+from pymongo.server_api import ServerApi
 
 import utilities.integration_adaptors_logger as log
 from persistence import persistence_adaptor
@@ -51,7 +51,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
                 'tls': True,
                 'tlsCAFile': _CERT_FILE_PATH
             }
-        return AsyncIOMotorClient(config.get_config('DB_ENDPOINT_URL'), **kwargs)
+        return MongoClient(config.get_config('DB_ENDPOINT_URL'), server_api=ServerApi('1'), async_=True, **kwargs)
 
     @validate_data_has_no_primary_key_field(primary_key=_KEY)
     @retriable

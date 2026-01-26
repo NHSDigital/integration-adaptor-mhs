@@ -15,6 +15,6 @@ setup(
         'tornado~=6.4.1',
         'isodate~=0.6.1',
         'aioboto3~=11.3.1',
-        'motor~=3.5.1'
+        'pymongo~=4.0'
     ]
 )
