@@ -65,7 +65,7 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         logger.info('Adding data for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
 
         try:
-            result = await self.collection.insert_one(self.add_primary_key_field(_KEY, key, data))
+            result = self.collection.insert_one(self.add_primary_key_field(_KEY, key, data))
             if not result.acknowledged:
                 raise RecordCreationError
         except DuplicateKeyError as e:
