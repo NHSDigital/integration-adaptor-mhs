@@ -1,6 +1,6 @@
 on:
-  push:
-    tags: "*"
+  release:
+    types: [published]
 
 jobs:
   push_to_dockerhub:
@@ -12,6 +12,7 @@ jobs:
           - {folder: inbound, dockerhub_name: nia-mhs-inbound}
     uses: NHSDigital/integration-adaptor-actions/.github/workflows/release-adaptor-container-image.yml@main
     with:
+        upload_url: ${{ github.event.release.upload_url }}
         dockerhub_name: ${{matrix.image.dockerhub_name}}
         folder: ${{matrix.image.folder}}
 
