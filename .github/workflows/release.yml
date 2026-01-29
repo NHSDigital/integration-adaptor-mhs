@@ -7,9 +7,9 @@ jobs:
     strategy:
       matrix:
         image:
-          - {folder: spineroutelookup, dockerhub_name: nia-mhs-route}
-          - {folder: outbound, dockerhub_name: nia-mhs-outbound}
-          - {folder: inbound, dockerhub_name: nia-mhs-inbound}
+          - {folder: docker/spineroutelookup, dockerhub_name: nia-mhs-route}
+          - {folder: docker/outbound, dockerhub_name: nia-mhs-outbound}
+          - {folder: docker/inbound, dockerhub_name: nia-mhs-inbound}
     uses: NHSDigital/integration-adaptor-actions/.github/workflows/release-adaptor-container-image.yml@main
     with:
         upload_url: ${{ github.event.release.upload_url }}
