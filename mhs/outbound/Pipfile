@@ -14,6 +14,7 @@ tornado = "~=6.0"
 defusedxml = "~=0.6"
 mhs-common = {editable = true,path = "./../common"}
 isodate = "~=0.6"
+marshmallow = ">=3.26.2"
 integration-adaptors-common = {editable = true, path = "./../../common"}
 pycurl = "~=7.43"
 aiohttp = "==3.12.14"
