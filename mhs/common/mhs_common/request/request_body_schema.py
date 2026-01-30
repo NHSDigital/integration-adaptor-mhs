@@ -37,21 +37,34 @@ class Attachment:
 
 class AttachmentSchema(marshmallow.Schema):
     """Schema for an attachment in the request body that MHS accepts"""
-    is_base64 = marshmallow.fields.Bool(required=True,
-                                        description='Whether the attachment payload is base64-encoded or not. This is '
-                                                    'only required for binary attachments eg images.',
-                                        truthy={True}, falsy={False})
-    content_type = marshmallow.fields.Str(required=True, description='Content type of the attachment',
-                                          validate=marshmallow.validate.OneOf(_ATTACHMENT_ALLOWED_CONTENT_TYPES))
-    payload = marshmallow.fields.Str(required=True,
-                                     description='The attachment, possibly base64-encoded as per is_base64.',
-                                     # Max length of payload is 5MB ie 5 000 000 characters. This requirement is from
-                                     # EIS section 2.5.4.2
-                                     validate=marshmallow.validate.Length(min=1, max=5_000_000))
-    description = marshmallow.fields.Str(required=True, description='Description of the attachment',
-                                         validate=marshmallow.validate.Length(min=1))
-    document_id = marshmallow.fields.Str(required=False,
-                                         description='The document id of the attachment.')
+    is_base64 = marshmallow.fields.Bool(
+        required=True,
+        truthy={True},
+        falsy={False},
+        metadata={
+            "description":  'Whether the attachment payload is base64-encoded or not. This is '
+                            'only required for binary attachments eg images.',
+        })
+
+    content_type = marshmallow.fields.Str(
+        required=True,
+        validate=marshmallow.validate.OneOf(_ATTACHMENT_ALLOWED_CONTENT_TYPES),
+        metadata={"description": 'Content type of the attachment.'})
+
+    # Max length of payload is 5MB ie 5 000 000 characters. This requirement is from EIS section 2.5.4.2
+    payload = marshmallow.fields.Str(
+        required=True,
+        validate=marshmallow.validate.Length(min=1, max=5_000_000),
+        metadata={"description": 'The attachment, possibly base64-encoded as per is_base64.'})
+
+    description = marshmallow.fields.Str(
+        required=True,
+        validate=marshmallow.validate.Length(min=1),
+        metadata={"description": 'Description of the attachment.'})
+
+    document_id = marshmallow.fields.Str(
+        required=False,
+        metadata={"description": 'The document id of the attachment.'})
 
     @marshmallow.post_load
     def make_attachment(self, data, **kwargs):
@@ -76,11 +89,17 @@ class ExternalAttachment:
 
 class ExternalAttachmentSchema(marshmallow.Schema):
     """Schema for an external attachment in the request body that MHS accepts"""
-    document_id = marshmallow.fields.Str(required=False,
-                                         description='The document id of the attachment.')
-    message_id = marshmallow.fields.Str(required=True,
-                                        description='Attachment message id.')
-    description = marshmallow.fields.Str(required=True, description='Description of the attachment')
+    document_id = marshmallow.fields.Str(
+        required=False,
+        metadata={"description": 'The document id of the attachment.'})
+
+    message_id = marshmallow.fields.Str(
+        required=True,
+        metadata={"description": 'Attachment message id.'})
+
+    description = marshmallow.fields.Str(
+        required=True,
+        metadata={"description": 'Description of the attachment'})
 
     @marshmallow.post_load
     def make_external_attachment(self, data, **kwargs):
@@ -98,25 +117,37 @@ class RequestBody:
 
 class RequestBodySchema(marshmallow.Schema):
     """Schema for the request body that MHS accepts"""
+
+    # No explicit documentation was found in the EIS as to the max size of this
+    # HL7 payload, but additional attachments have a max size of 5MB so just set to
+    # this. Note that the whole request body sent to Spine gets checked later to make
+    # sure it isn't too large.
     payload = marshmallow.fields.Str(
-        required=True, description='HL7 Payload to send to Spine',
-        # No explicit documentation was found in the EIS as to the max size of this
-        # HL7 payload, but additional attachments have a max size of 5MB so just set to
-        # this. Note that the whole request body sent to Spine gets checked later to make
-        # sure it isn't too large.
-        validate=marshmallow.validate.Length(min=1, max=5_000_000))
+        required=True,
+        validate=marshmallow.validate.Length(min=1, max=5_000_000),
+        metadata={"description": 'HL7 Payload to send to Spine'})
+
+    # EIS 2.5.4.2 says that the max number of attachments is 100, including
+    # the ebXML MIME part. And there is also the HL7 payload, so 100 - 2 = 98
     attachments = marshmallow.fields.Nested(
-        AttachmentSchema, many=True, missing=[],
-        description='Optional attachments to send with the payload. Only for use '
-                    'for interactions that support sending attachments.',
-        # EIS 2.5.4.2 says that the max number of attachments is 100, including
-        # the ebXML MIME part. And there is also the HL7 payload, so 100 - 2 = 98
-        validate=marshmallow.validate.Length(max=98))
+        AttachmentSchema,
+        many=True,
+        load_default=[],
+        validate=marshmallow.validate.Length(max=98),
+        metadata={
+            "description": 'Optional attachments to send with the payload. Only for use '
+                         'for interactions that support sending attachments.'
+        })
+
     external_attachments = marshmallow.fields.Nested(
-        ExternalAttachmentSchema, many=True, missing=[],
-        description='Optional external attachments to include in the Manifest '
-                    'that will be sent in separate messages. Only for use '
-                    'for interactions that support sending attachments.')
+        ExternalAttachmentSchema,
+        many=True,
+        load_default=[],
+        metadata={
+            "description":  'Optional external attachments to include in the Manifest '
+                            'that will be sent in separate messages. Only for use '
+                            'for interactions that support sending attachments.'
+        })
 
     @marshmallow.post_load
     def make_request_body(self, data, **kwargs):
