@@ -15,7 +15,7 @@ lxml = "~=5.3"
 isodate = "~=0.7.2"
 aioboto3 = "~=13.3.0"
 pymongo = ">=4.16"
-aiohttp = "==3.12.14"
+aiohttp = "==3.13.3"
 
 [requires]
 python_version = "3.11"
