@@ -9,7 +9,9 @@ unittest-xml-reporting = "~=3.2"
 
 [packages]
 defusedxml = "~=0.7.1"
-marshmallow = ">=3.26.2"
+marshmallow = "~=3.26.2"
+tornado = ">=6.2"
+aioboto3 = "~=15.5.0"
 integration-adaptors-common = {editable = true, path = "./../../common"}
 
 [requires]
