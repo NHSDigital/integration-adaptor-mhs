@@ -10,12 +10,9 @@ unittest-xml-reporting = "~=3.2"
 [packages]
 requests = "~=2.32.3"
 ldap3 = "~=2.9.1"
-tornado = "~=6.4.1"
-aioboto3 = "~=11.3.1"
 defusedxml = "~=0.7.1"
 dpath = "~=2.2.0"
 integration-adaptors-common = {editable = true, path = "../../common"}
-aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"

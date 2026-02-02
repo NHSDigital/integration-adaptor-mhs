@@ -9,11 +9,7 @@ unittest-xml-reporting = "~=3.2"
 
 [packages]
 integration-adaptors-common = {editable = true, path = "./../../common"}
-tornado = "~=6.0"
 mhs_common = {editable = true, path = "./../common"}
-isodate = "~=0.6"
-update = "*"
-aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"

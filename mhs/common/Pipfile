@@ -8,13 +8,9 @@ coverage = "~=7.6"
 unittest-xml-reporting = "~=3.2"
 
 [packages]
-tornado = "~=6.4.1"
 defusedxml = "~=0.7.1"
-aioboto3 = "~=11.3.1"
-isodate = "~=0.6.1"
 marshmallow = ">=3.26.2"
 integration-adaptors-common = {editable = true, path = "./../../common"}
-aiohttp = "==3.12.14"
 
 [requires]
 python_version = "3.11"
