@@ -5,7 +5,7 @@ FROM python:3.11-slim-bookworm
 RUN apt-get update  \
     && apt-get install -y --no-install-recommends \
       build-essential=12.9 \
-      libssl-dev=3.0.18-1~deb12u1 \
+      libssl-dev=3.0.18-1~deb12u2 \
       swig=4.1.0-0.2 \
       pkg-config=1.8.1-1 \
       libxml2-dev=2.9.14+dfsg-1.3~deb12u5 \

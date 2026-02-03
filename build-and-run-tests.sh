@@ -18,6 +18,7 @@ run_unit_test_module() {
 
   if (
     cd "$module_path" && \
+    rm -rf test-reports && \
     pipenv install --dev --deploy --ignore-pipfile && \
     pipenv run unittests-cov && \
     pipenv run coverage-report
