@@ -29,21 +29,39 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
     COPC_INTERACTION = "COPC_IN000001UK01"
     PRSC_INTERACTION = "PRSC_IN080000UK07"
 
+    DEFAULT_PARTY_ID = "9689177923"
+    SOAP_ERROR_PARTY_ID = "9446245796"
+
     def setUp(self):
         MHS_STATE_TABLE_WRAPPER.clear_all_records_in_table()
         MHS_SYNC_ASYNC_TABLE_WRAPPER.clear_all_records_in_table()
         MHS_INBOUND_QUEUE.drain()
 
+    def _build_copc_message(self, party_id=None, message_id=None, **kwargs):
+        return build_message(
+            self.COPC_INTERACTION,
+            party_id or self.DEFAULT_PARTY_ID,
+            message_id=message_id,
+            **kwargs
+        )
+
     def _post_to_inbound_proxy(self, message, expect_success=True):
         builder = InboundProxyHttpRequestBuilder().with_body(message)
-        if expect_success:
-            return builder.execute_post_expecting_success()
-        return builder.execute_post_expecting_error_response()
+        return (
+            builder.execute_post_expecting_success()
+            if expect_success
+            else builder.execute_post_expecting_error_response()
+        )
 
-    def _post_to_mhs(self, interaction_id, message_id, message,
-                     wait_for_response=False,
-                     expect="success",
-                     attachments=None):
+    def _post_to_mhs(
+            self,
+            interaction_id,
+            message_id,
+            message,
+            wait_for_response=False,
+            expect="success",
+            attachments=None,
+    ):
         builder = (
             MhsHttpRequestBuilder()
             .with_headers(
@@ -60,43 +78,44 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             return builder.execute_post_expecting_error_response()
         if expect == "bad_request":
             return builder.execute_post_expecting_bad_request_response()
+
         raise ValueError(f"Unknown expect type: {expect}")
 
     def _assert_table_state(self, message_id, outbound_status, workflow):
         MhsTableStateAssertor(
             MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()
-        ).assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values(
+        ).assert_single_item_exists_with_key(message_id).assert_item_contains_values(
             {
-                'INBOUND_STATUS': None,
-                'OUTBOUND_STATUS': outbound_status,
-                'WORKFLOW': workflow
-            })
+                "INBOUND_STATUS": None,
+                "OUTBOUND_STATUS": outbound_status,
+                "WORKFLOW": workflow,
+            }
+        )
 
     def test_should_place_unsolicited_valid_message_onto_queue_for_client_to_receive(self):
         message, message_id = build_message(
-            'INBOUND_UNEXPECTED_MESSAGE',
-            '9689177923',
-            to_party_id="test-party-key"
+            "INBOUND_UNEXPECTED_MESSAGE",
+            self.DEFAULT_PARTY_ID,
+            to_party_id="test-party-key",
         )
 
         self._post_to_inbound_proxy(message)
 
         AMQMessageAssertor(MHS_INBOUND_QUEUE.get_next_message_on_queue()) \
-            .assert_property('message-id', message_id) \
+            .assert_property("message-id", message_id) \
             .assert_durable_is(True) \
             .assertor_for_hl7_xml_message() \
             .assert_element_attribute(
             ".//ControlActEvent//code",
             "displayName",
-            "GP2GP Large Message Attachment Information"
+            "GP2GP Large Message Attachment Information",
         )
 
     def test_should_return_nack_when_forward_reliable_message_is_not_meant_for_the_mhs_system(self):
         message, _ = build_message(
-            'INBOUND_UNEXPECTED_MESSAGE',
-            '9689177923',
-            to_party_id="NOT_THE_MHS"
+            "INBOUND_UNEXPECTED_MESSAGE",
+            self.DEFAULT_PARTY_ID,
+            to_party_id="NOT_THE_MHS",
         )
 
         response = self._post_to_inbound_proxy(message)
@@ -106,15 +125,15 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             .assert_element_attribute(".//ErrorList//Error", "severity", "Error") \
             .assert_element_exists_with_value(
             ".//ErrorList//Error//Description",
-            "501314:Invalid To Party Type attribute"
+            "501314:Invalid To Party Type attribute",
         )
 
     def test_should_return_500_response_when_inbound_service_receives_message_in_invalid_format(self):
-        message, _ = build_message('INBOUND_UNEXPECTED_INVALID_MESSAGE', '9689177923')
+        message, _ = build_message("INBOUND_UNEXPECTED_INVALID_MESSAGE", self.DEFAULT_PARTY_ID)
 
         response = self._post_to_inbound_proxy(message, expect_success=False)
 
-        self.assertIn('Exception during inbound message parsing', response.text)
+        self.assertIn("Exception during inbound message parsing", response.text)
 
     def test_should_return_successful_response_to_client_when_a_business_level_retry_is_required_and_succeeds(self):
         """
@@ -122,9 +141,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         after 2 retries fakespine will return a success response.
         """
 
-        message, message_id = build_message(
-            self.COPC_INTERACTION,
-            '9689177923',
+        message, message_id = self._build_copc_message(
             message_id=self.RETRY_MESSAGE_ID
         )
 
@@ -133,7 +150,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             message_id,
             message,
             wait_for_response=False,
-            expect="success"
+            expect="success",
         )
 
     def test_should_record_message_status_when_a_business_level_retry_is_required_and_succeeds(self):
@@ -142,9 +159,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         after 2 retries fakespine will return a success response.
         """
 
-        message, message_id = build_message(
-            self.COPC_INTERACTION,
-            '9689177923',
+        message, message_id = self._build_copc_message(
             message_id=self.RETRY_MESSAGE_ID
         )
 
@@ -153,13 +168,13 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             message_id,
             message,
             wait_for_response=False,
-            expect="success"
+            expect="success",
         )
 
         self._assert_table_state(
             message_id,
-            'OUTBOUND_MESSAGE_ACKD',
-            'forward-reliable'
+            "OUTBOUND_MESSAGE_ACKD",
+            "forward-reliable",
         )
 
     def test_should_return_information_from_soap_fault_returned_by_spine_in_original_post_request_to_client(self):
@@ -168,10 +183,9 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
 
-        message, message_id = build_message(
-            self.COPC_INTERACTION,
-            '9446245796',
-            message_id=self.SOAP_FAULT_MESSAGE_ID
+        message, message_id = self._build_copc_message(
+            party_id=self.SOAP_ERROR_PARTY_ID,
+            message_id=self.SOAP_FAULT_MESSAGE_ID,
         )
 
         response = self._post_to_mhs(
@@ -179,13 +193,13 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             message_id,
             message,
             wait_for_response=False,
-            expect="error"
+            expect="error",
         )
 
         JsonErrorResponseAssertor(response.text) \
             .assert_error_code(200) \
-            .assert_code_context('urn:nhs:names:error:tms') \
-            .assert_severity('Error')
+            .assert_code_context("urn:nhs:names:error:tms") \
+            .assert_severity("Error")
 
     def test_should_record_message_status_when_soap_fault_returned_from_spine(self):
         """
@@ -193,10 +207,9 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
 
-        message, message_id = build_message(
-            self.COPC_INTERACTION,
-            '9446245796',
-            message_id=self.SOAP_FAULT_MESSAGE_ID
+        message, message_id = self._build_copc_message(
+            party_id=self.SOAP_ERROR_PARTY_ID,
+            message_id=self.SOAP_FAULT_MESSAGE_ID,
         )
 
         self._post_to_mhs(
@@ -204,24 +217,26 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             message_id,
             message,
             wait_for_response=False,
-            expect="error"
+            expect="error",
         )
 
         self._assert_table_state(
             message_id,
-            'OUTBOUND_MESSAGE_NACKD',
-            'forward-reliable'
+            "OUTBOUND_MESSAGE_NACKD",
+            "forward-reliable",
         )
 
     def test_should_return_bad_request_when_client_sends_invalid_message(self):
-        message, message_id = build_message('COPC_IN000001UK01')
+        message, message_id = self._build_copc_message()
 
-        attachments = [{
-            'content_type': 'application/zip',
-            'is_base64': False,
-            'description': 'Some description',
-            'payload': 'Some payload'
-        }]
+        attachments = [
+            {
+                "content_type": "application/zip",
+                "is_base64": False,
+                "description": "Some description",
+                "payload": "Some payload",
+            }
+        ]
 
         response = self._post_to_mhs(
             self.COPC_INTERACTION,
@@ -229,7 +244,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             message,
             wait_for_response=False,
             expect="bad_request",
-            attachments=attachments
+            attachments=attachments,
         )
 
         self.assertEqual(
