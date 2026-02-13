@@ -127,6 +127,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', '9446245796',
                                             message_id='3771F30C-A231-4D64-A46C-E7FB0D52C27C')
+
         # Act
         response = self._post_to_mhs('COPC_IN000001UK01', message_id, message, wait_for_response=False, expect="error")
 
@@ -144,6 +145,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', '9446245796',
                                             message_id='3771F30C-A231-4D64-A46C-E7FB0D52C27C')
+
         # Act
         self._post_to_mhs('COPC_IN000001UK01', message_id, message, wait_for_response=False, expect="error")
 
@@ -157,6 +159,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', '9689177923',
                                             message_id='A7D43B03-38FB-4ED7-8D04-0496DBDEDB7D')
+
         # Act
         response = self._post_to_mhs('COPC_IN000001UK01', message_id, message, wait_for_response=False, expect="error")
 
@@ -173,11 +176,89 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         # Arrange
         message, message_id = build_message('COPC_IN000001UK01', '9689177923',
                                             message_id='A7D43B03-38FB-4ED7-8D04-0496DBDEDB7D')
+
         # Act
         self._post_to_mhs('COPC_IN000001UK01', message_id, message, wait_for_response=False, expect="error")
 
         # Assert
         self._assert_table_state(message_id, 'OUTBOUND_MESSAGE_NACKD', 'forward-reliable')
+
+    def test_should_return_information_from_soap_fault_returned_from_spine_in_original_post_request_when_wait_for_response_requested(self):
+        """
+        Message ID: 3771F30C-A231-4D64-A46C-E7FB0D52C27C configured in fakespine to return a SOAP Fault error.
+        Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
+
+        Here we use 'PRSC_IN080000UK07' which is an eRS slot polling call, it is a forward reliable message type that
+        can be wrapped in wait_for_response
+        """
+        # Arrange
+        message, message_id = build_message('PRSC_IN080000UK07', '9446245796',
+                                            message_id='3771F30C-A231-4D64-A46C-E7FB0D52C27C')
+
+        # Act
+        response = self._post_to_mhs('PRSC_IN080000UK07', message_id, message, wait_for_response=True, expect="error")
+
+        # Assert
+        JsonErrorResponseAssertor(response.text) \
+            .assert_error_code(200) \
+            .assert_code_context('urn:nhs:names:error:tms') \
+            .assert_severity('Error')
+
+    def test_should_update_status_when_a_soap_fault_is_returned_from_spine_and_wait_for_response_is_requested(self):
+        """
+        Message ID: 3771F30C-A231-4D64-A46C-E7FB0D52C27C configured in fakespine to return a SOAP Fault error.
+        Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
+
+        Here we use 'PRSC_IN080000UK07' which is an eRS slot polling call, it is a forward reliable message type that
+        can be wrapped in sync-async
+        """
+        # Arrange
+        message, message_id = build_message('PRSC_IN080000UK07', '9446245796',
+                                            message_id='3771F30C-A231-4D64-A46C-E7FB0D52C27C')
+
+        # Act
+        self._post_to_mhs('PRSC_IN080000UK07', message_id, message, wait_for_response=True, expect="error")
+
+        # Assert
+        self._assert_table_state(message_id, 'OUTBOUND_SYNC_ASYNC_MESSAGE_SUCCESSFULLY_RESPONDED', 'sync-async')
+
+    def test_should_return_information_from_an_ebxml_fault_returned_from_spine_in_original_post_request_when_wait_for_response_requested(self):
+        """
+        Message ID: 'A7D43B03-38FB-4ED7-8D04-0496DBDEDB7D' configured in fakespine to return a ebxml fault
+
+        Here we use 'PRSC_IN080000UK07' which is an eRS slot polling call, it is a forward reliable message type that
+        can be wrapped in wait_for_response
+        """
+        # Arrange
+        message, message_id = build_message('PRSC_IN080000UK07', '9689177923',
+                                            message_id='A7D43B03-38FB-4ED7-8D04-0496DBDEDB7D')
+
+        # Act
+        response = self._post_to_mhs('PRSC_IN080000UK07', message_id, message, wait_for_response=True, expect="error")
+
+        # Assert
+        JsonErrorResponseAssertor(response.text) \
+            .assert_code_context('urn:oasis:names:tc:ebxml-msg:service:errors') \
+            .assert_severity('Error') \
+            .assert_error_type('ebxml_error')
+
+    def test_should_update_status_when_a_ebxml_fault_is_returned_from_spine_and_wait_for_response_is_requested(self):
+        """
+        Message ID: A7D43B03-38FB-4ED7-8D04-0496DBDEDB7D configured in fakespine to return a ebxml Fault error.
+        Error found here: fake_spine/fake_spine/configured_responses/ebxml_fault_single_error.xml
+
+        Here we use 'PRSC_IN080000UK07' which is an eRS slot polling call, it is a forward reliable message type that
+        can be wrapped in wait_for_response
+        """
+        # Arrange
+        message, message_id = build_message('PRSC_IN080000UK07', '9446245796',
+                                            message_id='3771F30C-A231-4D64-A46C-E7FB0D52C27C')
+
+        # Act
+        self._post_to_mhs('PRSC_IN080000UK07', message_id, message, wait_for_response=True, expect="error")
+
+        # Assert
+        self._assert_table_state(message_id, 'OUTBOUND_SYNC_ASYNC_MESSAGE_SUCCESSFULLY_RESPONDED', 'sync-async')
 
     def test_should_return_bad_request_when_client_sends_invalid_message(self):
         # Arrange
@@ -192,10 +273,7 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
         }]
 
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='COPC_IN000001UK01', message_id=message_id, wait_for_response=False) \
-            .with_body(message, attachments=attachments) \
-            .execute_post_expecting_bad_request_response()
+        response = self._post_to_mhs('COPC_IN000001UK01', message_id, message, attachments=attachments, expect="bad_request")
 
         # Assert
         self.assertEqual(response.text, "400: Invalid request. Validation errors: {'attachments': {0: "
