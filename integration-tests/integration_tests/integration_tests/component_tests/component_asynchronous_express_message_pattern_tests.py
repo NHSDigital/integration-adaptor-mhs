@@ -18,9 +18,31 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
     They make use of the fake-spine-route-lookup service, which has known responses for certain interaction ids.
     """
 
+    INTERACTION_ID = 'QUPC_IN160101UK05'
+    SOAP_FAULT_MESSAGE_ID = 'AD7D39A8-1B6C-4520-8367-6B7BEBD7B842'
+    EBXML_FAULT_MESSAGE_ID = '7AA57E38-8B20-4AE0-9E73-B9B0C0C42BDA'
+
     def setUp(self):
         MHS_STATE_TABLE_WRAPPER.clear_all_records_in_table()
         MHS_SYNC_ASYNC_TABLE_WRAPPER.clear_all_records_in_table()
+
+    def _build_message(self, ods_code, message_id=None):
+        return build_message(self.INTERACTION_ID, ods_code, message_id=message_id)
+
+    def _post_error(self, message_id, message, wait_for_response):
+        return MhsHttpRequestBuilder() \
+            .with_headers(
+            interaction_id=self.INTERACTION_ID,
+            message_id=message_id,
+            wait_for_response=wait_for_response
+        ) \
+            .with_body(message) \
+            .execute_post_expecting_error_response()
+
+    def _assert_state(self, message_id, expected_values):
+        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
+            .assert_single_item_exists_with_key(message_id) \
+            .assert_item_contains_values(expected_values)
 
     def test_should_return_information_from_soap_fault_returned_from_spine_in_original_post_request_to_client(self):
         """
@@ -28,14 +50,16 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='AD7D39A8-1B6C-4520-8367-6B7BEBD7B842'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.SOAP_FAULT_MESSAGE_ID
+        )
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=False) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        response = self._post_error(
+            message_id,
+            message,
+            wait_for_response=False
+        )
 
         # Assert
         JsonErrorResponseAssertor(response.text) \
@@ -49,25 +73,27 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='AD7D39A8-1B6C-4520-8367-6B7BEBD7B842'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.SOAP_FAULT_MESSAGE_ID
+        )
 
         # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=False) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        self._post_error(
+            message_id,
+            message,
+            wait_for_response=False
+        )
 
         # Assert
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values(
+        self._assert_state(
+            message_id,
             {
                 'INBOUND_STATUS': None,
                 'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_NACKD',
                 'WORKFLOW': 'async-express'
-            })
+            }
+        )
 
     def test_should_return_information_from_ebxml_fault_returned_from_spine_in_original_post_request(self):
         """
@@ -75,14 +101,16 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/ebxml_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='7AA57E38-8B20-4AE0-9E73-B9B0C0C42BDA'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.EBXML_FAULT_MESSAGE_ID
+        )
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=False) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        response = self._post_error(
+            message_id,
+            message,
+            wait_for_response=False
+        )
 
         # Assert
         JsonErrorResponseAssertor(response.text) \
@@ -96,24 +124,26 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/ebxml_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='7AA57E38-8B20-4AE0-9E73-B9B0C0C42BDA'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.EBXML_FAULT_MESSAGE_ID
+        )
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=False) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        self._post_error(
+            message_id,
+            message,
+            wait_for_response=False
+        )
 
         # Assert
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values(
+        self._assert_state(
+            message_id,
             {
                 'INBOUND_STATUS': None,
                 'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_NACKD',
                 'WORKFLOW': 'async-express'
-            })
+            }
+        )
 
     def test_should_return_information_from_soap_fault_returned_from_spine_in_original_request_to_client_when_wait_for_response_requested(self):
         """
@@ -121,14 +151,16 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='AD7D39A8-1B6C-4520-8367-6B7BEBD7B842'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.SOAP_FAULT_MESSAGE_ID
+        )
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=True) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        response = self._post_error(
+            message_id,
+            message,
+            wait_for_response=True
+        )
 
         # Assert
         JsonErrorResponseAssertor(response.text) \
@@ -142,24 +174,26 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='AD7D39A8-1B6C-4520-8367-6B7BEBD7B842'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.SOAP_FAULT_MESSAGE_ID
+        )
         # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=True) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        self._post_error(
+            message_id,
+            message,
+            wait_for_response=True
+        )
 
         # Assert
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values(
+        self._assert_state(
+            message_id,
             {
                 'INBOUND_STATUS': None,
                 'OUTBOUND_STATUS': 'OUTBOUND_SYNC_ASYNC_MESSAGE_SUCCESSFULLY_RESPONDED',
                 'WORKFLOW': 'sync-async'
-            })
+            }
+        )
 
     def test_should_return_information_in_ebxml_fault_returned_from_spine_in_original_post_request_to_client_when_wait_for_response_requested(self):
         """
@@ -167,14 +201,16 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/ebxml_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='7AA57E38-8B20-4AE0-9E73-B9B0C0C42BDA'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.EBXML_FAULT_MESSAGE_ID
+        )
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=True) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        response = self._post_error(
+            message_id,
+            message,
+            wait_for_response=True
+        )
 
         # Assert
         JsonErrorResponseAssertor(response.text) \
@@ -188,32 +224,34 @@ class AsynchronousExpressMssagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/ebxml_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689177923',
-                                            message_id='7AA57E38-8B20-4AE0-9E73-B9B0C0C42BDA'
-                                            )
+        message, message_id = self._build_message(
+            '9689177923',
+            message_id=self.EBXML_FAULT_MESSAGE_ID
+        )
         # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=True) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        self._post_error(
+            message_id,
+            message,
+            wait_for_response=True
+        )
 
         # Assert
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values(
+        self._assert_state(
+            message_id,
             {
                 'INBOUND_STATUS': None,
                 'OUTBOUND_STATUS': 'OUTBOUND_SYNC_ASYNC_MESSAGE_SUCCESSFULLY_RESPONDED',
                 'WORKFLOW': 'sync-async'
-            })
+            }
+        )
 
     def test_should_return_bad_request_when_client_sends_invalid_message(self):
         # Arrange
-        message, message_id = build_message('QUPC_IN160101UK05', '9689174606')
+        message, message_id = build_message(self.INTERACTION_ID, '9689174606')
 
         # Act
         response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPC_IN160101UK05', message_id=message_id, wait_for_response=False) \
+            .with_headers(interaction_id=self.INTERACTION_ID, message_id=message_id, wait_for_response=False) \
             .with_body({'blah': '123'}) \
             .execute_post_expecting_bad_request_response()
 
