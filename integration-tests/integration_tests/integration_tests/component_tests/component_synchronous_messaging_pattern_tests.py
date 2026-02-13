@@ -19,9 +19,42 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
     They make use of the fake-spine-route-lookup service, which has known responses for certain interaction ids.
     """
 
+    INTERACTION_ID = 'QUPA_IN040000UK32'
+    SOAP_FAULT_MESSAGE_ID = 'F5187FB6-B033-4A75-838B-9E7A1AFB3111'
+
     def setUp(self):
         MHS_STATE_TABLE_WRAPPER.clear_all_records_in_table()
         MHS_SYNC_ASYNC_TABLE_WRAPPER.clear_all_records_in_table()
+
+    def _build_message(self, ods_code, message_id=None):
+        return build_message(self.INTERACTION_ID, ods_code, message_id=message_id)
+
+    def _post_error(self, message_id, message, wait_for_response=False, from_asid='200000000115'):
+        return MhsHttpRequestBuilder() \
+            .with_headers(
+            interaction_id=self.INTERACTION_ID,
+            message_id=message_id,
+            wait_for_response=wait_for_response,
+            from_asid=from_asid
+        ) \
+            .with_body(message) \
+            .execute_post_expecting_error_response()
+
+    def _post_bad_request(self, message_id, message, wait_for_response=False, from_asid=None):
+        return MhsHttpRequestBuilder() \
+            .with_headers(
+            interaction_id=self.INTERACTION_ID,
+            message_id=message_id,
+            wait_for_response=wait_for_response,
+            from_asid=from_asid
+        ) \
+            .with_body(message) \
+            .execute_post_expecting_bad_request_response()
+
+    def _assert_state(self, message_id, expected_values):
+        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
+            .assert_single_item_exists_with_key(message_id) \
+            .assert_item_contains_values(expected_values)
 
     def test_should_return_error_response_to_client_when_error_response_returned_from_spine(self):
         """
@@ -29,13 +62,17 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPA_IN040000UK32', '9689174606', message_id='F5187FB6-B033-4A75-838B-9E7A1AFB3111')
+        message, message_id = self._build_message(
+            '9689174606',
+            message_id=self.SOAP_FAULT_MESSAGE_ID
+        )
 
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        response = self._post_error(
+            message_id,
+            message,
+            wait_for_response=False
+        )
 
         # Assert
         JsonErrorResponseAssertor(response.text) \
@@ -50,52 +87,60 @@ class SynchronousMessagingPatternTests(unittest.TestCase):
         Error found here: fake_spine/fake_spine/configured_responses/soap_fault_single_error.xml
         """
         # Arrange
-        message, message_id = build_message('QUPA_IN040000UK32', '9689174606',
-                                            message_id='F5187FB6-B033-4A75-838B-9E7A1AFB3111')
+        message, message_id = self._build_message(
+            '9689174606',
+            message_id=self.SOAP_FAULT_MESSAGE_ID
+        )
 
         # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False) \
-            .with_body(message) \
-            .execute_post_expecting_error_response()
+        self._post_error(
+            message_id,
+            message,
+            wait_for_response=False
+        )
 
         # Assert
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values(
+        self._assert_state(
+            message_id,
             {
                 'INBOUND_STATUS': None,
                 'OUTBOUND_STATUS': 'SYNC_RESPONSE_SUCCESSFUL',
                 'WORKFLOW': 'sync'
-            })
+            }
+        )
 
     def test_should_return_bad_request_when_client_sends_invalid_message(self):
         # Arrange
-        message, message_id = build_message('QUPA_IN040000UK32', '9689174606')
+        message, message_id = self._build_message('9689174606')
 
         # Act
-        response = MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False, from_asid=None) \
-            .with_body(message) \
-            .execute_post_expecting_bad_request_response()
+        response = self._post_bad_request(
+            message_id,
+            message,
+            wait_for_response=False,
+            from_asid=None
+        )
 
         # Assert
         self.assertEqual(response.text, "`from_asid` header field required for sync messages")
 
     def test_should_record_message_received_when_bad_request_returned_to_client(self):
         # Arrange
-        message, message_id = build_message('QUPA_IN040000UK32', '9689174606')
+        message, message_id = self._build_message('9689174606')
 
         # Act
-        MhsHttpRequestBuilder() \
-            .with_headers(interaction_id='QUPA_IN040000UK32', message_id=message_id, wait_for_response=False, from_asid=None) \
-            .with_body(message) \
-            .execute_post_expecting_bad_request_response()
+        self._post_bad_request(
+            message_id,
+            message,
+            wait_for_response=False,
+            from_asid=None
+        )
 
         # Assert
-        MhsTableStateAssertor(MHS_STATE_TABLE_WRAPPER.get_all_records_in_table()) \
-            .assert_single_item_exists_with_key(message_id) \
-            .assert_item_contains_values({
-            'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_RECEIVED',
-            'WORKFLOW': 'sync'
-        })
+        self._assert_state(
+            message_id,
+            {
+                'OUTBOUND_STATUS': 'OUTBOUND_MESSAGE_RECEIVED',
+                'WORKFLOW': 'sync'
+            }
+        )
