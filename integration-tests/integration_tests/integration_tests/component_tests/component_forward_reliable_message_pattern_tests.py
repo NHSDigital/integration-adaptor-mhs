@@ -57,7 +57,6 @@ class ForwardReliablesMessagingPatternTests(unittest.TestCase):
             'WORKFLOW': workflow
         })
 
-    # --- Tests ---
     def test_should_place_unsolicited_valid_message_onto_queue_for_client_to_receive(self):
         # Arrange
         message, message_id = build_message('INBOUND_UNEXPECTED_MESSAGE', '9689177923', to_party_id="test-party-key")
