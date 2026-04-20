@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-tornado = "~=6.5.4"
+tornado = "~=6.5.5"
 
 [requires]
 python_version = "3.11"
