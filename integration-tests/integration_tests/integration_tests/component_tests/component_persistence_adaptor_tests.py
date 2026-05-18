@@ -89,7 +89,7 @@ class DbAdaptorsTests(unittest.IsolatedAsyncioTestCase):
                 value = await adaptor.get(other_key)
                 self.assertIsNone(value)
 
-    async def test_error_if_same_key_inserted_twice(self):
+    async def test_can_reinsert_same_key(self):
         for adaptor_type in PERSISTENCE_ADAPTOR_TYPES:
             with self.subTest(f"{adaptor_type}"):
                 adaptor = self.get_adaptor(adaptor_type)
@@ -98,14 +98,10 @@ class DbAdaptorsTests(unittest.IsolatedAsyncioTestCase):
                 self.keys += [key]
 
                 await adaptor.add(key, OTHER_DATA)
+                await adaptor.add(key, SAMPLE_DATA)
 
-                try:
-                    await adaptor.add(key, OTHER_DATA)
-                except MaxRetriesExceeded as e:
-                    cause = e.__cause__
-                    self.assertIsInstance(cause, DuplicatePrimaryKeyError)
-                else:
-                    self.fail(f"Expected '{type(DuplicatePrimaryKeyError)}' exception not raised")
+                value = await adaptor.get(key)
+                self.assertEqual(value, SAMPLE_DATA)
 
     async def test_error_if_data_to_add_has_primary_key_in(self):
         await self._test_error_if_data_has_primary_key_in(PersistenceAdaptor.add.__name__)

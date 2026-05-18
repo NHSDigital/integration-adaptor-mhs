@@ -65,13 +65,13 @@ class MongoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
         logger.info('Adding data for {key} in table {table}', fparams={'key': key, 'table': self.table_name})
 
         try:
-            result = await asyncio.to_thread(
-                lambda: self.collection.insert_one(self.add_primary_key_field(_KEY, key, data))
+            await asyncio.to_thread(
+                lambda: self.collection.find_one_and_replace(
+                    {_KEY: key},
+                    self.add_primary_key_field(_KEY, key, data),
+                    upsert=True
+                )
             )
-            if not result.acknowledged:
-                raise RecordCreationError
-        except DuplicateKeyError as e:
-            raise DuplicatePrimaryKeyError from e
         except Exception as e:
             raise RecordCreationError from e
 
