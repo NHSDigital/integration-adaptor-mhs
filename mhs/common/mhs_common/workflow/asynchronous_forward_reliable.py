@@ -60,12 +60,6 @@ class AsynchronousForwardReliableWorkflow(asynchronous_reliable.AsynchronousReli
 
         reliability_details = await self._lookup_reliability_details(interaction_details,
                                                                      interaction_details.get('ods-code'))
-        retry_interval_xml_datetime = reliability_details[common_asynchronous.MHS_RETRY_INTERVAL]
-        try:
-            retry_interval = DateUtilities.convert_xml_date_time_format_to_seconds(retry_interval_xml_datetime)
-        except isoerror.ISO8601Error:
-            await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
-            return 500, 'Error when converting retry interval: {} to seconds'.format(retry_interval_xml_datetime), None
 
         error, http_headers, message = await self._serialize_outbound_message(message_id, correlation_id,
                                                                               interaction_details,
@@ -74,7 +68,7 @@ class AsynchronousForwardReliableWorkflow(asynchronous_reliable.AsynchronousReli
             return error[0], error[1], None
 
         return await self._make_outbound_request_with_retries_and_handle_response(url, http_headers, message, wdo,
-                                                                                  reliability_details, retry_interval)
+                                                                                  reliability_details)
 
     @timing.time_function
     async def handle_unsolicited_inbound_message(self, message_id: str, correlation_id: str, message_data: MessageData):

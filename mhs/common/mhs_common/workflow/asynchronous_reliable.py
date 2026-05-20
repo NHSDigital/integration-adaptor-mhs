@@ -64,12 +64,6 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
             return 500, 'Error obtaining outbound URL', None
 
         reliability_details = await self._lookup_reliability_details(interaction_details)
-        retry_interval_xml_datetime = reliability_details[common_asynchronous.MHS_RETRY_INTERVAL]
-        try:
-            retry_interval = DateUtilities.convert_xml_date_time_format_to_seconds(retry_interval_xml_datetime)
-        except isoerror.ISO8601Error:
-            await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
-            return 500, 'Error when converting retry interval: {} to seconds'.format(retry_interval_xml_datetime), None
 
         error, http_headers, message = await self._serialize_outbound_message(message_id, correlation_id,
                                                                               interaction_details,
@@ -78,12 +72,12 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
             return error[0], error[1], None
 
         return await self._make_outbound_request_with_retries_and_handle_response(url, http_headers, message, wdo,
-                                                                                  reliability_details, retry_interval)
+                                                                                  reliability_details)
 
     async def _make_outbound_request_with_retries_and_handle_response(self, url: str, http_headers: Dict[str, str],
                                                                       message: str, wdo: wd.WorkDescription,
-                                                                      reliability_details: dict, retry_interval: float):
-        num_of_retries = int(reliability_details[common_asynchronous.MHS_RETRIES])
+                                                                      reliability_details: dict):
+        num_of_retries = int(reliability_details[common_asynchronous.MHS_RETRIES] or 0)
 
         # retries_remaining is a mutable integer. This is done by putting an (immutable) integer into
         # a mutable container.
@@ -98,6 +92,13 @@ class AsynchronousReliableWorkflow(common_asynchronous.CommonAsynchronousWorkflo
                                                                              handle_error_response)
             except _NeedToRetryException:
                 retries_remaining[0] -= 1
+                retry_interval_xml_datetime = reliability_details[common_asynchronous.MHS_RETRY_INTERVAL]
+                try:
+                    retry_interval = DateUtilities.convert_xml_date_time_format_to_seconds(retry_interval_xml_datetime)
+                except isoerror.ISO8601Error:
+                    await wdo.set_outbound_status(wd.MessageStatus.OUTBOUND_MESSAGE_PREPARATION_FAILED)
+                    return 500, 'Error when converting retry interval: {} to seconds'.format(retry_interval_xml_datetime), None
+
                 logger.info("Waiting for {retry_interval} seconds before next request attempt.",
                             fparams={"retry_interval": retry_interval})
                 await asyncio.sleep(retry_interval)
