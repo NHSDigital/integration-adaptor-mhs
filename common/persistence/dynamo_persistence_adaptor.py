@@ -52,12 +52,7 @@ class DynamoPersistenceAdaptor(persistence_adaptor.PersistenceAdaptor):
             async with self.__get_dynamo_resource() as dynamo:
                 table = await dynamo.Table(self.table_name)
                 await table.put_item(
-                    Item=self.add_primary_key_field(_KEY, key, data),
-                    ConditionExpression=Attr(_KEY).not_exists())
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
-                raise DuplicatePrimaryKeyError
-            raise
+                    Item=self.add_primary_key_field(_KEY, key, data))
         except Exception as e:
             raise RecordCreationError from e
 

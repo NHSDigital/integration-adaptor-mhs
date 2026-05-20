@@ -7,7 +7,7 @@ RUN apt-get update \
        swig=4.1.0-0.2 \
        pkg-config=1.8.1-1 \
        libxml2-dev=2.9.14+dfsg-1.3~deb12u5 \
-       libxslt1-dev=1.1.35-1+deb12u3 \
+       libxslt1-dev=1.1.35-1+deb12u4 \
        python3-dev=3.11.2-1+b1 \
        libffi-dev=3.4.4-1 \
     && apt-get clean \
